@@ -1,5 +1,11 @@
 # blessed-repository
-This is the main file for Team Plum's final project.
-This is another change for demonstration.
-Another change.
-Taylor made a change
+__Team Name__: Plum
+
+__Last Updated__: April 13, 2023
+
+__Team Members__:
+Cameron Gregoire
+Devin Peevy
+Jiameng Li
+Junghyon Jo
+Taylor R Merwin
