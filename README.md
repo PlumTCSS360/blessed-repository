@@ -17,5 +17,5 @@ __Email__: plumpurple360@gmail.com
 __Links to Documents__:
 
 Weekly Reports
-* [Meeting Minutes](https://github.com/PlumTCSS360/blessed-repository/blob/a3cad1328b8a0b515a83c3968114ae2d4e4d8f14/Weekly%20Reports/Team%20Plum%20Meeting%20Minutes.pdf)
-* [Task Matrix](https://github.com/PlumTCSS360/blessed-repository/blob/a3cad1328b8a0b515a83c3968114ae2d4e4d8f14/Weekly%20Reports/Team%20Plum%20Task%20Matrix.pdf)
+* [Meeting Minutes](https://github.com/PlumTCSS360/blessed-repository/blob/97b9df63c1b0e0e0b4b0922773dda7ce636d112c/Weekly%20Reports/Team%20Plum%20Meeting%20Minutes-2.pdf)
+* [Task Matrix](https://github.com/PlumTCSS360/blessed-repository/blob/b14bb56772ef09f7735f99829145dd5976a8204d/Weekly%20Reports/Team%20Plum%20Task%20Matrix.pdf)
