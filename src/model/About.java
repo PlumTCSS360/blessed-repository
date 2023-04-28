@@ -60,7 +60,7 @@ public final class About {
     private void fillDevelopers() {
         developers[0] = new Person("Devin Peevy", "dpeevy@uw.edu");
         //TODO: Everybody add your name to the developers array!!
-        developers[1] = new Person("Devin Peevy", "dpeevy@uw.edu");
+        developers[1] = new Person("Junghyon Jo", "whwheoeo2015@gmail.com");
         developers[2] = new Person("Devin Peevy", "dpeevy@uw.edu");
         developers[3] = new Person("Devin Peevy", "dpeevy@uw.edu");
         developers[4] = new Person("Devin Peevy", "dpeevy@uw.edu");
