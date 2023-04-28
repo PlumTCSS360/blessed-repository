@@ -1,3 +1,2 @@
-# blessed-repository
-This is the main file for Team Plum's final project.
-This is another change for demonstration.
+# Crafty Companion
+This is my personal fork of the TCSS 360 group project (Team Plum).
