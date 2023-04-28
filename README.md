@@ -1,2 +1,4 @@
 # Crafty Companion
-This is my personal fork of the TCSS 360 group project (Team Plum).
+This is a group project made for TCSS 360.
+
+This application will allow users to manage their DIY projects more easily.
