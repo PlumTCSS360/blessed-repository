@@ -63,7 +63,7 @@ public final class About {
         developers[1] = new Person("Junghyon Jo", "whwheoeo2015@gmail.com");
         developers[2] = new Person("Taylor Merwin", "tmerwin@uw.edu");
         developers[3] = new Person("Jiameng Li", "jli39@uw.edu");
-        developers[4] = new Person("Devin Peevy", "dpeevy@uw.edu");
+        developers[4] = new Person("Cameron Gregoire", "cgrego2@uw.edu");
     }
 
     /**
