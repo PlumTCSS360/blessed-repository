@@ -13,7 +13,7 @@ import java.util.Scanner;
 public final class About {
 
     /** This is a path to the file containing the user's name and email. */
-    public static final String USER_INFO_FILE_PATH = "src/model/data/user_info.txt";
+    public static final String USER_INFO_FILE_PATH = "src/data/user_info.txt";
 
     /** This is the Person who is using the application. */
     private final Person user;
