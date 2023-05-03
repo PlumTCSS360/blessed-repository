@@ -32,6 +32,7 @@ public class AboutFrame {
                 (int) screenHeight / 3);
         frame.setSize(frameSize);
         frame.setLocationRelativeTo(null);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         displayInfo();
         //Make it show up.
         frame.setVisible(true);
