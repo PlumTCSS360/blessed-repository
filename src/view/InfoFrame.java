@@ -48,7 +48,7 @@ public class InfoFrame {
     }
 
     /**
-     * This method will set up the InfoFrame how I want it and
+     * This method will set up the InfoFrame how I want it atn
      */
     private void start() {
         //Set the size.
