@@ -1,6 +1,7 @@
 package view;
 
 import javax.swing.*;
+import javax.swing.plaf.metal.MetalButtonUI;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,6 +10,8 @@ import java.awt.event.ActionListener;
  * This is the initial screen when a user starts this application.
  * It prompts the user to either create a new project or load an existing one.
  */
+
+//Taylor Merwin
 //public class WelcomeFrame {
 //
 //    private static final Dimension BUTTON_SIZE = new Dimension(200, 100);
@@ -93,61 +96,53 @@ public class WelcomeFrame extends JFrame {
         final double screenWidth = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
         final double screenHeight = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
         final Dimension frameSize = new Dimension((int) screenWidth * 2 / 3, (int) screenHeight * 2 / 3);
-        setSize(frameSize);
+
 
 
         // Set frame properties
         setTitle("Crafty Companion");
-        setSize(400, 200);
+        setSize(frameSize);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null); // Center the frame
 
         // Create components
-        JLabel welcomeLabel = new JLabel("Welcome to Crafty Companion!");
+        JLabel welcomeLabel = new JLabel("Welcome to Crafty Companion!", SwingConstants.CENTER);
         JButton newButton = new JButton("New");
         JButton loadButton = new JButton("Load");
 
         // Set layout and add components
         setLayout(new GridBagLayout());
+
+        // Create constraints for components
         GridBagConstraints gbc = new GridBagConstraints();
 
-        // Add welcome label
+
+        //Add welcome label with dynamic font size
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 2;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = 1;
+        gbc.weighty = 0.5;
         gbc.insets = new Insets(10, 10, 10, 10);
         add(welcomeLabel, gbc);
 
-//        private void setUpButtons() {
-//
-//            newButton.addActionListener(new ActionListener() {
-//                @Override
-//                public void actionPerformed(ActionEvent e) {
-//                    //new NewFrame();
-//                    dispose();
-//                }
-//            });
-//
-//            loadButton.addActionListener(new ActionListener() {
-//                @Override
-//                public void actionPerformed(ActionEvent e) {
-//                    //new LoadFrame();
-//                    dispose();
-//                }
-//            });
-//        }
-
-        // Add New button
+        // Add New button with dynamic resizing
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.gridwidth = 1;
-        gbc.anchor = GridBagConstraints.EAST;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = 0.5;
+        gbc.weighty = 0.5;
+        gbc.anchor = GridBagConstraints.SOUTHWEST;
         add(newButton, gbc);
 
-        // Add Load button
+        // Add Load button with dynamic resizing
         gbc.gridx = 1;
         gbc.gridy = 1;
-        gbc.anchor = GridBagConstraints.WEST;
+        gbc.weightx = 0.5;
+        gbc.weighty = 0.5;
+        gbc.anchor = GridBagConstraints.SOUTHEAST;
         add(loadButton, gbc);
 
         // Make the frame visible
