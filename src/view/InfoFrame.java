@@ -73,36 +73,24 @@ public class InfoFrame {
         LayoutManager layout = new GridBagLayout();
         panel.setLayout(layout);
         //Put in the greeting.
-        GridBagConstraints gbc = new GridBagConstraints();
-        //gbc.ipady = 30;
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.gridwidth = 3;
-        gbc.gridheight = 1;
+        GBC gbc = new GBC(0, 0, 3, 1);
         gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.anchor = GBC.NORTH;
         panel.add(greeting(), gbc);
 
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        gbc.gridwidth = 1;
-        gbc.gridheight = 1;
-        gbc.fill = GridBagConstraints.NONE;
+        gbc = new GBC(0, 1);
         panel.add(nameQ(), gbc);
 
-        gbc.gridx = 0;
-        gbc.gridy = 2;
+        gbc = new GBC(0, 2);
         panel.add(emailQ(), gbc);
 
-        gbc.gridx = 1;
-        gbc.gridy = 1;
+        gbc = new GBC(1, 1);
         panel.add(nameBox, gbc);
 
-        gbc.gridx = 1;
-        gbc.gridy = 2;
+        gbc = new GBC(1, 2);
         panel.add(emailBox, gbc);
 
-        gbc.gridx = 1;
-        gbc.gridy = 3;
+        gbc = new GBC(1, 3);
         panel.add(okButton(), gbc);
         //Add the panel to the frame
         frame.add(panel);
