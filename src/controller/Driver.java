@@ -1,11 +1,13 @@
 package controller;
 
 import model.About;
+import model.Project;
 import view.AboutFrame;
 import view.WelcomeFrame;
 
 import java.awt.*;
 import java.io.File;
+import java.math.BigDecimal;
 
 /**
  * This class will initiate the program by running a new WelcomeFrame,
@@ -15,12 +17,12 @@ public class Driver {
     public static void main(String[] args) {
         String path = About.USER_INFO_FILE_PATH;
         File file = new File(path);
-        if (true) {
+        if (file.exists()) {
             EventQueue.invokeLater(new Runnable() {
                 @Override
                 public void run() {
-//                    new WelcomeFrame();
-                    new AboutFrame();
+                    new WelcomeFrame();
+//                    new AboutFrame();
                 }
             });
         }
