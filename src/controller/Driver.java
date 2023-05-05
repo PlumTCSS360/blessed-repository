@@ -1,13 +1,11 @@
 package controller;
 
 import model.About;
-import model.Project;
 import view.AboutFrame;
 import view.WelcomeFrame;
 
 import java.awt.*;
 import java.io.File;
-import java.math.BigDecimal;
 
 /**
  * This class will initiate the program by running a new WelcomeFrame,
