@@ -10,7 +10,7 @@ import java.util.Scanner;
 
 /**
  * This class represent the Project in to application.
- * It contains the methods for creating, saving, loading, deleting the project.
+ * It contains the methods for creating, saving, loading, deleting, and closing the project.
  *
  * @author Jiameng Li
  * @version v0.1
@@ -153,7 +153,7 @@ public final class Project {
     }
 
 
-    // Methods for creating, deleting, loading, and saving project
+    // Methods for creating, deleting, loading, saving, and closing project
 
     /**
      * Create a new project with given name, budget, and description.
@@ -327,6 +327,18 @@ public final class Project {
         } catch (Exception e) {
             System.err.println("Can't load project. " + e);
         }
+    }
+
+    /**
+     * Close the project by setting project name, budget, expense, and description to null.
+     * This method auto save the project.
+     */
+    public static void closeProject() {
+        saveProject();
+        myName = null;
+        myBudget = null;
+        myExpense = null;
+        myDescription = null;
     }
 
 }
