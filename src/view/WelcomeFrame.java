@@ -7,96 +7,22 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
- * This is the initial screen when a user starts this application.
- * It prompts the user to either create a new project or load an existing one.
+ * This class will create a new WelcomeFrame, the initial GUI.
  */
 
-//Taylor Merwin
-//public class WelcomeFrame {
-//
-//    private static final Dimension BUTTON_SIZE = new Dimension(200, 100);
-//
-//    final private JFrame frame;
-//    final private JButton newButton;
-//    final private JButton loadButton;
-//
-//    public WelcomeFrame() {
-//        //Initialize parameters.
-//        frame = new JFrame("Crafty Companion - Welcome");
-//        newButton = new JButton("Start a new project.");
-//        loadButton = new JButton("Load an existing project.");
-//        //Load Dimensions, ActionListeners into buttons.
-//        setUpButtons();
-//        //Display the frame.
-//        start();
-//    }
-//
-//    /**
-//     * This method sets the close operation and size, centers and displays the frame.
-//     */
-//    public void start() {
-//        //Terminate program upon pushing the X.
-//        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//        //Set the size.
-//        final double screenWidth = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
-//        final double screenHeight = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
-//        final Dimension frameSize = new Dimension( (int) screenWidth * 2 / 3,
-//                (int) screenHeight * 2 / 3);
-//        frame.setSize(frameSize);
-//        //Properly place the buttons on the frame.
-//        frame.setLayout(new GridLayout(1, 2));
-//        placeButtons();
-//        //Center the Frame on the screen.
-//        frame.setLocationRelativeTo(null);
-//        //Make it show up.
-//        frame.setVisible(true);
-//    }
-//
-//    /**
-//     * This method sets sizes and adds ActionListeners to the buttons.
-//     */
-//    private void setUpButtons() {
-//        newButton.setSize(BUTTON_SIZE);
-//        loadButton.setSize(BUTTON_SIZE);
-//
-//        newButton.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                new NewFrame();
-//                frame.dispose();
-//            }
-//        });
-//
-//        loadButton.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                new LoadFrame();
-//                frame.dispose();
-//            }
-//        });
-//    }
-//
-//    private void placeButtons() {
-//        JPanel lp = new JPanel();
-//        JPanel rp = new JPanel();
-//        frame.add(lp);
-//        frame.add(rp);
-//        lp.add(newButton);
-//        rp.add(loadButton);
-//    }
-//}
+//TODO: Make the font size dynamic
+
 
 public class WelcomeFrame extends JFrame {
 
-    private JButton newButton;
-    private JButton loadButton;
-
+    /**
+     * This constructor will create a new WelcomeFrame.
+     */
     public WelcomeFrame() {
 
         final double screenWidth = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
         final double screenHeight = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
-        final Dimension frameSize = new Dimension((int) screenWidth * 2 / 3, (int) screenHeight * 2 / 3);
-
+        final Dimension frameSize = new Dimension((int) screenWidth / 2, (int) screenHeight / 2);
 
 
         // Set frame properties
@@ -110,12 +36,18 @@ public class WelcomeFrame extends JFrame {
         JButton newButton = new JButton("New");
         JButton loadButton = new JButton("Load");
 
+        Font buttonFont = new Font("Segue", Font.PLAIN, (int) (frameSize.getHeight() / 30));
+        Font labelFont = new Font("Segue", Font.PLAIN, (int) (frameSize.getHeight() / 20));
+
+        welcomeLabel.setFont(labelFont);
+        newButton.setFont(buttonFont);
+        loadButton.setFont(buttonFont);
+
         // Set layout and add components
         setLayout(new GridBagLayout());
 
         // Create constraints for components
         GridBagConstraints gbc = new GridBagConstraints();
-
 
         //Add welcome label with dynamic font size
         gbc.gridx = 0;
@@ -131,6 +63,7 @@ public class WelcomeFrame extends JFrame {
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.gridwidth = 1;
+        //makes the buttons fill their areas
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weightx = 0.5;
         gbc.weighty = 0.5;
@@ -144,6 +77,23 @@ public class WelcomeFrame extends JFrame {
         gbc.weighty = 0.5;
         gbc.anchor = GridBagConstraints.SOUTHEAST;
         add(loadButton, gbc);
+
+        //add event listeners to buttons
+        newButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new NewFrame();
+                dispose();
+            }
+        });
+
+        loadButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new LoadFrame();
+                dispose();
+            }
+        });
 
         // Make the frame visible
         setVisible(true);
