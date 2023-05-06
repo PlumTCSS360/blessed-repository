@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Scanner;
 
 /**
  * This class will create a screen which will solicit from the user their name and email address.
@@ -138,13 +139,26 @@ public class InfoFrame implements GUIFrame {
         userName = nameBox.getText();
         userEmail = emailBox.getText();
         if (userName.contains(",")) {
-            new JOptionPane("The name field may not contain any commas!");
+            JOptionPane.showMessageDialog(null, "The name field may not contain any commas!");
             hasFailed = true;
         }
-        if (userEmail.contains(",")) {
-            new JOptionPane("The email field may not contain any commas!");
+        else if (userEmail.contains(",")) {
+            JOptionPane.showMessageDialog(null, "The email field may not contain any commas!");
             hasFailed = true;
         }
+        else if (userName.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "The name field cannot be left blank!");
+            hasFailed = true;
+        }
+        else if (userEmail.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "The email field cannot be left blank!");
+            hasFailed = true;
+        }
+        else if (!isEmail(userEmail)) {
+            JOptionPane.showMessageDialog(null, "That email doesn't look right. Try again!");
+            hasFailed = true;
+        }
+
         if (!hasFailed) {
             try {
                 FileWriter fw = new FileWriter(About.USER_INFO_FILE_PATH);
@@ -160,6 +174,36 @@ public class InfoFrame implements GUIFrame {
         else {
             hasFailed = false;
         }
+    }
+
+    private boolean isEmail(String string) {
+        char[] strArray = string.toCharArray();
+        boolean hasHitAt = false;
+        boolean hasHitLastDot = false;
+        int atLocation = 0;
+        int lastDotLocation = 0;
+        for (int i = 0; i < strArray.length; i++) {
+            if (strArray[i] == '@') {
+                atLocation = i;
+                if (hasHitAt) {
+                    return false;
+                }
+                hasHitAt = true;
+            }
+            if (strArray[i] == '.') {
+                if (hasHitAt) {
+                    hasHitLastDot = true;
+                    lastDotLocation = i;
+                }
+            }
+        }
+        if (hasHitLastDot) {
+            if (atLocation != 0 && lastDotLocation - atLocation > 1 && lastDotLocation != strArray.length - 1) {
+                return true;
+            }
+            return false;
+        }
+        return false;
     }
 
     private JLabel textArea(String text, float alignmentX, Font font) {
