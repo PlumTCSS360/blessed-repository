@@ -50,6 +50,7 @@ public class InfoFrame implements GUIFrame {
         final double screenHeight = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
         final Dimension frameSize = new Dimension((int) screenWidth / 4, (int) screenWidth / 8);
         frame.setSize(frameSize);
+        frame.setResizable(false);
         //Center it.
         frame.setLocationRelativeTo(null);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -92,6 +93,7 @@ public class InfoFrame implements GUIFrame {
         panel.add(emailBox, gbc);
 
         gbc = new GBC(1, 3);
+        gbc.ipady = 20;
         panel.add(okButton(), gbc);
         //Add the panel to the frame
         frame.add(panel);
@@ -126,6 +128,8 @@ public class InfoFrame implements GUIFrame {
                 okButtonAction();
             }
         });
+        ok.setBackground(FOREGROUND_COLOR);
+        ok.setForeground(BACKGROUND_COLOR);
         return ok;
     }
 
