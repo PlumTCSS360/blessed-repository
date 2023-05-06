@@ -38,9 +38,9 @@ public final class AboutFrame {
         //Set the size.
         final double screenWidth = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
         final double screenHeight = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
-        final Dimension frameSize = new Dimension( (int) screenWidth / 3,
-                (int) screenHeight / 3);
+        final Dimension frameSize = new Dimension( (int) screenWidth/3,  (int) screenHeight/3);
         frame.setSize(frameSize);
+        frame.setResizable(false);
         frame.setLocationRelativeTo(null);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         displayInfo();

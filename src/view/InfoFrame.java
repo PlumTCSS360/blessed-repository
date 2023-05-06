@@ -16,13 +16,7 @@ import java.io.IOException;
  * @author Devin Peevy
  * @version 0.1
  */
-public class InfoFrame {
-
-    private final static Color BACKGROUND = Color.DARK_GRAY;
-
-    private final static Color FOREGROUND = Color.lightGray;
-
-    private final static String FONT_NAME = "Courier New";
+public class InfoFrame implements GUIFrame {
 
     private final JFrame frame;
 
@@ -54,8 +48,7 @@ public class InfoFrame {
         //Set the size.
         final double screenWidth = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
         final double screenHeight = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
-        final Dimension frameSize = new Dimension( (int) screenWidth / 3,
-                (int) screenHeight / 3);
+        final Dimension frameSize = new Dimension((int) screenWidth / 4, (int) screenWidth / 8);
         frame.setSize(frameSize);
         //Center it.
         frame.setLocationRelativeTo(null);
@@ -69,25 +62,33 @@ public class InfoFrame {
     private void displayText() {
         //Initiate the panel
         JPanel panel = new JPanel();
-        panel.setBackground(BACKGROUND);
+        panel.setSize(frame.getSize());
+        panel.setBackground(BACKGROUND_COLOR);
         LayoutManager layout = new GridBagLayout();
         panel.setLayout(layout);
         //Put in the greeting.
         GBC gbc = new GBC(0, 0, 3, 1);
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.anchor = GBC.NORTH;
+        gbc.ipady = 20;
         panel.add(greeting(), gbc);
 
         gbc = new GBC(0, 1);
+        gbc.ipady = 20;
+        gbc.ipadx = 20;
         panel.add(nameQ(), gbc);
 
         gbc = new GBC(0, 2);
+        gbc.ipady = 20;
+        gbc.ipadx = 20;
         panel.add(emailQ(), gbc);
 
         gbc = new GBC(1, 1);
+        nameBox.setFont(BODY_FONT);
         panel.add(nameBox, gbc);
 
         gbc = new GBC(1, 2);
+        emailBox.setFont(BODY_FONT);
         panel.add(emailBox, gbc);
 
         gbc = new GBC(1, 3);
@@ -99,21 +100,21 @@ public class InfoFrame {
     private JLabel greeting() {
         JLabel greeting = new JLabel("Welcome to Crafty Companion!");
         //greeting.setAlignmentX(Component.CENTER_ALIGNMENT);
-        greeting.setFont(new Font(FONT_NAME, Font.BOLD, 36));
-        greeting.setBackground(BACKGROUND);
-        greeting.setForeground(FOREGROUND);
+        greeting.setFont(HEADING_FONT);
+        greeting.setBackground(BACKGROUND_COLOR);
+        greeting.setForeground(FOREGROUND_COLOR);
         return greeting;
     }
 
     private JLabel nameQ() {
         JLabel question = textArea("What is your name?", JLabel.LEFT_ALIGNMENT,
-                new Font(FONT_NAME, Font.BOLD, 24));
+                BODY_FONT);
         return question;
     }
 
     private JLabel emailQ() {
         JLabel emailQ = textArea("What is your email address?", JTextArea.LEFT_ALIGNMENT,
-                new Font(FONT_NAME, Font.BOLD, 24));
+                BODY_FONT);
         return emailQ;
     }
 
@@ -122,28 +123,47 @@ public class InfoFrame {
         ok.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                userName = nameBox.getText();
-                userEmail = emailBox.getText();
-                try {
-                    FileWriter fw = new FileWriter(About.USER_INFO_FILE_PATH);
-                    String data = "name, email\n" + userName + "," + userEmail;
-                    fw.write(data);
-                    fw.close();
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                }
-                System.out.println(userName);
+                okButtonAction();
             }
         });
         return ok;
+    }
+
+    private void okButtonAction() {
+        boolean hasFailed = false;
+        userName = nameBox.getText();
+        userEmail = emailBox.getText();
+        if (userName.contains(",")) {
+            new JOptionPane("The name field may not contain any commas!");
+            hasFailed = true;
+        }
+        if (userEmail.contains(",")) {
+            new JOptionPane("The email field may not contain any commas!");
+            hasFailed = true;
+        }
+        if (!hasFailed) {
+            try {
+                FileWriter fw = new FileWriter(About.USER_INFO_FILE_PATH);
+                String data = "name,email\n" + userName + "," + userEmail;
+                fw.write(data);
+                fw.close();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+            frame.dispose();
+            new WelcomeFrame();
+        }
+        else {
+            hasFailed = false;
+        }
     }
 
     private JLabel textArea(String text, float alignmentX, Font font) {
         JLabel textArea = new JLabel(text);
         textArea.setAlignmentX(alignmentX);
         textArea.setFont(font);
-        textArea.setBackground(BACKGROUND);
-        textArea.setForeground(FOREGROUND);
+        textArea.setBackground(BACKGROUND_COLOR);
+        textArea.setForeground(FOREGROUND_COLOR);
         return textArea;
     }
     public static void main(String[] args) {
