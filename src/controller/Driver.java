@@ -1,6 +1,5 @@
 package controller;
 
-import com.formdev.flatlaf.FlatDarculaLaf;
 import model.About;
 import view.AboutFrame;
 import view.WelcomeFrame;
@@ -19,9 +18,7 @@ public class Driver {
     public static void main(String[] args) {
         String path = About.USER_INFO_FILE_PATH;
         File file = new File(path);
-        //setup theme
 
-        FlatDarculaLaf.setup();
         if (true) {
             EventQueue.invokeLater(new Runnable() {
                 @Override
