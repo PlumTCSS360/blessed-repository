@@ -27,7 +27,7 @@ public class Driver {
                 @Override
                 public void run() {
                     new WelcomeFrame();
-                    //new AboutFrame();
+//                    new AboutFrame();
                 }
             });
         }

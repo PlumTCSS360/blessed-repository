@@ -42,7 +42,7 @@ public final class AboutFrame {
         frame.setSize(frameSize);
         frame.setResizable(false);
         frame.setLocationRelativeTo(null);
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         displayInfo();
         //Make it show up.
         frame.setVisible(true);
