@@ -3,6 +3,8 @@ package model;
 /**
  * The Person class will store a name and an email to represent the necessary information regarding all Persons on the
  * AboutFrame.
+ * @author Devin Peevy
+ * @version 0.1
  */
 public final class Person {
     /** The name of the Person. */
@@ -33,5 +35,10 @@ public final class Person {
      */
     public String getEmail() {
         return email;
+    }
+
+    @Override
+    public String toString() {
+        return name + ", " + email;
     }
 }

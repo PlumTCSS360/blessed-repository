@@ -9,10 +9,13 @@ import java.awt.*;
 import java.io.File;
 
 /**
- * This class will initiate the program by running a new WelcomeFrame,
- * the initial GUI.
+ * This class initiate the program. It will check for the existence of a file containing basic user information.
+ * If it exists, it will open the WelcomeFrame; else, it will open a InfoFrame to solicit this information.
+ * @author Devin Peevy
+ * @version 0.1
  */
 public class Driver {
+
     public static void main(String[] args) {
         String path = About.USER_INFO_FILE_PATH;
         File file = new File(path);
