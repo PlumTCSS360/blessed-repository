@@ -17,6 +17,7 @@ public class Driver {
         String path = About.USER_INFO_FILE_PATH;
         File file = new File(path);
         //setup theme
+
         FlatDarculaLaf.setup();
         if (true) {
             EventQueue.invokeLater(new Runnable() {
