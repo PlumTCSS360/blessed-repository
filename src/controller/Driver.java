@@ -19,8 +19,8 @@ public class Driver {
             EventQueue.invokeLater(new Runnable() {
                 @Override
                 public void run() {
-                    new WelcomeFrame();
-                    //new AboutFrame();
+                    // new WelcomeFrame();
+                     new AboutFrame();
                 }
             });
         }
