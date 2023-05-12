@@ -19,8 +19,17 @@ public class ProjectFrame implements GUIFrame{
 
     //panels to display in the frame
     JPanel projectListPanel;
-    JPanel cardsPanel;
+    JPanel activityContainerPanel;
     JPanel buttonsPanel;
+
+    //Activity panels to display in the activity panel
+    JPanel budgetPanel;
+    JPanel descriptionPanel;
+    JPanel todoListPanel;
+    JPanel imagePanel;
+
+    //array of activity panels
+    JPanel[] activityPanels;
 
     //buttons to display in the buttons panel
     JButton exitProjectButton;
@@ -39,18 +48,15 @@ public class ProjectFrame implements GUIFrame{
         //And call methods to set them up
 
         // Initialize ProjectFame and set frame title
-        projectFrame = new JFrame("Crafty Companion - ");
+        projectFrame = new JFrame("Crafty Companion - <Project Name>");
 
         //initialize panels
         projectListPanel = new JPanel();
-        cardsPanel = new JPanel();
+        activityContainerPanel = new JPanel();
         buttonsPanel = new JPanel();
 
         //initialize menu bar
         menuBar = new JMenuBar();
-
-
-
 
 
         // Create menu bar
@@ -58,7 +64,7 @@ public class ProjectFrame implements GUIFrame{
 
         //create panels
         createListPanel();
-        createCardsPanel();
+        createActivityPanels();
         createButtonsPanel();
 
         //create buttons
@@ -76,20 +82,107 @@ public class ProjectFrame implements GUIFrame{
      */
     private void createMenuBar( JMenuBar menuBar) {
 
-        final JMenu fileMenu1 = new JMenu("Menu1");
-        final JMenu fileMenu2 = new JMenu("Menu2");
-        final JMenu fileMenu3 = new JMenu("Menu3");
-        menuBar.add(fileMenu1);
-        menuBar.add(fileMenu2);
-        menuBar.add(fileMenu3);
+//        final JMenu fileMenu1 = new JMenu("Menu1");
+//        final JMenu fileMenu2 = new JMenu("Menu2");
+//        final JMenu fileMenu3 = new JMenu("Menu3");
+        final JMenuItem openBudget = new JMenuItem("Open Budget");
+        final JMenuItem openDescription = new JMenuItem("Open Description");
+        final JMenuItem openTodoList = new JMenuItem("Open Todo List");
+        final JMenuItem openImage = new JMenuItem("Open Image");
+
+        menuBar.add(openBudget);
+        menuBar.add(openDescription);
+        menuBar.add(openTodoList);
+        menuBar.add(openImage);
+
+        //add action listeners to menu items
+        openBudget.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                myCardLayout.show(activityContainerPanel, "0");
+            }
+        });
+        openDescription.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                myCardLayout.show(activityContainerPanel, "1");
+            }
+        });
+        openTodoList.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                myCardLayout.show(activityContainerPanel, "2");
+            }
+        });
+        openImage.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                myCardLayout.show(activityContainerPanel, "3");
+            }
+        });
 
     }
 
     private void createActivityPanels() {
-        final JPanel budgetPanel = new JPanel(myCardLayout);
-        final JPanel descriptionPanel = new JPanel(myCardLayout);
-        final JPanel listPanel = new JPanel(myCardLayout);
-        final JPanel imagePanel = new JPanel(myCardLayout);
+
+        //set up activity panel
+        activityContainerPanel.setLayout(myCardLayout);
+        activityContainerPanel.setVisible(true);
+
+        //initialize activity panels
+        budgetPanel = new JPanel();
+        descriptionPanel = new JPanel();
+        todoListPanel = new JPanel();
+        imagePanel = new JPanel();
+
+        //set up array of activity panels
+        activityPanels = new JPanel[4];
+        activityPanels[0] = budgetPanel;
+        activityPanels[1] = descriptionPanel;
+        activityPanels[2] = todoListPanel;
+        activityPanels[3] = imagePanel;
+
+        //create activity panels
+        createBudgetPanel();
+        createDescriptionPanel();
+        createTodoListPanel();
+        createImagePanel();
+
+        //add activity panels to activity panel
+        for (int i = 0; i < activityPanels.length; i++) {
+            activityContainerPanel.add(activityPanels[i], Integer.toString(i));
+        }
+        //show first activity panel (budget)
+        myCardLayout.show(activityContainerPanel, "0");
+
+    }
+
+    //create budget panel
+    private void createBudgetPanel() {
+        budgetPanel.add(new JLabel("Budget Panel"));
+        budgetPanel.setBackground(Color.cyan);
+        budgetPanel.setVisible(true);
+    }
+
+    //create description panel
+    private void createDescriptionPanel() {
+        descriptionPanel.add(new JLabel("Description Panel"));
+        descriptionPanel.setBackground(Color.yellow);
+        descriptionPanel.setVisible(true);
+    }
+
+    //create todo list panel
+    private void createTodoListPanel() {
+        todoListPanel.add(new JLabel("Todo List Panel"));
+        todoListPanel.setBackground(Color.orange);
+        todoListPanel.setVisible(true);
+    }
+
+    //create image panel
+    private void createImagePanel() {
+        imagePanel.add(new JLabel("Image Panel"));
+        imagePanel.setBackground(Color.pink);
+        imagePanel.setVisible(true);
     }
 
     private void createListPanel() {
@@ -97,10 +190,6 @@ public class ProjectFrame implements GUIFrame{
         projectListPanel.setVisible(true);
     }
 
-    private void createCardsPanel() {
-        cardsPanel.setBackground(Color.blue);
-        cardsPanel.setVisible(true);
-    }
 
     private void createButtonsPanel() {
         buttonsPanel.setBackground(Color.red);
@@ -163,7 +252,7 @@ public class ProjectFrame implements GUIFrame{
 
         //Add panels to frame
         projectFrame.add(buttonsPanel, BorderLayout.SOUTH);
-        projectFrame.add(cardsPanel, BorderLayout.CENTER);
+        projectFrame.add(activityContainerPanel, BorderLayout.CENTER);
         projectFrame.add(projectListPanel, BorderLayout.WEST);
 
 
@@ -172,7 +261,7 @@ public class ProjectFrame implements GUIFrame{
         // Set frame properties
         double screenWidth = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
         double screenHeight = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
-        Dimension frameSize = new Dimension((int) screenWidth, (int) screenHeight);
+        Dimension frameSize = new Dimension((int) screenWidth * 2 / 3, (int) screenHeight * 2 / 3);
         projectFrame.setSize(frameSize);
         projectFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         projectFrame.setLocationRelativeTo(null);
