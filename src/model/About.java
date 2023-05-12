@@ -13,7 +13,7 @@ import java.util.Scanner;
 public final class About {
 
     /** This is a path to the file containing the user's name and email. */
-    public static final String USER_INFO_FILE_PATH = "src/data/user_info.txt";
+    public static final String USER_INFO_FILE_PATH = "data/user_info.txt";
 
     /** This is the Person who is using the application. */
     private final Person user;
@@ -59,7 +59,6 @@ public final class About {
      */
     private void fillDevelopers() {
         developers[0] = new Person("Devin Peevy", "dpeevy@uw.edu");
-        //TODO: Everybody add your name to the developers array!!
         developers[1] = new Person("Junghyon Jo", "whwheoeo2015@gmail.com");
         developers[2] = new Person("Taylor Merwin", "tmerwin@uw.edu");
         developers[3] = new Person("Jiameng Li", "jli39@uw.edu");

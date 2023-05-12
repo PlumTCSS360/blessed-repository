@@ -3,21 +3,27 @@ package model;
 import javax.swing.*;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Scanner;
 
 /**
  * This class represent the Project in to application.
  * It contains the methods for creating, saving, loading, deleting, and closing the project.
+ * It also contains the necessary methods for creating, deleting, and loading subprojects.
  *
  * @author Jiameng Li
  * @version v0.1
  */
 public final class Project {
 
-    // These fields will be null if there's no opened project.
+    /** File name for the necessary files for the project and subproject. */
+    public static final String[] BASIC_INFO_FILE = {"/Budget.txt", "/Description.txt"};
+
+    // These fields will be null or empty if there's no opened project.
 
     /** The name of the currently opened project. */
     private static String myName;
@@ -31,7 +37,8 @@ public final class Project {
     /** The description of the currently opened project. */
     private static String myDescription;
 
-    // TODO Add a field for the list of subproject
+    /** The subprojects in the project. */
+    private static Map<String, Subproject> mySubprojects = new LinkedHashMap<>();
 
     /**
      * Private constructor that prevent initialization of this class.
@@ -51,23 +58,7 @@ public final class Project {
         return myName;
     }
 
-    /**
-     * Get the total budget of the project.
-     *
-     * @return The total budget of the project.
-     */
-    public static BigDecimal getProjectBudget() {
-        return myBudget;
-    }
-
-    /**
-     * Get the total expense of the project.
-     *
-     * @return The total expense of the project.
-     */
-    public static BigDecimal getProjectExpense() {
-        return myExpense;
-    }
+    // TODO Create a method to get budget and expense
 
     /**
      * Get the project description.
@@ -78,6 +69,7 @@ public final class Project {
         return myDescription;
     }
 
+    // TODO Change this after the Budget class is implemented
     /**
      * Get a list of all existing projects with project name and budget and expense.
      * The list will be return as a 2D array that looks like this
@@ -92,7 +84,7 @@ public final class Project {
      */
     public static String[][] getProjectList() {
         String[][] projectList = new String[0][0];
-        File file = new File("src/data");
+        File file = new File("data");
 
         if (file.exists()) {
             // Only accept directories (projects) in the data folder
@@ -125,23 +117,7 @@ public final class Project {
 
     // Setters
 
-    /**
-     * Set a new budget for the project.
-     *
-     * @param theBudget The new budget for the project.
-     */
-    public static void setProjectBudget(final BigDecimal theBudget) {
-        myBudget = theBudget;
-    }
-
-    /**
-     * Set a new expense for the project.
-     *
-     * @param theExpense The new expense for the project.
-     */
-    public static void setProjectExpense(final BigDecimal theExpense) {
-        myExpense = theExpense;
-    }
+    // TODO Create a method to set the budget and expense
 
     /**
      * Set a new project description.
@@ -158,13 +134,8 @@ public final class Project {
     /**
      * Create a new project with given name, budget, and description.
      * If the project already existed, display an error message dialog.
-     *<p>
-     * Steps:
-     * 1. Assign name, budget, expense, and description to the field since the project will be opened.
-     * 2. Create a folder for the project and a budget and a description text file inside that folder.
-     * 3. Write given budget and expense in the budget file in the format: expense / budget.
-     * 4. Write given description in the description file.
-     * </p>
+     * This method only creates necessary text files for a new project. These text files will remain
+     * empty until the saveProject() method is called.
      * <p>
      *      Precondition: The project doesn't exist. In other words, the project name hasn't been used.
      * </p>
@@ -172,82 +143,65 @@ public final class Project {
      * @param theName The name of the new project.
      * @param theBudget The total budget of the new project.
      * @param theDescription The description of the new project.
+     * @return Whether the project is created successfully.
      */
-    public static void createProject(final String theName, final BigDecimal theBudget,
+    public static boolean createProject(final String theName, final BigDecimal theBudget,
                                      final String theDescription) {
-        try {
-            // Path to the folder where project information will be stored.
-            String path = "src/data/" + theName;
-            File file = new File(path);
+        boolean projectCreated = false;
 
-            if (!file.exists()) {
-                // Assigning project name, budget, expense, and description
-                myName = theName;
-                myBudget = theBudget;
-                myExpense = new BigDecimal("0");
-                myDescription = theDescription;
+        // Path to the folder where project will be stored.
+        String path = "data/" + theName;
+        File file = new File(path);
 
-                // If successfully created a directory for the project
-                if (file.mkdirs()) {
-                    // Create a budget file and write budget and expense in it
-                    file = new File(path + "/Budget.txt");
-                    if (file.createNewFile()) {
-                        FileWriter writer = new FileWriter(file, false);
-                        writer.write(myExpense.toString() + " / " + myBudget.toString());
-                        writer.close();
-                    }
+        if (!file.exists()) {
+            // Assigning project name, budget, expense, and description
+            myName = theName;
+            myBudget = theBudget;
+            myExpense = new BigDecimal("0");
+            myDescription = theDescription;
 
-                    // Create a description file and write description in it
-                    file = new File(path + "/Description.txt");
-                    if (file.createNewFile()) {
-                        FileWriter writer = new FileWriter(file, false);
-                        writer.write(myDescription);
-                        writer.close();
-                    }
+            projectCreated = file.mkdirs();
+            // If successfully created a directory for the project, create text files for budget and description
+            for (int i = 0; i < BASIC_INFO_FILE.length && projectCreated; i++) {
+                file = new File(path + BASIC_INFO_FILE[i]);
+                try {
+                    projectCreated = file.createNewFile();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
                 }
-            } else {
-                JOptionPane.showMessageDialog(null,
-                        "The project \"" + theName + "\" already existed.",
-                        "Can't create project", JOptionPane.ERROR_MESSAGE);
             }
-        } catch (Exception e) {
-            System.err.println("Can't create project. " + e);
+        } else {
+            JOptionPane.showMessageDialog(null,
+                    "The project \"" + theName + "\" already existed.",
+                    "Can't create project", JOptionPane.WARNING_MESSAGE);
         }
+        return projectCreated;
     }
 
     /**
-     * Delete the project and files that store its data.
+     * Delete the project and the folder that store its data.
      * If the project doesn't exist, display an error message dialog.
      * <p>
      *      Precondition: The selected project exists.
      * </p>
+     *
      * @param theName The name of the project to be deleted.
      */
     public static void deleteProject(final String theName) {
-        try {
-            // Path to the project to be deleted.
-            String path = "src/data/" + theName;
-            File file = new File(path);
+        // Path to the project to be deleted.
+        String path = "data/" + theName;
+        File file = new File(path);
 
-            if (file.exists()) {
-                // Recursively delete files in the project folder so the project folder can be deleted.
-                for (File subFiles : Objects.requireNonNull(file.listFiles())) {
-                    if (subFiles.isDirectory()) {
-                        deleteProject(theName + "/" + subFiles.getName());
-                    } else {
-                        subFiles.delete();
-                    }
-                }
-                // Delete the project folder.
-                file.delete();
+        // Recursively delete files in the project folder so the project folder can be deleted.
+        for (File subFiles : Objects.requireNonNull(file.listFiles())) {
+            if (subFiles.isDirectory()) {
+                deleteProject(theName + "/" + subFiles.getName());
             } else {
-                JOptionPane.showMessageDialog(null,
-                        "The project \"" + theName + "\" doesn't exist.",
-                        "Can't delete project", JOptionPane.ERROR_MESSAGE);
+                subFiles.delete();
             }
-        } catch (Exception e) {
-            System.err.println("Can't find or delete project. " + e);
         }
+        // Delete the project folder.
+        file.delete();
     }
 
     /**
@@ -259,26 +213,18 @@ public final class Project {
      * </p>
      */
     public static void saveProject() {
-        try {
-            // Path to the folder where project information will be stored.
-            String path = "src/data/" + myName;
+        // Path to the folder where project information will be stored.
+        String path = "data/" + myName;
+        File file = new File(path);
 
-            // Save budget and expense
-            File file = new File(path + "/Budget.txt");
-            FileWriter writer = new FileWriter(file, false);
-            writer.write(myExpense.toString() + " / " + myBudget.toString());
-            writer.close();
+        // Save budget and expense
+        TextFileAccessor.writeTextFile(path + "/Budget.txt",
+                myExpense.toString() + " / " + myBudget.toString());
 
-            // Save project description
-            file = new File(path + "/Description.txt");
-            writer = new FileWriter(file, false);
-            writer.write(myDescription);
-            writer.close();
+        // Save project description
+        TextFileAccessor.writeTextFile(path + "/Description.txt", myDescription);
 
-            // TODO Add code to save subproject
-        } catch (Exception e) {
-            System.err.println("Can't save project. " + e);
-        }
+        // TODO Add code to save subproject
     }
 
     /**
@@ -287,51 +233,43 @@ public final class Project {
      * <p>
      *     Precondition: The selected project exists.
      * </p>
+     *
      * @param theName The name of the project to be loaded.
      */
     public static void loadProject(final String theName) {
         try {
-            // Path to the project to be deleted.
-            String path = "src/data/" + theName;
+            // Path to the project to be loaded
+            String path = "data/" + theName;
             File file = new File(path);
 
-            if (file.exists()) {
-                // Load project name
-                myName = theName;
-
-                // Load project budget and expense
-                file = new File(path + "/Budget.txt");
-                Scanner scanner = new Scanner(file);
-                myExpense = scanner.nextBigDecimal();
-                scanner.next();     // Skip the / between budget and expense
-                myBudget = scanner.nextBigDecimal();
-                scanner.close();
-
-                // Load project description
-                file = new File(path + "/Description.txt");
-                scanner = new Scanner(file);
-                StringBuilder sb = new StringBuilder();
-                while(scanner.hasNextLine()) {
-                    sb.append(scanner.nextLine());
-                    sb.append("\n");
-                }
-                myDescription = sb.toString();
-                scanner.close();
-
-                // TODO Add code to load subproject
-            } else {
-                JOptionPane.showMessageDialog(null,
-                        "The project \"" + theName + "\" doesn't exist.",
-                        "Can't load project", JOptionPane.ERROR_MESSAGE);
+            // Load subprojects
+            File[] subprojects = file.listFiles(File::isDirectory);
+            for (File subproject : Objects.requireNonNull(subprojects)) {
+                loadSubproject(subproject);
             }
-        } catch (Exception e) {
+
+            // Load project name
+            myName = theName;
+
+            // Load project budget and expense
+            file = new File(path + "/Budget.txt");
+            Scanner scanner = new Scanner(file);
+            myExpense = scanner.nextBigDecimal();
+            scanner.next();     // Skip the / between budget and expense
+            myBudget = scanner.nextBigDecimal();
+            scanner.close();
+
+            // Load project description
+            myDescription = TextFileAccessor.readTextFile(path + "/Description.txt");
+        } catch (IOException e) {
             System.err.println("Can't load project. " + e);
         }
     }
 
     /**
-     * Close the project by setting project name, budget, expense, and description to null.
-     * This method auto save the project.
+     * Close the project by setting project name, budget, expense, and description to null,
+     * and empty the list of subprojects.
+     * This method auto save the project before it close.
      */
     public static void closeProject() {
         saveProject();
@@ -339,6 +277,101 @@ public final class Project {
         myBudget = null;
         myExpense = null;
         myDescription = null;
+        mySubprojects.clear();
+    }
+
+
+    // Methods for creating, deleting, and loading subproject
+    // The method for saving subproject is in Subproject class
+
+    /**
+     * Create a subproject and necessary files and folders to store its data.
+     * These text files will remain empty until the saveProject() method is called.
+     *
+     * @param theName The name of the subproject.
+     * @param theBudget The budget of the subproject.
+     * @param theDescription The description of the subproject.
+     */
+    public static void createSubproject(final String theName, final BigDecimal theBudget,
+                                        final String theDescription) {
+        if (mySubprojects.containsKey(theName)) {       // Check for duplicate name
+            JOptionPane.showMessageDialog(null, "The subproject \"" +
+                    theName + "\" already existed.", "Can't create subproject.", JOptionPane.WARNING_MESSAGE
+            );
+        } else {
+            // Create folder for subproject
+            String path = String.format("data/%s/%s", myName, theName);
+
+            // If successfully created a directory for the subproject,
+            // create text files for budget and description
+            for (String s : BASIC_INFO_FILE) {
+                File file = new File(path + s);
+                try {
+                    file.createNewFile();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            // Create subfolder for option, notes, and sketches
+            for (String s : Subproject.SUBPROJECT_FOLDERS) {
+                File file = new File(path + s);
+                file.mkdirs();
+            }
+
+            mySubprojects.put(theName, new Subproject(theName, theBudget, theDescription));
+        }
+    }
+
+    /**
+     * Delete the subproject and the folder that stores its data.
+     *
+     * @param theName The name of the subproject to be deleted.
+     */
+    public static void deleteSubproject(final String theName) {
+        if (mySubprojects.containsKey(theName)) {
+            mySubprojects.remove(theName);
+            // Delete folder for the subproject
+            deleteProject(myName + "/" + theName);
+        } else {
+            JOptionPane.showMessageDialog(null, "The subproject doesn't exist.",
+                    "Can't delete subproject", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    /**
+     * Load the subproject stored in given directory.
+     * This method is declared private because it should only be called within the
+     * loadProject() method.
+     *
+     * @param theSubproject The directory where the subproject is saved.
+     */
+    private static void loadSubproject(final File theSubproject) {
+        try {
+            String path = theSubproject.getPath();
+
+            // Load the subproject name
+            final String name = theSubproject.getName();
+
+            // Load the subproject budget
+            File file = new File(path + "/Budget.txt");
+            Scanner scanner = new Scanner(file);
+            scanner.nextBigDecimal();
+            scanner.next();     // Skip the / between budget and expense
+            final BigDecimal budget = scanner.nextBigDecimal();
+            scanner.close();
+
+            // Load subproject description
+            final String description = TextFileAccessor.readTextFile(path + "/Description.txt");
+
+            // Load other information and add subproject to the list
+            final Subproject subproject = new Subproject(name, budget, description);
+            subproject.loadOptionsNotesSketches();
+            mySubprojects.put(name, subproject);
+
+        } catch (IOException e) {
+            System.out.println("Can't load subproject :" + e);
+        }
     }
 
 }
