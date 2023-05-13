@@ -2,7 +2,6 @@ package model;
 
 import javax.swing.*;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.LinkedHashMap;
@@ -38,7 +37,7 @@ public final class Project {
     private static String myDescription;
 
     /** The subprojects in the project. */
-    private static Map<String, Subproject> mySubprojects = new LinkedHashMap<>();
+    private static final Map<String, Subproject> mySubprojects = new LinkedHashMap<>();
 
     /**
      * Private constructor that prevent initialization of this class.
@@ -69,7 +68,25 @@ public final class Project {
         return myDescription;
     }
 
-    // TODO Change this after the Budget class is implemented
+    /**
+     * Get a subproject by the subproject name from the list.
+     *
+     * @param theName The name of the subproject to get.
+     * @return A subproject with given name, if there's such subproject.
+     */
+    public static Subproject getSubproject(final String theName) {
+        return mySubprojects.get(theName);
+    }
+
+    /**
+     * Get a copy of the list of subproject.
+     *
+     * @return A copy of the list of subproject.
+     */
+    public static Map<String, Subproject> getSubprojectsList() {
+        return Map.copyOf(mySubprojects);
+    }
+
     /**
      * Get a list of all existing projects with project name and budget and expense.
      * The list will be return as a 2D array that looks like this
@@ -86,27 +103,19 @@ public final class Project {
         String[][] projectList = new String[0][0];
         File file = new File("data");
 
-        if (file.exists()) {
-            // Only accept directories (projects) in the data folder
-            File[] projects = file.listFiles(File::isDirectory);
+        // Only accept directories (projects) in the data folder
+        File[] projects = file.listFiles(File::isDirectory);
 
-            if (projects != null && projects.length > 0) {
-                // Goes through all the project and read their name, budget and expense.
-                projectList = new String[projects.length][2];
-                for (int i = 0; i < projects.length; i++) {
-                    if (projects[i].isDirectory()) {
-                        // Read the project name
-                        projectList[i][0] = projects[i].getName();
-                        // Read the budget and expense in format "expense / budget"
-                        try {
-                            Scanner scanner = new Scanner(new File(projects[i].getPath() + "/Budget.txt"));
-                            projectList[i][1] = scanner.nextLine();
-                            scanner.close();
-                        } catch (FileNotFoundException e) {
-                            System.out.println("Can't find file: " + e);
-                        }
+        if (projects != null && projects.length > 0) {
+            // Goes through all the project and read their name, budget and expense.
+            projectList = new String[projects.length][2];
+            for (int i = 0; i < projects.length; i++) {
+                if (projects[i].isDirectory()) {
+                    // Read the project name
+                    projectList[i][0] = projects[i].getName();
+                    // Read the budget and expense in format "expense / budget"
+                    projectList[i][1] = FileAccessor.readTxtFile(projects[i].getPath() + "/Budget.txt");
 
-                    }
                 }
             }
         }
@@ -215,16 +224,18 @@ public final class Project {
     public static void saveProject() {
         // Path to the folder where project information will be stored.
         String path = "data/" + myName;
-        File file = new File(path);
 
         // Save budget and expense
-        TextFileAccessor.writeTextFile(path + "/Budget.txt",
+        FileAccessor.writeTxtFile(path + "/Budget.txt",
                 myExpense.toString() + " / " + myBudget.toString());
 
         // Save project description
-        TextFileAccessor.writeTextFile(path + "/Description.txt", myDescription);
+        FileAccessor.writeTxtFile(path + "/Description.txt", myDescription);
 
-        // TODO Add code to save subproject
+        // Save subprojects
+        for (Subproject sp : mySubprojects.values()) {
+            sp.saveSubproject(myName);
+        }
     }
 
     /**
@@ -240,19 +251,12 @@ public final class Project {
         try {
             // Path to the project to be loaded
             String path = "data/" + theName;
-            File file = new File(path);
-
-            // Load subprojects
-            File[] subprojects = file.listFiles(File::isDirectory);
-            for (File subproject : Objects.requireNonNull(subprojects)) {
-                loadSubproject(subproject);
-            }
 
             // Load project name
             myName = theName;
 
             // Load project budget and expense
-            file = new File(path + "/Budget.txt");
+            File file = new File(path + "/Budget.txt");
             Scanner scanner = new Scanner(file);
             myExpense = scanner.nextBigDecimal();
             scanner.next();     // Skip the / between budget and expense
@@ -260,7 +264,14 @@ public final class Project {
             scanner.close();
 
             // Load project description
-            myDescription = TextFileAccessor.readTextFile(path + "/Description.txt");
+            myDescription = FileAccessor.readTxtFile(path + "/Description.txt");
+
+            // Load subprojects
+            file = new File(path);
+            File[] subprojects = file.listFiles(File::isDirectory);
+            for (File subproject : Objects.requireNonNull(subprojects)) {
+                loadSubproject(subproject);
+            }
         } catch (IOException e) {
             System.err.println("Can't load project. " + e);
         }
@@ -282,18 +293,22 @@ public final class Project {
 
 
     // Methods for creating, deleting, and loading subproject
-    // The method for saving subproject is in Subproject class
 
     /**
      * Create a subproject and necessary files and folders to store its data.
      * These text files will remain empty until the saveProject() method is called.
+     * <p>
+     *     Precondition: The subproject doesn't exist in currently opened project.
+     * </p>
      *
-     * @param theName The name of the subproject.
-     * @param theBudget The budget of the subproject.
-     * @param theDescription The description of the subproject.
+     * @param theName The name of the new subproject.
+     * @param theBudget The budget of the new subproject.
+     * @param theDescription The description of the new subproject.
+     * @return The subproject that just been created.
      */
-    public static void createSubproject(final String theName, final BigDecimal theBudget,
+    public static Subproject createSubproject(final String theName, final BigDecimal theBudget,
                                         final String theDescription) {
+        Subproject sp = null;
         if (mySubprojects.containsKey(theName)) {       // Check for duplicate name
             JOptionPane.showMessageDialog(null, "The subproject \"" +
                     theName + "\" already existed.", "Can't create subproject.", JOptionPane.WARNING_MESSAGE
@@ -301,11 +316,12 @@ public final class Project {
         } else {
             // Create folder for subproject
             String path = String.format("data/%s/%s", myName, theName);
+            File file = new File(path);
+            file.mkdirs();
 
-            // If successfully created a directory for the subproject,
             // create text files for budget and description
             for (String s : BASIC_INFO_FILE) {
-                File file = new File(path + s);
+                file = new File(path + s);
                 try {
                     file.createNewFile();
                 } catch (IOException e) {
@@ -315,16 +331,21 @@ public final class Project {
 
             // Create subfolder for option, notes, and sketches
             for (String s : Subproject.SUBPROJECT_FOLDERS) {
-                File file = new File(path + s);
+                file = new File(path + s);
                 file.mkdirs();
             }
 
-            mySubprojects.put(theName, new Subproject(theName, theBudget, theDescription));
+            sp = new Subproject(theName, theBudget, theDescription);
+            mySubprojects.put(theName, sp);
         }
+        return sp;
     }
 
     /**
      * Delete the subproject and the folder that stores its data.
+     * <p>
+     *     Precondition: The subproject exists in currently opened project.
+     * </p>
      *
      * @param theName The name of the subproject to be deleted.
      */
@@ -342,7 +363,7 @@ public final class Project {
     /**
      * Load the subproject stored in given directory.
      * This method is declared private because it should only be called within the
-     * loadProject() method.
+     * loadProject() method. The program should not load a subproject without loading a project.
      *
      * @param theSubproject The directory where the subproject is saved.
      */
@@ -356,13 +377,11 @@ public final class Project {
             // Load the subproject budget
             File file = new File(path + "/Budget.txt");
             Scanner scanner = new Scanner(file);
-            scanner.nextBigDecimal();
-            scanner.next();     // Skip the / between budget and expense
             final BigDecimal budget = scanner.nextBigDecimal();
             scanner.close();
 
             // Load subproject description
-            final String description = TextFileAccessor.readTextFile(path + "/Description.txt");
+            final String description = FileAccessor.readTxtFile(path + "/Description.txt");
 
             // Load other information and add subproject to the list
             final Subproject subproject = new Subproject(name, budget, description);
