@@ -22,8 +22,7 @@ public class Option {
                 Phone:
                 Email:
                 
-                Additional Information:
-                """;
+                Additional Information:""";
 
     /** The setup text for warranty information in a new option. */
     public static final String WARRANTY_SETUP = """
@@ -32,8 +31,7 @@ public class Option {
                 Email:
                 Service Details:
                 
-                Additional Information:
-                """;
+                Additional Information:""";
 
     /** The name of the option. */
     private final String myName;

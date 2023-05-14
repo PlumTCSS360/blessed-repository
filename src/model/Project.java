@@ -30,9 +30,6 @@ public final class Project {
     /** The total budget of the currently opened project. */
     private static BigDecimal myBudget;
 
-    /** The total expense of the currently opened project. */
-    private static BigDecimal myExpense;
-
     /** The description of the currently opened project. */
     private static String myDescription;
 
@@ -57,7 +54,14 @@ public final class Project {
         return myName;
     }
 
-    // TODO Create a method to get budget and expense
+    /**
+     * Get the project budget.
+     *
+     * @return The project budget.
+     */
+    public static BigDecimal getBudget() {
+        return myBudget;
+    }
 
     /**
      * Get the project description.
@@ -113,7 +117,7 @@ public final class Project {
                 if (projects[i].isDirectory()) {
                     // Read the project name
                     projectList[i][0] = projects[i].getName();
-                    // Read the budget and expense in format "expense / budget"
+                    // Read the budget
                     projectList[i][1] = FileAccessor.readTxtFile(projects[i].getPath() + "/Budget.txt");
 
                 }
@@ -140,13 +144,16 @@ public final class Project {
 
     // Methods for creating, deleting, loading, saving, and closing project
 
+    // TODO Check valid project name in NewFrame
     /**
      * Create a new project with given name, budget, and description.
      * If the project already existed, display an error message dialog.
      * This method only creates necessary text files for a new project. These text files will remain
      * empty until the saveProject() method is called.
      * <p>
-     *      Precondition: The project doesn't exist. In other words, the project name hasn't been used.
+     *      Precondition:
+     *      1. The project doesn't exist. In other words, the project name hasn't been used.
+     *      2. The name of the project must not be empty or contains \ or .
      * </p>
      *
      * @param theName The name of the new project.
@@ -166,11 +173,11 @@ public final class Project {
             // Assigning project name, budget, expense, and description
             myName = theName;
             myBudget = theBudget;
-            myExpense = new BigDecimal("0");
             myDescription = theDescription;
 
             projectCreated = file.mkdirs();
-            // If successfully created a directory for the project, create text files for budget and description
+            // If successfully created a directory for the project, create text files for budget
+            // and description
             for (int i = 0; i < BASIC_INFO_FILE.length && projectCreated; i++) {
                 file = new File(path + BASIC_INFO_FILE[i]);
                 try {
@@ -226,8 +233,7 @@ public final class Project {
         String path = "data/" + myName;
 
         // Save budget and expense
-        FileAccessor.writeTxtFile(path + "/Budget.txt",
-                myExpense.toString() + " / " + myBudget.toString());
+        FileAccessor.writeTxtFile(path + "/Budget.txt", myBudget.toString());
 
         // Save project description
         FileAccessor.writeTxtFile(path + "/Description.txt", myDescription);
@@ -258,8 +264,6 @@ public final class Project {
             // Load project budget and expense
             File file = new File(path + "/Budget.txt");
             Scanner scanner = new Scanner(file);
-            myExpense = scanner.nextBigDecimal();
-            scanner.next();     // Skip the / between budget and expense
             myBudget = scanner.nextBigDecimal();
             scanner.close();
 
@@ -286,7 +290,6 @@ public final class Project {
         saveProject();
         myName = null;
         myBudget = null;
-        myExpense = null;
         myDescription = null;
         mySubprojects.clear();
     }
@@ -294,11 +297,14 @@ public final class Project {
 
     // Methods for creating, deleting, and loading subproject
 
+    // TODO Check valid subproject name in GUI
     /**
      * Create a subproject and necessary files and folders to store its data.
      * These text files will remain empty until the saveProject() method is called.
      * <p>
-     *     Precondition: The subproject doesn't exist in currently opened project.
+     *     Precondition:
+     *     1. The subproject doesn't exist in currently opened project.
+     *     2. The name of the subproject must not be empty or contains \ or .
      * </p>
      *
      * @param theName The name of the new subproject.
@@ -311,8 +317,8 @@ public final class Project {
         Subproject sp = null;
         if (mySubprojects.containsKey(theName)) {       // Check for duplicate name
             JOptionPane.showMessageDialog(null, "The subproject \"" +
-                    theName + "\" already existed.", "Can't create subproject.", JOptionPane.WARNING_MESSAGE
-            );
+                    theName + "\" already existed.", "Can't create subproject.",
+                    JOptionPane.WARNING_MESSAGE);
         } else {
             // Create folder for subproject
             String path = String.format("data/%s/%s", myName, theName);

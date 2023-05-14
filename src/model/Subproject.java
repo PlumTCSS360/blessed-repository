@@ -192,13 +192,17 @@ public class Subproject {
 
     // Methods to add options, notes, and sketches
 
-    // TODO Validate link address in gui when creating option
+    // TODO Validate link address in GUI when creating option
+
+    // TODO Check valid name in GUI when creating option, note, or sketch
 
     /**
      * Create a new option by creating necessary folders and files for the option and add the option to the list.
      * The text file remain empty until the saveProject() method is called.
      * <p>
-     *     Precondition: The option doesn't exist in current subproject.
+     *     Precondition:
+     *     1. The option doesn't exist in current subproject.
+     *     2. The name of the option must not be empty or contains \ or .
      * </p>
      *
      * @param theName The name of the new option.
@@ -210,7 +214,11 @@ public class Subproject {
     public Option createOption(final String theName, final BigDecimal theCost, final String theDescription,
                              final String theWebsite) {
         Option op = null;
-        if (!myOptions.containsKey(theName)) {      // Check for duplicate name
+        if (myOptions.containsKey(theName)) {   // Check for duplicate name
+            JOptionPane.showMessageDialog(null,
+                    "Option \" " + theName + "\" already existed.", "Name duplicate",
+                    JOptionPane.WARNING_MESSAGE);
+        } else {
             // Create subfolder for this option
             String path = String.format("data/%s/%s/Options/%s", Project.getProjectName(), myName, theName);
             File file = new File(path);
@@ -229,10 +237,6 @@ public class Subproject {
             op = new Option(theName, theCost, theDescription, theWebsite, Option.CONTRACTOR_SETUP,
                     Option.WARRANTY_SETUP);
             myOptions.put(theName, op);
-        } else {
-            JOptionPane.showMessageDialog(null,
-                    "Option \" " + theName + "\" already existed.", "Name duplicate",
-                    JOptionPane.WARNING_MESSAGE);
         }
         return op;
     }
@@ -242,14 +246,20 @@ public class Subproject {
      * This creates an empty txt file for the note, but the content won't be saved until the saveProject()
      * method is called.
      * <p>
-     *     Precondition: The note doesn't exist in current subproject.
+     *     Precondition:
+     *     1. The note doesn't exist in current subproject.
+     *     2. The name of the note must not be empty or contains \ or .
      * </p>
      *
      * @param theName The name of the new note.
      * @param theNote The content of the note.
      */
     public void createNote(final String theName, final String theNote) {
-        if (!myNotes.containsKey(theName)) {
+        if (myNotes.containsKey(theName)) {   // Check for duplicate name
+            JOptionPane.showMessageDialog(null,
+                    "Note \" " + theName + "\" already existed.", "Name duplicate",
+                    JOptionPane.WARNING_MESSAGE);
+        } else {
             myNotes.put(theName, theNote);
             String path = String.format("data/%s/%s/Notes/%s.txt", Project.getProjectName(), myName, theName);
             File file = new File(path);
@@ -258,10 +268,6 @@ public class Subproject {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-        } else {
-            JOptionPane.showMessageDialog(null,
-                    "Note \"" + theName + "\" already existed.", "Name duplicate",
-                    JOptionPane.WARNING_MESSAGE);
         }
     }
 
@@ -273,6 +279,7 @@ public class Subproject {
      *     Precondition:
      *     1. The sketch doesn't exist in current subproject.
      *     2. The file in the given path must is an image.
+     *     3. The name of the sketch must not be empty or contains \ or .
      * </p>
      *
      * @param theName The name of the new note.
@@ -287,7 +294,11 @@ public class Subproject {
             return;
         }
         // Create an empty file for the image and add the image to the list
-        if (!mySketches.containsKey(theName)) {
+        if (mySketches.containsKey(theName)) {   // Check for duplicate name
+            JOptionPane.showMessageDialog(null,
+                    "Sketch \" " + theName + "\" already existed.", "Name duplicate",
+                    JOptionPane.WARNING_MESSAGE);
+        } else {
             mySketches.put(theName, new ImageIcon(thePath));
             String path = String.format("data/%s/%s/Sketches/%s.png", Project.getProjectName(), myName, theName);
             File file = new File(path);
@@ -296,10 +307,6 @@ public class Subproject {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-        } else {
-            JOptionPane.showMessageDialog(null,
-                    "Sketch \"" + theName + "\" already existed.", "Name duplicate",
-                    JOptionPane.WARNING_MESSAGE);
         }
     }
 
@@ -310,10 +317,10 @@ public class Subproject {
      * @return Whether the file exists and is an image.
      */
     private boolean isValidImageFile(final String thePath) {
-        boolean valid = true;
+        File file = new File(thePath);
+        boolean valid = file.exists();
         try {
-            File file = new File(thePath);
-            if (!file.exists() || ImageIO.read(file) == null) {
+            if (ImageIO.read(file) == null) {
                 valid = false;
             }
         } catch (IOException e) {
