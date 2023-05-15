@@ -3,6 +3,8 @@ package model;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Represent an option in a subproject.
@@ -51,8 +53,12 @@ public class Option {
     /** The warranty information of the option. */
     private String myWarrantyInfo;
 
+    /** Contents been modified since last save. */
+    private final Map<String, String> myModifiedContents;
+
     /**
-     * Create an option with given name, cost, description, website, contractor information, and warranty information.
+     * Create an option with given name, cost, description, website, contractor information,
+     * and warranty information.
      *
      * @param theName The name of the option.
      * @param theCost The cost of the option.
@@ -60,9 +66,11 @@ public class Option {
      * @param theWebsite The website of the option.
      * @param theContractorInfo The contractor information of the option.
      * @param theWarrantyInfo The warranty information of the option.
+     * @param theLoad Whether the program is loading the option.
      */
     public Option(final String theName, final BigDecimal theCost, final String theDescription,
-                  final String theWebsite, final String theContractorInfo, final String theWarrantyInfo) {
+                  final String theWebsite, final String theContractorInfo, final String theWarrantyInfo,
+                  final boolean theLoad) {
         super();
         myName = theName;
         myCost = theCost;
@@ -77,6 +85,15 @@ public class Option {
         }
         myContractorInfo = theContractorInfo;
         myWarrantyInfo = theWarrantyInfo;
+        myModifiedContents = new HashMap<>();
+        // If the option is created instead of loaded, record the changes
+        if (!theLoad) {
+            myModifiedContents.put("Cost", theCost.toString());
+            myModifiedContents.put("Description", theDescription);
+            myModifiedContents.put("Website", theWebsite);
+            myModifiedContents.put("Contractor", theContractorInfo);
+            myModifiedContents.put("Warranty", theWarrantyInfo);
+        }
     }
 
 
@@ -140,25 +157,27 @@ public class Option {
     // Setter
 
     /**
-     * Set a new cost for the option.
+     * Set a new cost for the option and record the change.
      *
      * @param theCost The new cost for the option.
      */
     public void setCost(final BigDecimal theCost) {
         myCost = theCost;
+        myModifiedContents.put("Cost", theCost.toString());
     }
 
     /**
-     * Set a new description for the option.
+     * Set a new description for the option and record the change.
      *
      * @param theDescription The new description for the option.
      */
     public void setDescription(final String theDescription) {
         myDescription = theDescription;
+        myModifiedContents.put("Description", theDescription);
     }
 
     /**
-     * Set a new link of the website for the option.
+     * Set a new link of the website for the option and record the change.
      *
      * @param theWebsite The new link of the website for the option.
      */
@@ -170,46 +189,46 @@ public class Option {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
+            myModifiedContents.put("Website", theWebsite);
         }
     }
 
     /**
-     * Set a new contractor information for the option.
+     * Set a new contractor information for the option and record the change.
      *
      * @param theContractorInfo The new contractor information for the option.
      */
     public void setContractorInfo(final String theContractorInfo) {
         myContractorInfo = theContractorInfo;
+        myModifiedContents.put("Contractor", theContractorInfo);
     }
 
     /**
-     * Set a new warranty information for the option.
+     * Set a new warranty information for the option and record the change.
      *
      * @param theWarrantyInfo The new warranty information for the option.
      */
     public void setWarrantyInfo(final String theWarrantyInfo) {
         myWarrantyInfo = theWarrantyInfo;
+        myModifiedContents.put("Warranty", theWarrantyInfo);
     }
 
     /**
-     * Save the information of the option in the txt files associated with it.
+     * Save the information about the option in the txt files
+     * Use the list of modified content to identify changes.
      *
-     * @param theProjectName The name of the project the option belongs to.
      * @param theSubprojectName The name of the subproject the option belongs to.
      */
-    protected void saveOption(final String theProjectName, final String theSubprojectName) {
+    protected void saveOption(final String theSubprojectName) {
         // Path to the folder where project information will be stored.
-        String path = String.format("data/%s/%s/Options/%s", theProjectName, theSubprojectName, myName);
+        String path = String.format("data/%s/%s/Options/%s", Project.getProjectName(), theSubprojectName, myName);
 
         // Save cost, description, website, contractor information, and warranty information
-        FileAccessor.writeTxtFile(path + "/Cost.txt", myCost.toString());
-        FileAccessor.writeTxtFile(path + "/Description.txt", myDescription);
-        if (myWebsite == null) {        // If there's no website, store empty string
-            FileAccessor.writeTxtFile(path + "/Website.txt", "");
-        } else {
-            FileAccessor.writeTxtFile(path + "/Website.txt", myWebsite.toString());
+        for (String s : myModifiedContents.keySet()) {
+            FileAccessor.writeTxtFile(String.format("%s/%s.txt", path, s), myModifiedContents.get(s));
         }
-        FileAccessor.writeTxtFile(path + "/Contractor.txt", myContractorInfo);
-        FileAccessor.writeTxtFile(path + "/Warranty.txt", myWarrantyInfo);
+
+        // Clear the recorded changes
+        myModifiedContents.clear();
     }
 }

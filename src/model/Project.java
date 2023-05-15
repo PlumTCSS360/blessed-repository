@@ -4,10 +4,7 @@ import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * This class represent the Project in to application.
@@ -22,7 +19,7 @@ public final class Project {
     /** File name for the necessary files for the project and subproject. */
     public static final String[] BASIC_INFO_FILE = {"/Budget.txt", "/Description.txt"};
 
-    // These fields will be null or empty if there's no opened project.
+    // These name, budget, and description will be null if there's no opened project.
 
     /** The name of the currently opened project. */
     private static String myName;
@@ -33,8 +30,11 @@ public final class Project {
     /** The description of the currently opened project. */
     private static String myDescription;
 
-    /** The subprojects in the project. */
-    private static final Map<String, Subproject> mySubprojects = new LinkedHashMap<>();
+    /** The subprojects in the currently opened project. */
+    private static final Map<String, Subproject> mySubprojects = new TreeMap<>();
+
+    /** Contents (budget and description) been modified since last save. */
+    private static final Map<String, String> myModifiedContents = new HashMap<>();
 
     /**
      * Private constructor that prevent initialization of this class.
@@ -73,7 +73,7 @@ public final class Project {
     }
 
     /**
-     * Get a subproject by the subproject name from the list.
+     * Get a subproject from the list by the subproject name.
      *
      * @param theName The name of the subproject to get.
      * @return A subproject with given name, if there's such subproject.
@@ -133,12 +133,13 @@ public final class Project {
     // TODO Create a method to set the budget and expense
 
     /**
-     * Set a new project description.
+     * Set a new project description and record change.
      *
      * @param theDescription The new project description.
      */
     public static void setProjectDescription(final String theDescription) {
         myDescription = theDescription;
+        myModifiedContents.put("Description", theDescription);
     }
 
 
@@ -147,7 +148,7 @@ public final class Project {
     // TODO Check valid project name in NewFrame
     /**
      * Create a new project with given name, budget, and description.
-     * If the project already existed, display an error message dialog.
+     * If the project already existed, display a warning message dialog.
      * This method only creates necessary text files for a new project. These text files will remain
      * empty until the saveProject() method is called.
      * <p>
@@ -174,10 +175,12 @@ public final class Project {
             myName = theName;
             myBudget = theBudget;
             myDescription = theDescription;
+            // Record changes
+            myModifiedContents.put("Budget", theBudget.toString());
+            myModifiedContents.put("Description", theDescription);
 
             projectCreated = file.mkdirs();
-            // If successfully created a directory for the project, create text files for budget
-            // and description
+            // If successfully created a directory for the project, then create text files
             for (int i = 0; i < BASIC_INFO_FILE.length && projectCreated; i++) {
                 file = new File(path + BASIC_INFO_FILE[i]);
                 try {
@@ -196,10 +199,6 @@ public final class Project {
 
     /**
      * Delete the project and the folder that store its data.
-     * If the project doesn't exist, display an error message dialog.
-     * <p>
-     *      Precondition: The selected project exists.
-     * </p>
      *
      * @param theName The name of the project to be deleted.
      */
@@ -221,7 +220,9 @@ public final class Project {
     }
 
     /**
-     * Save the currently opened project.
+     * Save the changes in the currently opened project since last save.
+     * It only save changes recorded in the list of modified content and deleting a subproject doesn't count
+     * as a change.
      * This method should not be called when there's no project opened. No data will be store into the
      * data file before this method is called.
      * <p>
@@ -232,21 +233,19 @@ public final class Project {
         // Path to the folder where project information will be stored.
         String path = "data/" + myName;
 
-        // Save budget and expense
-        FileAccessor.writeTxtFile(path + "/Budget.txt", myBudget.toString());
-
-        // Save project description
-        FileAccessor.writeTxtFile(path + "/Description.txt", myDescription);
+        // Save budget and description
+        for (String s : myModifiedContents.keySet()) {
+            FileAccessor.writeTxtFile(String.format("%s/%s.txt", path, s), myModifiedContents.get(s));
+        }
 
         // Save subprojects
         for (Subproject sp : mySubprojects.values()) {
-            sp.saveSubproject(myName);
+            sp.saveSubproject();
         }
     }
 
     /**
      * Load the project with given project name.
-     * If the project doesn't exist, display an error message dialog.
      * <p>
      *     Precondition: The selected project exists.
      * </p>
@@ -282,8 +281,8 @@ public final class Project {
     }
 
     /**
-     * Close the project by setting project name, budget, expense, and description to null,
-     * and empty the list of subprojects.
+     * Close the project by setting project name, budget, and description to null,
+     * and clear the list of subprojects.
      * This method auto save the project before it close.
      */
     public static void closeProject() {
@@ -301,6 +300,7 @@ public final class Project {
     /**
      * Create a subproject and necessary files and folders to store its data.
      * These text files will remain empty until the saveProject() method is called.
+     * This method display a warning massage dialog when the subproject already exists.
      * <p>
      *     Precondition:
      *     1. The subproject doesn't exist in currently opened project.
@@ -315,7 +315,8 @@ public final class Project {
     public static Subproject createSubproject(final String theName, final BigDecimal theBudget,
                                         final String theDescription) {
         Subproject sp = null;
-        if (mySubprojects.containsKey(theName)) {       // Check for duplicate name
+        // Check for duplicate name
+        if (mySubprojects.containsKey(theName)) {
             JOptionPane.showMessageDialog(null, "The subproject \"" +
                     theName + "\" already existed.", "Can't create subproject.",
                     JOptionPane.WARNING_MESSAGE);
@@ -325,7 +326,7 @@ public final class Project {
             File file = new File(path);
             file.mkdirs();
 
-            // create text files for budget and description
+            // Create text files for budget and description
             for (String s : BASIC_INFO_FILE) {
                 file = new File(path + s);
                 try {
@@ -341,7 +342,7 @@ public final class Project {
                 file.mkdirs();
             }
 
-            sp = new Subproject(theName, theBudget, theDescription);
+            sp = new Subproject(theName, theBudget, theDescription, false);
             mySubprojects.put(theName, sp);
         }
         return sp;
@@ -349,25 +350,16 @@ public final class Project {
 
     /**
      * Delete the subproject and the folder that stores its data.
-     * <p>
-     *     Precondition: The subproject exists in currently opened project.
-     * </p>
      *
      * @param theName The name of the subproject to be deleted.
      */
     public static void deleteSubproject(final String theName) {
-        if (mySubprojects.containsKey(theName)) {
-            mySubprojects.remove(theName);
-            // Delete folder for the subproject
-            deleteProject(myName + "/" + theName);
-        } else {
-            JOptionPane.showMessageDialog(null, "The subproject doesn't exist.",
-                    "Can't delete subproject", JOptionPane.ERROR_MESSAGE);
-        }
+        mySubprojects.remove(theName);
+        deleteProject(myName + "/" + theName);
     }
 
     /**
-     * Load the subproject stored in given directory.
+     * Load the subproject stored in given directory (File).
      * This method is declared private because it should only be called within the
      * loadProject() method. The program should not load a subproject without loading a project.
      *
@@ -390,7 +382,7 @@ public final class Project {
             final String description = FileAccessor.readTxtFile(path + "/Description.txt");
 
             // Load other information and add subproject to the list
-            final Subproject subproject = new Subproject(name, budget, description);
+            final Subproject subproject = new Subproject(name, budget, description, true);
             subproject.loadOptionsNotesSketches();
             mySubprojects.put(name, subproject);
 

@@ -5,10 +5,7 @@ import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * Represent a subproject in a project.
@@ -36,8 +33,17 @@ public class Subproject {
     /** The list of notes in subproject. */
     private final Map<String, String> myNotes;
 
+    /** Name of notes been modified since last save. */
+    private final Set<String> myModifiedNotes;
+
     /** The list of sketches in subproject. */
     private final Map<String, ImageIcon> mySketches;
+
+    /** Name of sketches been modified since last save. */
+    private final Set<String> myModifiedSketches;
+
+    /** Contents (budget and description) been modified since last save. */
+    private final Map<String, String> myModifiedContents;
 
     /**
      * Construct a subproject with given name, budget, and description.
@@ -45,15 +51,25 @@ public class Subproject {
      * @param theName The name of the subproject.
      * @param theBudget The budget of the subproject.
      * @param theDescription The description of the subproject.
+     * @param theLoad Whether the program is loading the subproject.
      */
-    public Subproject(final String theName, final BigDecimal theBudget, final String theDescription) {
+    public Subproject(final String theName, final BigDecimal theBudget, final String theDescription,
+                      final boolean theLoad) {
         super();
         myName = theName;
         myBudget = theBudget;
         myDescription = theDescription;
-        myOptions = new LinkedHashMap<>();
-        myNotes = new LinkedHashMap<>();
-        mySketches = new LinkedHashMap<>();
+        myOptions = new TreeMap<>();
+        myNotes = new TreeMap<>();
+        myModifiedNotes = new HashSet<>();
+        mySketches = new TreeMap<>();
+        myModifiedSketches = new HashSet<>();
+        myModifiedContents = new HashMap<>();
+        // If the subproject is created instead of loaded, record the changes
+        if (!theLoad) {
+            myModifiedContents.put("Budget", theBudget.toString());
+            myModifiedContents.put("Description", theDescription);
+        }
     }
 
 
@@ -149,30 +165,32 @@ public class Subproject {
     // TODO Add setter method for budget
 
     /**
-     * Set a new subproject description.
+     * Set a new subproject description and record the change.
      *
      * @param theDescription The new subproject description.
      */
     public void setDescription(final String theDescription) {
         myDescription = theDescription;
+        myModifiedContents.put("Description", theDescription);
     }
 
     /**
-     * Replace the old content in a note with the new content.
+     * Replace the old content in a note with the new content and record the change.
      *
      * @param theName The name of the note.
      * @param theNote The new content in the note.
      */
     public void setNoteContent(final String theName, final String theNote) {
         myNotes.replace(theName, theNote);
+        myModifiedNotes.add(theName);
     }
 
     /**
-     * Replace the old sketch with the new sketch.
+     * Replace the old sketch with the new sketch and record the change.
      * <p>
      *     Precondition:
      *     1. The file in the path exists.
-     *     2. The file in the given path must is an image.
+     *     2. The file in the given path must be an image.
      * </p>
      *
      * @param theName The name of the sketch.
@@ -187,6 +205,7 @@ public class Subproject {
             return;
         }
         mySketches.replace(theName, new ImageIcon(thePath));
+        myModifiedSketches.add(theName);
     }
 
 
@@ -197,7 +216,8 @@ public class Subproject {
     // TODO Check valid name in GUI when creating option, note, or sketch
 
     /**
-     * Create a new option by creating necessary folders and files for the option and add the option to the list.
+     * Create a new option by creating necessary folders and files for the option
+     * and add the option to the list.
      * The text file remain empty until the saveProject() method is called.
      * <p>
      *     Precondition:
@@ -214,7 +234,8 @@ public class Subproject {
     public Option createOption(final String theName, final BigDecimal theCost, final String theDescription,
                              final String theWebsite) {
         Option op = null;
-        if (myOptions.containsKey(theName)) {   // Check for duplicate name
+        // Check for duplicate name
+        if (myOptions.containsKey(theName)) {
             JOptionPane.showMessageDialog(null,
                     "Option \" " + theName + "\" already existed.", "Name duplicate",
                     JOptionPane.WARNING_MESSAGE);
@@ -235,14 +256,14 @@ public class Subproject {
             }
 
             op = new Option(theName, theCost, theDescription, theWebsite, Option.CONTRACTOR_SETUP,
-                    Option.WARRANTY_SETUP);
+                    Option.WARRANTY_SETUP, false);
             myOptions.put(theName, op);
         }
         return op;
     }
 
     /**
-     * Add a new note by adding the name and content to the list.
+     * Add a new note by adding the name and content to the list and record the change.
      * This creates an empty txt file for the note, but the content won't be saved until the saveProject()
      * method is called.
      * <p>
@@ -255,7 +276,8 @@ public class Subproject {
      * @param theNote The content of the note.
      */
     public void createNote(final String theName, final String theNote) {
-        if (myNotes.containsKey(theName)) {   // Check for duplicate name
+        // Check for duplicate name
+        if (myNotes.containsKey(theName)) {
             JOptionPane.showMessageDialog(null,
                     "Note \" " + theName + "\" already existed.", "Name duplicate",
                     JOptionPane.WARNING_MESSAGE);
@@ -268,11 +290,12 @@ public class Subproject {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+            myModifiedNotes.add(theName);
         }
     }
 
     /**
-     * Add a new sketch by adding the name and image to the list.
+     * Add a new sketch by adding the name and image to the list and record the change.
      * This creates an empty png file for the sketch, but the content won't be saved until the saveProject()
      * method is called.
      * <p>
@@ -282,11 +305,11 @@ public class Subproject {
      *     3. The name of the sketch must not be empty or contains \ or .
      * </p>
      *
-     * @param theName The name of the new note.
+     * @param theName The name of the new sketch.
      * @param thePath The path to the image file to be added.
      */
     public void createSketch(final String theName, final String thePath) {
-        // Check if the file exists and is an image
+        // If the file is not an image, return
         if (!isValidImageFile(thePath)) {
             JOptionPane.showMessageDialog(null,
                     "The file you choose is not an image.", "Wrong File Format",
@@ -294,7 +317,8 @@ public class Subproject {
             return;
         }
         // Create an empty file for the image and add the image to the list
-        if (mySketches.containsKey(theName)) {   // Check for duplicate name
+        // Check for duplicate name
+        if (mySketches.containsKey(theName)) {
             JOptionPane.showMessageDialog(null,
                     "Sketch \" " + theName + "\" already existed.", "Name duplicate",
                     JOptionPane.WARNING_MESSAGE);
@@ -307,6 +331,7 @@ public class Subproject {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+            myModifiedSketches.add(theName);
         }
     }
 
@@ -318,9 +343,9 @@ public class Subproject {
      */
     private boolean isValidImageFile(final String thePath) {
         File file = new File(thePath);
-        boolean valid = file.exists();
+        boolean valid = true;
         try {
-            if (ImageIO.read(file) == null) {
+            if (!file.exists() || ImageIO.read(file) == null) {
                 valid = false;
             }
         } catch (IOException e) {
@@ -334,57 +359,41 @@ public class Subproject {
 
     /**
      * Delete an option by deleting all folders and files that store its data and remove it from the list.
-     * <p>
-     *     Precondition: The option exists in current subproject.
-     * </p>
      *
      * @param theName The name of the option to be deleted.
      */
     public void deleteOption(final String theName) {
-        if (myOptions.containsKey(theName)) {
-            myOptions.remove(theName);
-            Project.deleteProject(String.format("/%s/%s/Options/%s", Project.getProjectName(), myName, theName));
-        }
+        myOptions.remove(theName);
+        Project.deleteProject(String.format("/%s/%s/Options/%s", Project.getProjectName(), myName, theName));
     }
 
     /**
      * Delete a note by deleting the text file that store its data and remove it from the list.
-     * <p>
-     *     Precondition: The note exists in current subproject.
-     * </p>
      *
      * @param theName The name of the note to be deleted.
      */
     public void deleteNote(final String theName) {
-        if (myNotes.containsKey(theName)) {
-            myNotes.remove(theName);
-            String path = String.format("data/%s/%s/Notes/%s.txt", Project.getProjectName(), myName, theName);
-            File file = new File(path);
-            file.delete();
-        }
+        myNotes.remove(theName);
+        String path = String.format("data/%s/%s/Notes/%s.txt", Project.getProjectName(), myName, theName);
+        File file = new File(path);
+        file.delete();
     }
 
     /**
      * Delete a sketch by deleting the image file that store its data and remove it from the list.
-     * <p>
-     *     Precondition: The sketch exists in current subproject.
-     * </p>
      *
      * @param theName The name of the sketch to be deleted.
      */
     public void deleteSketch(final String theName) {
-        if (mySketches.containsKey(theName)) {
-            mySketches.remove(theName);
-            String path = String.format("data/%s/%s/Sketches/%s.png", Project.getProjectName(), myName, theName);
-            File file = new File(path);
-            file.delete();
-        }
+        mySketches.remove(theName);
+        String path = String.format("data/%s/%s/Sketches/%s.png", Project.getProjectName(), myName, theName);
+        File file = new File(path);
+        file.delete();
     }
 
     /**
-     * Load the notes and sketches in the subproject by reading the contents in their text files
+     * Load the notes and sketches in the subproject by reading the contents in their files
      * and add them to the list.
-     * It calls another method to load options since different options are store in different folders.
      * This method should only be called in the loadSubproject() method in the Project class.
      */
     protected void loadOptionsNotesSketches() {
@@ -418,7 +427,7 @@ public class Subproject {
     /**
      * Load an option from the folder that store its data and add it to the list.
      *
-     * @param theOption The folder that store the data of the option.
+     * @param theOption The directory that store the data of the option.
      */
     private void loadOption(final File theOption) {
         try {
@@ -439,7 +448,7 @@ public class Subproject {
             final String contractor = FileAccessor.readTxtFile(path + "/Contractor.txt");
             final String warranty = FileAccessor.readTxtFile(path + "/Warranty.txt");
 
-            myOptions.put(name, new Option(name, cost, description, website, contractor, warranty));
+            myOptions.put(name, new Option(name, cost, description, website, contractor, warranty, true));
         } catch (IOException e) {
             System.out.println("Can't load subproject :" + e);
         }
@@ -449,37 +458,39 @@ public class Subproject {
     // Method to save subproject
 
     /**
-     * Save the information of the subproject in the file associated with it,
+     * Save the information about the subproject in files associated with it,
      * include saving the current budget, description, options, notes, and sketches.
-     *
-     * @param theProjectName The name of the project the subproject belongs to.
      */
-    protected void saveSubproject(final String theProjectName) {
+    protected void saveSubproject() {
         // Path to the folder where project information will be stored.
-        String path = String.format("data/%s/%s", theProjectName, myName);
+        String path = String.format("data/%s/%s", Project.getProjectName(), myName);
 
-        // Save budget and expense
-        FileAccessor.writeTxtFile(path + "/Budget.txt", myBudget.toString());
-
-        // Save project description
-        FileAccessor.writeTxtFile(path + "/Description.txt", myDescription);
+        // Save budget and description
+        for (String s : myModifiedContents.keySet()) {
+            FileAccessor.writeTxtFile(String.format("%s/%s.txt", path, s), myModifiedContents.get(s));
+        }
 
         // Save options
         for (Option op : myOptions.values()) {
-            op.saveOption(theProjectName, myName);
+            op.saveOption(myName);
         }
 
         // Save notes
-        for (String noteName : myNotes.keySet()) {
-            final String filepath = String.format("%s/Notes/%s.txt", path, noteName);
-            FileAccessor.writeTxtFile(filepath, myNotes.get(noteName));
+        for (String s : myModifiedNotes) {
+            final String filepath = String.format("%s/Notes/%s.txt", path, s);
+            FileAccessor.writeTxtFile(filepath, myNotes.get(s));
         }
 
         // Save sketches
-        for (String sketchName : mySketches.keySet()) {
-            final String filepath = String.format("%s/Sketches/%s.png", path, sketchName);
-            FileAccessor.writePngFile(filepath, mySketches.get(sketchName));
+        for (String s : myModifiedSketches) {
+            final String filepath = String.format("%s/Sketches/%s.png", path, s);
+            FileAccessor.writePngFile(filepath, mySketches.get(s));
         }
+
+        // Clear the recorded changes
+        myModifiedContents.clear();
+        myModifiedNotes.clear();
+        myModifiedSketches.clear();
     }
 
 }
