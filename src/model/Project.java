@@ -145,7 +145,7 @@ public final class Project {
 
     // Methods for creating, deleting, loading, saving, and closing project
 
-    // TODO Check valid project name in NewFrame
+    // TODO Check valid project name
     /**
      * Create a new project with given name, budget, and description.
      * If the project already existed, display a warning message dialog.
@@ -154,7 +154,7 @@ public final class Project {
      * <p>
      *      Precondition:
      *      1. The project doesn't exist. In other words, the project name hasn't been used.
-     *      2. The name of the project must not be empty or contains \ or .
+     *      2. The name of the project must not be empty or contains '\', ',', or '.'
      * </p>
      *
      * @param theName The name of the new project.
@@ -296,7 +296,7 @@ public final class Project {
 
     // Methods for creating, deleting, and loading subproject
 
-    // TODO Check valid subproject name in GUI
+    // TODO Check valid subproject name
     /**
      * Create a subproject and necessary files and folders to store its data.
      * These text files will remain empty until the saveProject() method is called.
@@ -304,7 +304,7 @@ public final class Project {
      * <p>
      *     Precondition:
      *     1. The subproject doesn't exist in currently opened project.
-     *     2. The name of the subproject must not be empty or contains \ or .
+     *     2. The name of the subproject must not be empty or contains '\', ',', or '.'
      * </p>
      *
      * @param theName The name of the new subproject.

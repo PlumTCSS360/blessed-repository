@@ -211,9 +211,9 @@ public class Subproject {
 
     // Methods to add options, notes, and sketches
 
-    // TODO Validate link address in GUI when creating option
+    // TODO Validate link address when creating option
 
-    // TODO Check valid name in GUI when creating option, note, or sketch
+    // TODO Check valid name when creating option, note, or sketch
 
     /**
      * Create a new option by creating necessary folders and files for the option
@@ -222,7 +222,7 @@ public class Subproject {
      * <p>
      *     Precondition:
      *     1. The option doesn't exist in current subproject.
-     *     2. The name of the option must not be empty or contains \ or .
+     *     2. The name of the option must not be empty or contains '\', ',', or '.'
      * </p>
      *
      * @param theName The name of the new option.
