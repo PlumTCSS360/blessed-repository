@@ -22,8 +22,6 @@ public class NewFrame implements GUIFrame {
 
     private final JTextField budgetBox;
 
-    private final JTextField expenseBox;
-
     private final JTextArea descriptionBox;
 
     private String userName;
@@ -37,13 +35,12 @@ public class NewFrame implements GUIFrame {
     public NewFrame() {
         frame = new JFrame("Crafty Companion - New");
         userBudget = null;
-        userExpense = null;
         userDescription = null;
         userName = null;
         nameBox = new JTextField(20);
         budgetBox = new JTextField(20);
-        expenseBox = new JTextField(20);
         descriptionBox = new JTextArea(10,20);
+        descriptionBox.setLineWrap(true);
         start();
     }
 
@@ -103,11 +100,6 @@ public class NewFrame implements GUIFrame {
         gbc = new GBC(1, 5);
         gbc.ipady = 40;
         gbc.ipadx = 20;
-        panel.add(expenseQ(), gbc);
-
-        gbc = new GBC(1, 7);
-        gbc.ipady = 40;
-        gbc.ipadx = 20;
         panel.add(descriptionM(), gbc);
 
         gbc = new GBC(1, 2);
@@ -119,11 +111,7 @@ public class NewFrame implements GUIFrame {
         panel.add(budgetBox, gbc);
 
         gbc = new GBC(1, 6);
-        expenseBox.setFont(BODY_FONT);
-        panel.add(expenseBox, gbc);
-
-        gbc = new GBC(1, 8);
-        expenseBox.setFont(BODY_FONT);
+        descriptionBox.setFont(BODY_FONT);
         panel.add(descriptionBox, gbc);
 
         return panel;
@@ -154,15 +142,9 @@ public class NewFrame implements GUIFrame {
     }
 
     private JLabel budgetQ() {
-        JLabel budgetQ = textArea("What is your budget?", JLabel.LEFT_ALIGNMENT,
+        JLabel budgetQ = textArea("What is your spending limit?", JLabel.LEFT_ALIGNMENT,
                 BODY_FONT);
         return budgetQ;
-    }
-
-    private JLabel expenseQ() {
-        JLabel expenseQ = textArea("What is your actual expense?", JTextArea.LEFT_ALIGNMENT,
-                BODY_FONT);
-        return expenseQ;
     }
 
     private JLabel descriptionM() {
@@ -209,7 +191,6 @@ public class NewFrame implements GUIFrame {
         boolean hasFailed = false;
         userName = nameBox.getText();
         userBudget = budgetBox.getText();
-        userExpense = expenseBox.getText();
         userDescription = descriptionBox.getText();
 
         int idx = userBudget.indexOf(".");
