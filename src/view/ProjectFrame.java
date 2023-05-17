@@ -1,5 +1,7 @@
 package view;
 
+import model.Project;
+
 import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -10,12 +12,14 @@ import java.awt.event.ActionListener;
 
 /**
 The main UI for the project.
+ Currently a skeleton of the UI, but will be updated as the project progresses.
 @author Taylor Merwin
  */
+
 public class ProjectFrame implements GUIFrame{
 
     JFrame projectFrame;
-
+    JOptionPane closeWarning;
     //menubar to display at the top of the frame
     JMenuBar menuBar;
     //panels to display in the frame
@@ -32,22 +36,17 @@ public class ProjectFrame implements GUIFrame{
     //buttons to display in the buttons panel
     JButton exitProjectButton;
     JButton saveProjectButton;
-    JButton undoActionButton;
     //card layout to switch between panels
     CardLayout myCardLayout;
-
-    //List for the projectListPanel
-    JList<String> projectList;
-
-    //Scroll pane for the projectList
-    JScrollPane projectListScrollPane;
-
     //JTree for the projectList panel
     JTree projectTree;
-
     //Scroll pane for the projectTree
     JScrollPane projectTreeScrollPane;
 
+    /**
+     * Constructor for the ProjectFrame class
+     * @author Taylor Merwin
+     */
     public ProjectFrame() {
 
         //Initialize all the top level objects in the Class
@@ -60,73 +59,49 @@ public class ProjectFrame implements GUIFrame{
         myCardLayout = new CardLayout();
 
         //initialize panels
-        projectTreePanel = new JPanel();
+
+        //create project tree panel with border layout
+        projectTreePanel = new JPanel(new BorderLayout());
         activityContainerPanel = new JPanel();
         buttonsPanel = new JPanel();
-
         //initialize menu bar
         menuBar = new JMenuBar();
 
         // Create menu bar
         createMenuBar(menuBar);
-
         //create panels
-        createProjectTree();
+        createProjectPanel();
         //createListPanel();
         createActivityPanels();
         createButtonsPanel();
-
         //create buttons for bottom panel
         createExitButton();
-        createUndoButton();
         createSaveButton();
-
         // Set frame properties
         setUpProjectFrame();
     }
 
-    /*
-    This method will create the menu bar for the frame.
+    /**
+     @author Taylor Merwin
+    Creates the menu bar for the frame.
      */
     private void createMenuBar( JMenuBar menuBar) {
 
-        final JMenuItem openBudget = new JMenuItem("Open Budget");
-        final JMenuItem openDescription = new JMenuItem("Open Description");
-        final JMenuItem openTodoList = new JMenuItem("Open Todo List");
-        final JMenuItem openImage = new JMenuItem("Open Image");
+        //create menu items
+        final JMenuItem menuItem1 = new JMenuItem("Item 1");
+        final JMenuItem menuItem2 = new JMenuItem("Item 2");
+        final JMenuItem menuItem3 = new JMenuItem("Item 3");
 
-        menuBar.add(openBudget);
-        menuBar.add(openDescription);
-        menuBar.add(openTodoList);
-        menuBar.add(openImage);
+        //add menu items to menu
+        menuBar.add(menuItem1);
+        menuBar.add(menuItem2);
+        menuBar.add(menuItem3);
 
-        //add action listeners to menu items
-        openBudget.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                myCardLayout.show(activityContainerPanel, "0");
-            }
-        });
-        openDescription.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                myCardLayout.show(activityContainerPanel, "1");
-            }
-        });
-        openTodoList.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                myCardLayout.show(activityContainerPanel, "2");
-            }
-        });
-        openImage.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                myCardLayout.show(activityContainerPanel, "3");
-            }
-        });
     }
 
+    /**
+     * @author Taylor Merwin
+     */
     private void createActivityPanels() {
 
         //set up activity panel
@@ -156,32 +131,40 @@ public class ProjectFrame implements GUIFrame{
         for (int i = 0; i < activityPanels.length; i++) {
             activityContainerPanel.add(activityPanels[i], Integer.toString(i));
         }
-        //show first activity panel (budget)
-        myCardLayout.show(activityContainerPanel, "0");
+        //show the description panel
+        myCardLayout.show(activityContainerPanel, "1");
     }
 
-    //create budget panel
+    /**
+     * @author Taylor Merwin
+     */
     private void createBudgetPanel() {
         budgetPanel.add(new JLabel("Budget Panel"));
         budgetPanel.setBackground(Color.cyan);
         budgetPanel.setVisible(true);
     }
 
-    //create description panel
+    /**
+     * @author Taylor Merwin
+     */
     private void createDescriptionPanel() {
         descriptionPanel.add(new JLabel("Description Panel"));
         descriptionPanel.setBackground(Color.yellow);
         descriptionPanel.setVisible(true);
     }
 
-    //create todo list panel
+    /**
+     * @author Taylor Merwin
+     */
     private void createTodoListPanel() {
         todoListPanel.add(new JLabel("Todo List Panel"));
         todoListPanel.setBackground(Color.orange);
         todoListPanel.setVisible(true);
     }
 
-    //create image panel
+    /**
+     * @author Taylor Merwin
+     */
     private void createImagePanel() {
         imagePanel.add(new JLabel("Image Panel"));
         //imagePanel.setBackground(Color.pink);
@@ -189,9 +172,12 @@ public class ProjectFrame implements GUIFrame{
     }
 
 
-    private void createProjectTree() {
+    /**
+     * @author Taylor Merwin
+     */
+    private void createProjectPanel() {
         //create root node
-        DefaultMutableTreeNode root = new DefaultMutableTreeNode("Project");
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode("Project Name");
 
         //create child nodes
         //This will certainly change once it retrieves data from the other classes
@@ -199,6 +185,8 @@ public class ProjectFrame implements GUIFrame{
         DefaultMutableTreeNode description = new DefaultMutableTreeNode("Description");
         DefaultMutableTreeNode todoList = new DefaultMutableTreeNode("Todo List");
         DefaultMutableTreeNode image = new DefaultMutableTreeNode("Image");
+
+        //Create
 
         //add child nodes to root node
         root.add(budget);
@@ -210,7 +198,6 @@ public class ProjectFrame implements GUIFrame{
         projectTree = new JTree(root);
 
         // Add a TreeSelectionListener to the JTree
-
         projectTree.addTreeSelectionListener(new TreeSelectionListener() {
             @Override
             public void valueChanged(TreeSelectionEvent e) {
@@ -218,9 +205,25 @@ public class ProjectFrame implements GUIFrame{
 
                 // If the selected node exists and is a leaf node (i.e., it has no children)
                 if (selectedNode != null && selectedNode.isLeaf()) {
-                    //simply prints the name of the selected node
-                    //Later will open the appropriate activity panel
-                    System.out.println("You selected " + selectedNode.getUserObject());
+                    //currently uses a very naive approach to determine which panel to open
+                    //Will need to change this to support subprojects and other activities
+
+                    //open budget panel
+                    if (selectedNode.getUserObject().equals("Budget")) {
+                        myCardLayout.show(activityContainerPanel, "0");
+                    }
+                    //open description panel
+                    else if (selectedNode.getUserObject().equals("Description")) {
+                        myCardLayout.show(activityContainerPanel, "1");
+                    }
+                    //open todo list panel
+                    else if (selectedNode.getUserObject().equals("Todo List")) {
+                        myCardLayout.show(activityContainerPanel, "2");
+                    }
+                    //open image panel
+                    else if (selectedNode.getUserObject().equals("Image")) {
+                        myCardLayout.show(activityContainerPanel, "3");
+                    }
                 }
             }
         });
@@ -229,16 +232,24 @@ public class ProjectFrame implements GUIFrame{
         projectTreeScrollPane = new JScrollPane(projectTree);
 
         //add the scroll pane to the projectListPanel
-        projectTreePanel.add(projectTreeScrollPane);
+        projectTreePanel.add(projectTreeScrollPane, BorderLayout.CENTER);
+
+        JButton newItemButton = new JButton("New Item");
+        projectTreePanel.add(newItemButton, BorderLayout.SOUTH);
         projectTreePanel.setVisible(true);
+
     }
 
-
+    /**
+     * @author Taylor Merwin
+     */
     private void createButtonsPanel() {
-        buttonsPanel.setBackground(Color.red);
         buttonsPanel.setVisible(true);
     }
 
+    /**
+     * @author Taylor Merwin
+     */
     private void createExitButton() {
         exitProjectButton = new JButton("Exit Project");
 
@@ -254,21 +265,9 @@ public class ProjectFrame implements GUIFrame{
         buttonsPanel.add(exitProjectButton);
     }
 
-    private void createUndoButton() {
-        undoActionButton = new JButton("Undo Action");
-
-        //add action listener to button
-        undoActionButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println("Undo Action Button Pressed");
-            }
-        });
-
-        //add button to buttons panel
-        buttonsPanel.add(undoActionButton);
-    }
-
+    /**
+     * @author Taylor Merwin
+     */
     private void createSaveButton() {
         saveProjectButton = new JButton("Save Project");
 
@@ -283,6 +282,9 @@ public class ProjectFrame implements GUIFrame{
         buttonsPanel.add(saveProjectButton);
     }
 
+    /**
+     * @author Taylor Merwin
+     */
     private void setUpProjectFrame() {
 
         projectFrame.setLayout(new BorderLayout());
