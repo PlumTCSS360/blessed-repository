@@ -19,7 +19,7 @@ public class Driver {
         String path = About.USER_INFO_FILE_PATH;
         File file = new File(path);
 
-        if (true) {
+        if (file.exists()) {
             EventQueue.invokeLater(new Runnable() {
                 @Override
                 public void run() {
@@ -27,8 +27,7 @@ public class Driver {
 //                    new AboutFrame();
                 }
             });
-        }
-        else {
+        } else {
             EventQueue.invokeLater(new Runnable() {
                 @Override
                 public void run() {
