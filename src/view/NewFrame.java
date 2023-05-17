@@ -258,20 +258,20 @@ public class NewFrame implements GUIFrame {
             }
         }
 
-        File file = new File("C:/Users/Owner/blessed-repository/src/data/" + userName +".txt");
-
-        try {
-            if (file.createNewFile()) {
-
-            } else {
-                JOptionPane.showMessageDialog(null, "Create Error: Same Name Found!");
-                hasFailed = true;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
         if (!hasFailed) {
+            File file = new File("C:/Users/Owner/blessed-repository/src/data/" + userName +".txt");
+
+            try {
+                if (file.createNewFile()) {
+
+                } else {
+                    JOptionPane.showMessageDialog(null, "Create Error: Same Name Found!");
+                    hasFailed = true;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
             try {
                 FileWriter fw = new FileWriter("C:/Users/Owner/blessed-repository/src/data/" + userName +".txt");
                 String data = "Name: " + userName + "\nBudget: " +userBudget + "\nExpense: "+ userBudget + "\nDescription: " + userDescription;
