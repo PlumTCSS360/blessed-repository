@@ -19,7 +19,6 @@ The main UI for the project.
 public class ProjectFrame implements GUIFrame{
 
     JFrame projectFrame;
-    JOptionPane closeWarning;
     //menubar to display at the top of the frame
     JMenuBar menuBar;
     //panels to display in the frame
@@ -253,11 +252,20 @@ public class ProjectFrame implements GUIFrame{
     private void createExitButton() {
         exitProjectButton = new JButton("Exit Project");
 
-        //add action listener to button
+        //add Action listener to button
+        //When clicked, the ProjectFrame is disposed and returned to welcome frame
         exitProjectButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("Exit Project Button Pressed");
+
+                int response = JOptionPane.showConfirmDialog(projectFrame,
+                        "Unsaved Changes will be lost, Are you sure you want to exit the project?",
+                        "Exit Project", JOptionPane.YES_NO_OPTION);
+
+                if (response == JOptionPane.OK_OPTION) {
+                    projectFrame.dispose();
+                    new WelcomeFrame();
+                }
             }
         });
 
