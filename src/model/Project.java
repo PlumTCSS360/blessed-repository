@@ -145,16 +145,15 @@ public final class Project {
 
     // Methods for creating, deleting, loading, saving, and closing project
 
-    // TODO Check valid project name
     /**
      * Create a new project with given name, budget, and description.
-     * If the project already existed, display a warning message dialog.
+     * If the given name is invalid or the project already existed, it displays an error/warning message dialog.
      * This method only creates necessary text files for a new project. These text files will remain
      * empty until the saveProject() method is called.
      * <p>
      *      Precondition:
      *      1. The project doesn't exist. In other words, the project name hasn't been used.
-     *      2. The name of the project must not be empty or contains '\', ',', or '.'
+     *      2. The name of the project must not be blank, longer than 25 characters, or contains illegal characters.
      * </p>
      *
      * @param theName The name of the new project.
@@ -166,33 +165,37 @@ public final class Project {
                                      final String theDescription) {
         boolean projectCreated = false;
 
-        // Path to the folder where project will be stored.
-        String path = "data/" + theName;
-        File file = new File(path);
+        if (!InputValidator.validName(theName)) {       // If the project name is invalid
+            InputValidator.displayInvalidNameMessage();
+        } else {
+            // Path to the folder where project will be stored.
+            String path = "data/" + theName;
+            File file = new File(path);
 
-        if (!file.exists()) {
-            // Assigning project name, budget, expense, and description
-            myName = theName;
-            myBudget = theBudget;
-            myDescription = theDescription;
-            // Record changes
-            myModifiedContents.put("Budget", theBudget.toString());
-            myModifiedContents.put("Description", theDescription);
+            if (file.exists()) {        // If the project already exists
+                JOptionPane.showMessageDialog(null,
+                        "The project \"" + theName + "\" already existed.",
+                        "Fail to Create Project", JOptionPane.WARNING_MESSAGE);
+            } else {
+                // Assigning project name, budget, expense, and description
+                myName = theName;
+                myBudget = theBudget;
+                myDescription = theDescription;
+                // Record changes
+                myModifiedContents.put("Budget", theBudget.toString());
+                myModifiedContents.put("Description", theDescription);
 
-            projectCreated = file.mkdirs();
-            // If successfully created a directory for the project, then create text files
-            for (int i = 0; i < BASIC_INFO_FILE.length && projectCreated; i++) {
-                file = new File(path + BASIC_INFO_FILE[i]);
-                try {
-                    projectCreated = file.createNewFile();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
+                projectCreated = file.mkdirs();
+                // If successfully created a directory for the project, then create text files
+                for (int i = 0; i < BASIC_INFO_FILE.length && projectCreated; i++) {
+                    file = new File(path + BASIC_INFO_FILE[i]);
+                    try {
+                        projectCreated = file.createNewFile();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             }
-        } else {
-            JOptionPane.showMessageDialog(null,
-                    "The project \"" + theName + "\" already existed.",
-                    "Can't create project", JOptionPane.WARNING_MESSAGE);
         }
         return projectCreated;
     }
@@ -296,15 +299,15 @@ public final class Project {
 
     // Methods for creating, deleting, and loading subproject
 
-    // TODO Check valid subproject name
     /**
      * Create a subproject and necessary files and folders to store its data.
+     * If the given name is invalid or the subproject already existed, it displays an error/warning message dialog.
      * These text files will remain empty until the saveProject() method is called.
      * This method display a warning massage dialog when the subproject already exists.
      * <p>
      *     Precondition:
      *     1. The subproject doesn't exist in currently opened project.
-     *     2. The name of the subproject must not be empty or contains '\', ',', or '.'
+     *     2. The name of the subproject must not be blank, longer than 25 characters, or contains illegal characters.
      * </p>
      *
      * @param theName The name of the new subproject.
@@ -315,10 +318,11 @@ public final class Project {
     public static Subproject createSubproject(final String theName, final BigDecimal theBudget,
                                         final String theDescription) {
         Subproject sp = null;
-        // Check for duplicate name
-        if (mySubprojects.containsKey(theName)) {
+        if (!InputValidator.validName(theName)) {       // If the subproject name is invalid
+            InputValidator.displayInvalidNameMessage();
+        } else if (mySubprojects.containsKey(theName)) {        // If the subproject already existed
             JOptionPane.showMessageDialog(null, "The subproject \"" +
-                    theName + "\" already existed.", "Can't create subproject.",
+                    theName + "\" already existed.", "Fail to Create Subproject.",
                     JOptionPane.WARNING_MESSAGE);
         } else {
             // Create folder for subproject
