@@ -216,46 +216,23 @@ public class NewFrame implements GUIFrame {
             }
         }
 
-        idx = userExpense.indexOf(".");
-        countDot = 0;
-        afterDot = userExpense.substring(idx+1);
-
-        if(afterDot.length() > 2){
-            JOptionPane.showMessageDialog(null, "Expense Error: Your expense can't have more than 2 floating point");
-            hasFailed = true;
-        }
-
-        for(int i = 0; i < userExpense.length(); i++){
-            if((userExpense.charAt(i) <48 && userExpense.charAt(i) != 46) || (userExpense.charAt(i) > 57 && userExpense.charAt(i) != 46)){
-                JOptionPane.showMessageDialog(null, "Expense Error: You entered invalid expense!");
-                hasFailed = true;
-            } else if (userExpense.charAt(i) == 46){
-                countDot++;
-            }
-
-            if(countDot > 1){
-                JOptionPane.showMessageDialog(null, "Expense Error: You can't have more than 1 dot!");
-                hasFailed = true;
-            }
-        }
-
         if (!hasFailed) {
-            File file = new File("C:/Users/Owner/blessed-repository/src/data/" + userName +".txt");
+            File folder = new File("C:/Users/Owner/blessed-repository/src/data/" + userName);
 
             try {
-                if (file.createNewFile()) {
-
+                if (!folder.exists()) {
+                    folder.mkdir();
                 } else {
                     JOptionPane.showMessageDialog(null, "Create Error: Same Name Found!");
                     hasFailed = true;
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
             try {
-                FileWriter fw = new FileWriter("C:/Users/Owner/blessed-repository/src/data/" + userName +".txt");
-                String data = "Name: " + userName + "\nBudget: " +userBudget + "\nExpense: "+ userBudget + "\nDescription: " + userDescription;
+                FileWriter fw = new FileWriter("C:/Users/Owner/blessed-repository/src/data/" +userName + "/Budget" +".txt");
+                String data = "Name: " + userName + "\nBudget: " +userBudget + "\nDescription: " + userDescription;
                 fw.write(data);
                 fw.close();
             } catch (IOException ex) {
