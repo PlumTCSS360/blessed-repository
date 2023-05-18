@@ -11,12 +11,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
-The main UI for the project.
- Currently a skeleton of the UI, but will be updated as the project progresses.
-@author Taylor Merwin
+ * The main UI for the project.
+ * Currently, a skeleton of the UI, but will be updated as the project progresses.
+ * @author Taylor Merwin
  */
 
 public class ProjectFrame implements GUIFrame{
+
+    //The name of current project
+    String projectName;
 
     JFrame projectFrame;
     //menubar to display at the top of the frame
@@ -44,15 +47,17 @@ public class ProjectFrame implements GUIFrame{
 
     /**
      * Constructor for the ProjectFrame class
+     * Initializes all the top level objects in the Class
+     * Call methods to set the GUI
      * @author Taylor Merwin
      */
-    public ProjectFrame() {
+    public ProjectFrame(Project theProject) {
 
-        //Initialize all the top level objects in the Class
-        //And call methods to set them up
+        //Set the project name
+        projectName = theProject.getProjectName();
 
         // Initialize ProjectFame and set frame title
-        projectFrame = new JFrame("Crafty Companion - <Project Name>");
+        projectFrame = new JFrame("Crafty Companion - " + projectName);
 
         //Initialize the layout manager for the activities
         myCardLayout = new CardLayout();
@@ -95,7 +100,6 @@ public class ProjectFrame implements GUIFrame{
         menuBar.add(menuItem1);
         menuBar.add(menuItem2);
         menuBar.add(menuItem3);
-
     }
 
     /**
