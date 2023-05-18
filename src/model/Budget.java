@@ -9,13 +9,20 @@ import java.math.RoundingMode;
 import java.util.LinkedList;
 import java.util.Scanner;
 
+/**
+ * A Budget object consists of a spending limit and a list of expenses. It is able to do calculations on itself, and
+ * update its list of expenses and spending limit. It can also write itself to a .txt file, and has a static method for
+ * creating a Budget from an existing .txt file (for persistence).
+ * @author Devin Peevy
+ * @version 1.0
+ */
 public class Budget {
 
     /** This is the total amount that you would like to spend on your Project. */
     private BigDecimal spendingLimit;
 
     /** This is the list of Expenses which you have. */
-    private LinkedList<Expense> expenses;
+    private final LinkedList<Expense> expenses;
 
     /** This is the path of the parent Project or Subproject. */
     private String parentFilePath;
@@ -29,6 +36,34 @@ public class Budget {
         this.spendingLimit = spendingLimit.setScale(2, RoundingMode.HALF_UP);
         this.expenses = new LinkedList<>();
         this.parentFilePath = parentFilePath;
+    }
+
+    /**
+     * This method updates the spending limit of the Budget.
+     * @author Devin Peevy
+     * @param spendingLimit the new spending limit.
+     */
+    public void setSpendingLimit(BigDecimal spendingLimit) {
+        this.spendingLimit = spendingLimit.setScale(2, RoundingMode.HALF_UP);
+    }
+
+    public void setParentFilePath(String parentFilePath) {
+        this.parentFilePath = parentFilePath;
+    }
+
+    /**
+     * This method updates an Expense within the Budget, replacing it with a new Expense.
+     * @param expenseIndex The index in expenses which is being updated.
+     * @param newExpense The replacement Expense.
+     * @return the old Expense which has been replaced.
+     */
+    public Expense changeExpense(int expenseIndex, Expense newExpense) {
+        if (expenseIndex > expenses.size() - 1 || expenseIndex < 0) {
+            throw new IllegalArgumentException("This index does not found in this Budget's expenses.");
+        }
+        Expense oldExpense = expenses.remove(expenseIndex);
+        expenses.add(expenseIndex, newExpense);
+        return oldExpense;
     }
 
     /**
@@ -47,23 +82,15 @@ public class Budget {
     /**
      * This method removes an expense from the budgets list of expenses.
      * @author Devin Peevy
-     * @param expense The expense which should be removed.
+     * @param index The index of the expense which should be removed.
      * @throws IllegalArgumentException if the expense does not exist.
      * @return The deleted expense.
      */
-    public Expense removeExpense(Expense expense) {
-        boolean exists = false;
-        for (Expense e : expenses) {
-            if (e.equals(expense)) {
-                exists = true;
-                expenses.remove(e);
-                break;
-            }
+    public Expense removeExpense(int index) {
+        if (index < 0 || index > expenses.size() - 1) {
+            throw new IllegalArgumentException("This index position does not exist in this Budget's expenses.");
         }
-        if (!exists) {
-            throw new IllegalArgumentException("This expense exists nowhere in this Budget!");
-        }
-        return expense;
+        return expenses.remove(index);
     }
 
     /**
@@ -93,7 +120,7 @@ public class Budget {
             fw.write(toTXT(this));
             fw.close();
         } catch (IOException ioe){
-            throw new IllegalArgumentException("Path exists as a folder.");
+            throw new IllegalArgumentException("Invalid Parent File Path. Project/Subproject does not exist.");
         }
 
     }
@@ -105,9 +132,24 @@ public class Budget {
      * @return The String which can be written interpreted as a Budget
      */
     private static String toTXT(Budget budget) {
+
+        /*
+        A budget.txt File is written in the following format:
+
+        <parentFilePath>
+        spending limit:<spendingLimit>
+        <expense1Name,expense1Cost,expense1IsChecked>
+        ...
+        <expenseNName,expenseNCost,expenseNIsChecked>
+        end
+         */
+
         StringBuilder sb = new StringBuilder(100);
-        sb.append(budget.getFilePath()).append("\n");
+        // Write the parent file path
+        sb.append(budget.getParentFilePath()).append("\n");
+        // Write the spending limit
         sb.append("spending limit").append(":").append(budget.spendingLimit).append("\n");
+        // Write each of the expenses.
         for (Expense e : budget.expenses) {
             sb.append(e.getName());
             sb.append(",");
@@ -116,6 +158,7 @@ public class Budget {
             sb.append(e.isChecked());
             sb.append("\n");
         }
+        // End the document.
         sb.append("end");
         return sb.toString();
     }
@@ -131,11 +174,11 @@ public class Budget {
         try {
             Scanner s = new Scanner(new File(filePath));
             //First line is the project name.
-            String theProjectName = s.nextLine();
+            String theFilePath = s.nextLine();
             String theSL = s.nextLine();
             theSL = theSL.substring(15, theSL.length()-1);
             BigDecimal theSpendingLimit = BigDecimal.valueOf(Double.parseDouble(theSL)).setScale(2, RoundingMode.HALF_UP);
-            theBudget = new Budget(theProjectName, theSpendingLimit);
+            theBudget = new Budget(theFilePath, theSpendingLimit);
             String thisExpense = s.nextLine();
             while (!thisExpense.equals("end")) {
                 Scanner q = new Scanner(thisExpense);
@@ -155,18 +198,15 @@ public class Budget {
     }
 
     public static void main(String[] args) {
-        Budget b = new Budget("data/sample", BigDecimal.valueOf(1200.3294));
-        b.addExpense("1", BigDecimal.valueOf(100.75349), true);
-        b.addExpense("2", BigDecimal.valueOf(459.3), false);
-        b.writeToTXT();
-        Budget c = Budget.loadBudgetFromTXT(b.getFilePath());
-        System.out.println(c.getFilePath());
-        System.out.println(c.spendingLimit);
-        System.out.println(c.expenses);
-        System.out.println(b.getFilePath());
-        System.out.println(b.spendingLimit);
-        System.out.println(b.expenses);
-        System.out.println(c.getRemainingAmount());
+        Budget c = new Budget("data/sample", new BigDecimal(12000));
+        c.addExpense("Radiator", BigDecimal.valueOf(1049.30284058), true);
+        c.addExpense("Engine", BigDecimal.valueOf(2500), true);
+        c.addExpense("Gear Shift", BigDecimal.valueOf(575.9), true);
+        c.removeExpense(1);
+        c.changeExpense(0, new Expense("Radiator", BigDecimal.valueOf(1400), true));
+        c.changeExpense(1, new Expense("Gear Shift", BigDecimal.valueOf(500), true));
+
+        System.out.println(Budget.toTXT(c));
     }
 
     /**
@@ -175,5 +215,9 @@ public class Budget {
      */
     public String getFilePath() {
         return parentFilePath + "/budget.txt";
+    }
+
+    private String getParentFilePath() {
+        return this.parentFilePath;
     }
 }
