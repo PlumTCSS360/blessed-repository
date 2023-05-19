@@ -8,7 +8,11 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  * This class will create a new WelcomeFrame, the initial GUI.
@@ -104,19 +108,93 @@ public class WelcomeFrame extends JFrame {
     }
 
     public static void exportUserInfo() {
+        // Get content from the user info file
         final String s = FileAccessor.readTxtFile("data/user_info.txt");
         JFileChooser fc = new JFileChooser();
+        // Get a destination to export user info file
         fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         int opt = fc.showDialog(null, "Export");
         if (opt == JFileChooser.APPROVE_OPTION) {
             final String path = String.format("%s\\user_info.txt", fc.getSelectedFile().getPath());
             File file = new File(path);
+            // Create file to write user info
             try {
                 file.createNewFile();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
             FileAccessor.writeTxtFile(path, s);
+        }
+    }
+
+    public static void exportProject() {
+        // Select a project to export
+        String name;
+        String path;
+        JFileChooser fc = new JFileChooser("data");
+        fc.setDialogTitle("Choose a project");
+        fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        int projectSelected = fc.showDialog(null, "Select");
+        if (projectSelected == JFileChooser.APPROVE_OPTION) {
+            path = fc.getSelectedFile().getAbsolutePath();
+            name = fc.getSelectedFile().getName();
+        } else {
+            return;
+        }
+
+        // Select the destination to export the project
+        String destination = "";
+        fc = new JFileChooser();
+        fc.setDialogTitle("Choose a location to export project");
+        fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        projectSelected = fc.showDialog(null, "Export");
+        if (projectSelected == JFileChooser.APPROVE_OPTION) {
+            destination= fc.getSelectedFile().getAbsolutePath();
+        } else {
+            return;
+        }
+
+        // Create zip file
+        String zipPath = destination + "\\" + name;
+        try {
+            FileOutputStream fos = new FileOutputStream(zipPath + ".zip");
+            ZipOutputStream zos = new ZipOutputStream(fos);
+            zipProject(zos, new File(path), null);
+            zos.flush();
+            fos.flush();
+            zos.close();
+            fos.close();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static void zipProject(final ZipOutputStream theZos, final File theFile, final String theParent) {
+        String name = theFile.getName();
+        // Set file path
+        if (theParent != null && !theParent.isEmpty()) {
+            name = theParent + "\\" + name;
+        }
+        if (theFile.isDirectory()) {
+            for (File subfile : theFile.listFiles()) {
+                zipProject(theZos, subfile, name);
+            }
+        } else {
+            try {
+                // Write data to the files in the zip
+                FileInputStream fis = new FileInputStream(theFile);
+                theZos.putNextEntry(new ZipEntry(name));
+                byte[] data = new byte[1024];
+                int length = fis.read(data);
+                while (length > -1) {
+                    theZos.write(data, 0, length);
+                    length = fis.read(data);
+                }
+                theZos.closeEntry();
+                fis.close();
+            } catch (Exception e) {
+                throw new RuntimeException();
+            }
         }
     }
 
