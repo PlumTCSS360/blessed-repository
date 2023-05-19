@@ -10,6 +10,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.awt.BorderLayout;
+import java.math.BigDecimal;
+
+import static model.Project.createProject;
 
 /**
  * This class creates a window allowing the user to create a new project from scratch.
@@ -217,27 +220,10 @@ public class NewFrame implements GUIFrame {
         }
 
         if (!hasFailed) {
-            File folder = new File("C:/Users/Owner/blessed-repository/src/data/" + userName);
+            BigDecimal theBudget = new BigDecimal(userBudget);
 
-            try {
-                if (!folder.exists()) {
-                    folder.mkdir();
-                } else {
-                    JOptionPane.showMessageDialog(null, "Create Error: Same Name Found!");
-                    hasFailed = true;
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            createProject(userName, theBudget, userDescription);
 
-            try {
-                FileWriter fw = new FileWriter("C:/Users/Owner/blessed-repository/src/data/" +userName + "/Budget" +".txt");
-                String data = "Name: " + userName + "\nBudget: " +userBudget + "\nDescription: " + userDescription;
-                fw.write(data);
-                fw.close();
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
             frame.dispose();
 //            new WelcomeFrame();
         }
