@@ -8,15 +8,17 @@ import java.awt.event.ActionListener;
 
 /**
  * This class will create a new WelcomeFrame, the initial GUI.
+ * @author Taylor Merwin
  */
 
 //TODO: Make the font size dynamic
 
 
-public class WelcomeFrame extends JFrame {
+public class WelcomeFrame extends JFrame  implements GUIFrame {
 
     /**
      * This constructor will create a new WelcomeFrame.
+     * @author Taylor Merwin
      */
     public WelcomeFrame() {
 
@@ -24,27 +26,39 @@ public class WelcomeFrame extends JFrame {
         final double screenHeight = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
         final Dimension frameSize = new Dimension((int) screenWidth / 2, (int) screenHeight / 2);
 
-
         // Set frame properties
         setTitle("Crafty Companion");
         setSize(frameSize);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null); // Center the frame
 
-        // Create components
+        //Create panel and add it to the frame
+        JPanel panel = new JPanel();
+        add(panel);
+
+        //Create components
         JLabel welcomeLabel = new JLabel("Welcome to Crafty Companion!", SwingConstants.CENTER);
         JButton newButton = new JButton("New");
         JButton loadButton = new JButton("Load");
+        Font buttonFont = new Font("Arial", Font.PLAIN, (int) (frameSize.getHeight() / 30));
+        Font labelFont = new Font("Arial", Font.BOLD, (int) (frameSize.getHeight() / 20));
 
-        Font buttonFont = new Font("Segue", Font.PLAIN, (int) (frameSize.getHeight() / 30));
-        Font labelFont = new Font("Segue", Font.PLAIN, (int) (frameSize.getHeight() / 20));
-
+        //Set fonts
         welcomeLabel.setFont(labelFont);
         newButton.setFont(buttonFont);
         loadButton.setFont(buttonFont);
 
-        // Set layout and add components
-        setLayout(new GridBagLayout());
+        //Set colors
+        panel.setBackground(BACKGROUND_COLOR);
+        panel.setForeground(FOREGROUND_COLOR);
+        welcomeLabel.setForeground(FOREGROUND_COLOR);
+        newButton.setBackground(FOREGROUND_COLOR);
+        newButton.setForeground(BACKGROUND_COLOR);
+        loadButton.setBackground(FOREGROUND_COLOR);
+        loadButton.setForeground(BACKGROUND_COLOR);
+
+        // Set layout
+        panel.setLayout(new GridBagLayout());
 
         // Create constraints for components
         GridBagConstraints gbc = new GridBagConstraints();
@@ -57,7 +71,7 @@ public class WelcomeFrame extends JFrame {
         gbc.weightx = 1;
         gbc.weighty = 0.5;
         gbc.insets = new Insets(10, 10, 10, 10);
-        add(welcomeLabel, gbc);
+        panel.add(welcomeLabel, gbc);
 
         // Add New button with dynamic resizing
         gbc.gridx = 0;
@@ -68,7 +82,7 @@ public class WelcomeFrame extends JFrame {
         gbc.weightx = 0.5;
         gbc.weighty = 0.5;
         gbc.anchor = GridBagConstraints.SOUTHWEST;
-        add(newButton, gbc);
+        panel.add(newButton, gbc);
 
         // Add Load button with dynamic resizing
         gbc.gridx = 1;
@@ -76,7 +90,7 @@ public class WelcomeFrame extends JFrame {
         gbc.weightx = 0.5;
         gbc.weighty = 0.5;
         gbc.anchor = GridBagConstraints.SOUTHEAST;
-        add(loadButton, gbc);
+        panel.add(loadButton, gbc);
 
         //add event listeners to buttons
         newButton.addActionListener(new ActionListener() {
