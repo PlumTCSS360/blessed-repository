@@ -51,6 +51,14 @@ public class Budget {
         this.parentFilePath = parentFilePath;
     }
 
+    public BigDecimal getSpendingLimit() {
+        return spendingLimit;
+    }
+
+    public LinkedList<Expense> getExpenses() {
+        return expenses;
+    }
+
     /**
      * This method updates an Expense within the Budget, replacing it with a new Expense.
      * @param expenseIndex The index in expenses which is being updated.
@@ -115,7 +123,6 @@ public class Budget {
      */
     public void writeToTXT() {
         try {
-            System.out.println(getFilePath());
             FileWriter fw = new FileWriter(getFilePath());
             fw.write(toTXT(this));
             fw.close();
@@ -205,8 +212,13 @@ public class Budget {
         c.removeExpense(1);
         c.changeExpense(0, new Expense("Radiator", BigDecimal.valueOf(1400), true));
         c.changeExpense(1, new Expense("Gear Shift", BigDecimal.valueOf(500), true));
-
+        c.addExpense("Tint windows", BigDecimal.valueOf(295), false);
+        c.addExpense("New tires", BigDecimal.valueOf(859.35), false);
         System.out.println(Budget.toTXT(c));
+        c.writeToTXT();
+        Budget d = Budget.loadBudgetFromTXT(c.getFilePath());
+
+        System.out.println(Budget.toTXT(d));
     }
 
     /**
@@ -219,5 +231,25 @@ public class Budget {
 
     private String getParentFilePath() {
         return this.parentFilePath;
+    }
+
+    public LinkedList<Expense> getCheckedExpenses() {
+        LinkedList<Expense> checkedExpenses = new LinkedList<>();
+        for (Expense e : expenses) {
+            if (e.isChecked()) {
+                checkedExpenses.add(e);
+            }
+        }
+        return checkedExpenses;
+    }
+
+    public LinkedList<Expense> getUncheckedExpenses() {
+        LinkedList<Expense> uncheckedExpenses = new LinkedList<>();
+        for (Expense e : expenses) {
+            if (!e.isChecked()) {
+                uncheckedExpenses.add(e);
+            }
+        }
+        return uncheckedExpenses;
     }
 }
