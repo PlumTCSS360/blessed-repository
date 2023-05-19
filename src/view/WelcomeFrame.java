@@ -1,7 +1,6 @@
 package view;
 
 import javax.swing.*;
-import javax.swing.plaf.metal.MetalButtonUI;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -105,42 +104,92 @@ public class WelcomeFrame extends JFrame  implements GUIFrame {
             }
         });
 
+
         importButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String destinationDir = "data/";
-                JFileChooser myFolderChooser = new JFileChooser();
-                myFolderChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
-                final int option = myFolderChooser.showOpenDialog(null);
-                if (option == JFileChooser.APPROVE_OPTION) {
-                    File selectedDir = myFolderChooser.getSelectedFile();
-                    File newDir = new File(destinationDir + selectedDir.getName());
-                    newDir.mkdir();
 
-                    //loop through selectedDir and copy all files to newDir
-                    File[] files = selectedDir.listFiles();
-                    for (File file : files) {
-                        if (file.isFile()) {
-                            try {
-                                FileReader in = new FileReader(file);
-                                FileWriter out = new FileWriter(newDir + "/" + file.getName());
-                                int c;
-                                while ((c = in.read()) != -1) {
-                                    out.write(c);
+                //open a dialog box to choose whether to import a project folder or user info file
+                String[] options = {"Project Folder", "User Info File"};
+                int choice = JOptionPane.showOptionDialog(null, "What would you like to import?",
+                        "Import", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+
+                //User chooses to import a project folder
+                if (choice == JOptionPane.YES_OPTION) {
+                    JFileChooser myFolderChooser = new JFileChooser();
+                    myFolderChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+                    final int option = myFolderChooser.showOpenDialog(null);
+                    if (option == JFileChooser.APPROVE_OPTION) {
+                        File selectedDir = myFolderChooser.getSelectedFile();
+                        File newDir = new File(destinationDir + selectedDir.getName());
+                        newDir.mkdir();
+
+                        //loop through selectedDir and copy all files to newDir
+                        File[] files = selectedDir.listFiles();
+                        for (File file : files) {
+                            if (file.isFile()) {
+                                try {
+                                    FileReader in = new FileReader(file);
+                                    FileWriter out = new FileWriter(newDir + "/" + file.getName());
+                                    int c;
+                                    while ((c = in.read()) != -1) {
+                                        out.write(c);
+
+                                    }
+                                    in.close();
+                                    out.close();
+                                } catch (Exception ex) {
+                                    ex.printStackTrace();
                                 }
-                                in.close();
-                                out.close();
-                            } catch (Exception ex) {
-                                ex.printStackTrace();
                             }
                         }
                     }
+                }
+
+                //Else if chooses to import a user info file
+                else if (choice == JOptionPane.NO_OPTION) {
+                    System.out.println("Clicked!");
+                    JFileChooser myUserChooser = new JFileChooser();
+                    myUserChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                    final int option = myUserChooser.showOpenDialog(null);
+                    if (option == JFileChooser.APPROVE_OPTION) {
+                        File selectedFile = myUserChooser.getSelectedFile();
+                        File newFile = new File(destinationDir + selectedFile.getName());
+                        try {
+                            FileReader in = new FileReader(selectedFile);
+                            FileWriter out = new FileWriter(newFile);
+                            int c;
+                            while ((c = in.read()) != -1) {
+                                out.write(c);
+
+                            }
+                            in.close();
+                            out.close();
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
                     }
+
+                }
+
+
+
             }
         });
 
-
+        //export button lets the user choose a filer from the data folder to export
+        //Then lets the user choose where to export it to
+//        exportButton.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                String sourceDir = "data/";
+//
+//
+//            }
+//        });
 
         // Make the frame visible
         setVisible(true);
