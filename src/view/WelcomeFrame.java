@@ -1,10 +1,14 @@
 package view;
 
+import model.FileAccessor;
+
 import javax.swing.*;
 import javax.swing.plaf.metal.MetalButtonUI;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * This class will create a new WelcomeFrame, the initial GUI.
@@ -111,6 +115,23 @@ public class WelcomeFrame extends JFrame  implements GUIFrame {
 
         // Make the frame visible
         setVisible(true);
+    }
+
+    public static void exportUserInfo() {
+        final String s = FileAccessor.readTxtFile("data/user_info.txt");
+        JFileChooser fc = new JFileChooser();
+        fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        int opt = fc.showDialog(null, "Export");
+        if (opt == JFileChooser.APPROVE_OPTION) {
+            final String path = String.format("%s\\user_info.txt", fc.getSelectedFile().getPath());
+            File file = new File(path);
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            FileAccessor.writeTxtFile(path, s);
+        }
     }
 
 
