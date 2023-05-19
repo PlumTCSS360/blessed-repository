@@ -40,8 +40,6 @@ public class InputValidator {
         return valid;
     }
 
-    // TODO Add a method to validate the input for budget
-
     /**
      * Determine whether the given link for the website is valid.
      * Be aware that it only check whether the link is in right format, but not
