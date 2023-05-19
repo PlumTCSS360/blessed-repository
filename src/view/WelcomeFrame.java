@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -143,7 +144,7 @@ public class WelcomeFrame extends JFrame {
         }
 
         // Select the destination to export the project
-        String destination = "";
+        String destination;
         fc = new JFileChooser();
         fc.setDialogTitle("Choose a location to export project");
         fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -176,7 +177,7 @@ public class WelcomeFrame extends JFrame {
             name = theParent + "\\" + name;
         }
         if (theFile.isDirectory()) {
-            for (File subfile : theFile.listFiles()) {
+            for (File subfile : Objects.requireNonNull(theFile.listFiles())) {
                 zipProject(theZos, subfile, name);
             }
         } else {
