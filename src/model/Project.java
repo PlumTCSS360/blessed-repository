@@ -395,4 +395,12 @@ public final class Project {
         }
     }
 
+    /**model/Project.java:394
+     * @author Devin Peevy
+     * @return The name of the project.
+     */
+    public String getMyName() {
+        return myName;
+    }
+
 }
