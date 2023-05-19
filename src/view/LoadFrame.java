@@ -106,7 +106,7 @@ public class LoadFrame extends JFrame implements GUIFrame {
         loadButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String selectedFolder = projectList.getSelectedValue();
+                String selectedProject = projectList.getSelectedValue();
                 //TODO call loadProject method
                 dispose();  // Close the LoadFrame
             }
