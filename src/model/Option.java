@@ -1,5 +1,6 @@
 package model;
 
+import javax.swing.*;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URL;
@@ -178,11 +179,20 @@ public class Option {
 
     /**
      * Set a new link of the website for the option and record the change.
+     * If the website is invalid, it displays an error message dialog.
+     * If the website is blank, set the website to null.
+     * <p>
+     *     Precondition: The given url is valid or blank.
+     * </p>
      *
      * @param theWebsite The new link of the website for the option.
      */
     public void setWebsite(final String theWebsite) {
-        if (theWebsite.length() > 0) {
+        if(!InputValidator.validWebsite(theWebsite)) {
+            InputValidator.displayInvalidUrlMessage();
+        } else if (theWebsite.isBlank()) {
+            myWebsite = null;
+        } else {
             try {
                 URL link = new URL(theWebsite);
                 myWebsite = link.toURI();

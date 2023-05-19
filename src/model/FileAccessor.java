@@ -29,23 +29,25 @@ public class FileAccessor {
      */
     public static String readTxtFile(final String thePath) {
         StringBuilder sb = new StringBuilder();
-        File file = new File(thePath);
-        if (file.exists()) {
-            // Open scanner
-            Scanner scanner;
-            try {
-                scanner = new Scanner(file);
-            } catch (FileNotFoundException e) {
-                throw new RuntimeException(e);
-            }
-            // Read content
-            while (scanner.hasNextLine()) {
-                sb.append(scanner.nextLine());
-                if (scanner.hasNextLine()) {
-                    sb.append("\n");
+        if (thePath.endsWith(".txt")) {
+            File file = new File(thePath);
+            if (file.exists()) {
+                // Open scanner
+                Scanner scanner;
+                try {
+                    scanner = new Scanner(file);
+                } catch (FileNotFoundException e) {
+                    throw new RuntimeException(e);
                 }
+                // Read content
+                while (scanner.hasNextLine()) {
+                    sb.append(scanner.nextLine());
+                    if (scanner.hasNextLine()) {
+                        sb.append("\n");
+                    }
+                }
+                scanner.close();
             }
-            scanner.close();
         }
         return sb.toString();
     }
@@ -60,15 +62,17 @@ public class FileAccessor {
      * @param theContent The content to write to the txt file.
      */
     public static void writeTxtFile(final String thePath, final String theContent) {
-        try {
-            File file = new File(thePath);
-            if (file.exists()) {
-                FileWriter writer = new FileWriter(file, false);
-                writer.write(theContent);
-                writer.close();
+        if (thePath.endsWith(".txt")) {
+            try {
+                File file = new File(thePath);
+                if (file.exists()) {
+                    FileWriter writer = new FileWriter(file, false);
+                    writer.write(theContent);
+                    writer.close();
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
     }
 

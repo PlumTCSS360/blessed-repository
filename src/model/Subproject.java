@@ -1,6 +1,5 @@
 package model;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
@@ -187,6 +186,7 @@ public class Subproject {
 
     /**
      * Replace the old sketch with the new sketch and record the change.
+     * This display an error message dialog when the chosen file is not an image.
      * <p>
      *     Precondition:
      *     1. The file in the path exists.
@@ -198,10 +198,8 @@ public class Subproject {
      */
     public void setSketchContent(final String theName, final String thePath) {
         // Check if the file exists and is an image
-        if (!isValidImageFile(thePath)) {
-            JOptionPane.showMessageDialog(null,
-                    "The file you choose is not an image.", "Wrong File Format",
-                    JOptionPane.ERROR_MESSAGE);
+        if (!InputValidator.validImageFile(thePath)) {
+            InputValidator.displayInvalidImageFileMessage();
             return;
         }
         mySketches.replace(theName, new ImageIcon(thePath));
@@ -211,18 +209,17 @@ public class Subproject {
 
     // Methods to add options, notes, and sketches
 
-    // TODO Validate link address when creating option
-
-    // TODO Check valid name when creating option, note, or sketch
-
     /**
      * Create a new option by creating necessary folders and files for the option
      * and add the option to the list.
+     * This displays an error dialog if the name or website is invalid or a warning dialog if the
+     * option already existed.
      * The text file remain empty until the saveProject() method is called.
      * <p>
      *     Precondition:
      *     1. The option doesn't exist in current subproject.
-     *     2. The name of the option must not be empty or contains '\', ',', or '.'
+     *     2. The name of the option must not be blank, longer than 25 characters, or contains illegal characters.
+     *     3. The link for the website must be a valid url.
      * </p>
      *
      * @param theName The name of the new option.
@@ -234,10 +231,13 @@ public class Subproject {
     public Option createOption(final String theName, final BigDecimal theCost, final String theDescription,
                              final String theWebsite) {
         Option op = null;
-        // Check for duplicate name
-        if (myOptions.containsKey(theName)) {
+        if (!InputValidator.validName(theName)) {       // If the option name is invalid
+            InputValidator.displayInvalidNameMessage();
+        } else if (!InputValidator.validWebsite(theWebsite)) {      // If the link is invalid
+            InputValidator.displayInvalidUrlMessage();
+        } else if (myOptions.containsKey(theName)) {        // If the option is already existed
             JOptionPane.showMessageDialog(null,
-                    "Option \" " + theName + "\" already existed.", "Name duplicate",
+                    "Option \" " + theName + "\" already existed.", "Fail to Create Option",
                     JOptionPane.WARNING_MESSAGE);
         } else {
             // Create subfolder for this option
@@ -264,12 +264,13 @@ public class Subproject {
 
     /**
      * Add a new note by adding the name and content to the list and record the change.
+     * If the given name is invalid or the note already existed, it displays an error/warning message dialog.
      * This creates an empty txt file for the note, but the content won't be saved until the saveProject()
      * method is called.
      * <p>
      *     Precondition:
      *     1. The note doesn't exist in current subproject.
-     *     2. The name of the note must not be empty or contains \ or .
+     *     2. The name of the note must not be blank, longer than 25 characters, or contains illegal characters.
      * </p>
      *
      * @param theName The name of the new note.
@@ -277,9 +278,11 @@ public class Subproject {
      */
     public void createNote(final String theName, final String theNote) {
         // Check for duplicate name
-        if (myNotes.containsKey(theName)) {
+        if (!InputValidator.validName(theName)) {       // If the name is invalid
+            InputValidator.displayInvalidNameMessage();
+        } else if (myNotes.containsKey(theName)) {      // If the note already existed
             JOptionPane.showMessageDialog(null,
-                    "Note \" " + theName + "\" already existed.", "Name duplicate",
+                    "Note \" " + theName + "\" already existed.", "Fail to Create Note",
                     JOptionPane.WARNING_MESSAGE);
         } else {
             myNotes.put(theName, theNote);
@@ -296,33 +299,31 @@ public class Subproject {
 
     /**
      * Add a new sketch by adding the name and image to the list and record the change.
+     * If the given name is invalid, the sketch already existed, or the chosen file is ot an image,
+     * it displays an error/warning message dialog
      * This creates an empty png file for the sketch, but the content won't be saved until the saveProject()
      * method is called.
      * <p>
      *     Precondition:
      *     1. The sketch doesn't exist in current subproject.
      *     2. The file in the given path must is an image.
-     *     3. The name of the sketch must not be empty or contains \ or .
+     *     3. The name of the sketch must not be blank, longer than 25 characters, or contains illegal characters.
      * </p>
      *
      * @param theName The name of the new sketch.
      * @param thePath The path to the image file to be added.
      */
     public void createSketch(final String theName, final String thePath) {
-        // If the file is not an image, return
-        if (!isValidImageFile(thePath)) {
-            JOptionPane.showMessageDialog(null,
-                    "The file you choose is not an image.", "Wrong File Format",
-                    JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        // Create an empty file for the image and add the image to the list
-        // Check for duplicate name
-        if (mySketches.containsKey(theName)) {
+        if (!InputValidator.validImageFile(thePath)) {          // If the file is not an image
+            InputValidator.displayInvalidImageFileMessage();
+        } else if (!InputValidator.validName(theName)) {       // If the name is invalid
+            InputValidator.displayInvalidNameMessage();
+        } else if (mySketches.containsKey(theName)) {           // If the sketch already existed
             JOptionPane.showMessageDialog(null,
                     "Sketch \" " + theName + "\" already existed.", "Name duplicate",
                     JOptionPane.WARNING_MESSAGE);
         } else {
+            // Create an empty file for the image and add the image to the list
             mySketches.put(theName, new ImageIcon(thePath));
             String path = String.format("data/%s/%s/Sketches/%s.png", Project.getProjectName(), myName, theName);
             File file = new File(path);
@@ -333,25 +334,6 @@ public class Subproject {
             }
             myModifiedSketches.add(theName);
         }
-    }
-
-    /**
-     * Check if the file in the given path is an image.
-     *
-     * @param thePath The path to the file.
-     * @return Whether the file exists and is an image.
-     */
-    private boolean isValidImageFile(final String thePath) {
-        File file = new File(thePath);
-        boolean valid = true;
-        try {
-            if (!file.exists() || ImageIO.read(file) == null) {
-                valid = false;
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return valid;
     }
 
 

@@ -80,6 +80,12 @@ public final class AboutFrame {
     }
 
     public static void main(String[] args) {
-
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+//                new WelcomeFrame();
+                new AboutFrame();
+            }
+        });
     }
 }
