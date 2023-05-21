@@ -153,9 +153,8 @@ public class WelcomeFrame extends JFrame {
         }
 
         // Create zip file
-        String zipPath = destination + "\\" + name;
         try {
-            FileOutputStream fos = new FileOutputStream(zipPath + ".zip");
+            FileOutputStream fos = new FileOutputStream(destination + "\\" + name + ".zip");
             ZipOutputStream zos = new ZipOutputStream(fos);
             zipProject(zos, new File(path), null);
             zos.flush();
