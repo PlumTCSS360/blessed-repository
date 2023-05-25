@@ -9,6 +9,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
 /**
  * The main UI for the project.
@@ -74,8 +75,9 @@ public class ProjectFrame implements GUIFrame{
         // Create menu bar
         createMenuBar(menuBar);
         //create panels
-        createProjectPanel();
+        //createProjectPanel();
         //createListPanel();
+        createTreePanel();
         createActivityPanels();
         createButtonsPanel();
         //create buttons for bottom panel
@@ -174,32 +176,44 @@ public class ProjectFrame implements GUIFrame{
         imagePanel.setVisible(true);
     }
 
-
     /**
+     * Creates the tree panel showing the project directory
      * @author Taylor Merwin
      */
-    private void createProjectPanel() {
-        //create root node
-        DefaultMutableTreeNode root = new DefaultMutableTreeNode("Project Name");
-
-        //create child nodes
-        //This will certainly change once it retrieves data from the other classes
-        DefaultMutableTreeNode budget = new DefaultMutableTreeNode("Budget");
-        DefaultMutableTreeNode description = new DefaultMutableTreeNode("Description");
-        DefaultMutableTreeNode todoList = new DefaultMutableTreeNode("Todo List");
-        DefaultMutableTreeNode image = new DefaultMutableTreeNode("Image");
-
-        //Create
-
-        //add child nodes to root node
-        root.add(budget);
-        root.add(description);
-        root.add(todoList);
-        root.add(image);
-
+    private void createTreePanel() {
+        //Create the root node from the project directory in the data folder
+        //we will use the literal project name for now
+        String projectFolder = "sampleImport";
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode(projectFolder);
+        //Create the child nodes from the subdirectories in the project directory
+        //Start from the data folder
+        File projectDirectory = new File("data/" + projectFolder);
+        //for each file and subdirectory in the project directory create a DefaultMutableTreeNode
+        for (File file : projectDirectory.listFiles()) {
+            //if the file is a directory
+            if (file.isDirectory()) {
+                //create a new DefaultMutableTreeNode with the name of the file
+                DefaultMutableTreeNode subDirectory = new DefaultMutableTreeNode(file.getName());
+                //add the subdirectory to the root node
+                root.add(subDirectory);
+                //for each file in the subdirectory
+                for (File subFile : file.listFiles()) {
+                    //create a new DefaultMutableTreeNode with the name of the file
+                    DefaultMutableTreeNode subSubDirectory = new DefaultMutableTreeNode(subFile.getName());
+                    //add the subdirectory to the root node
+                    subDirectory.add(subSubDirectory);
+                }
+            }
+            //if the file is not a directory
+            else {
+                //create a new DefaultMutableTreeNode with the name of the file
+                DefaultMutableTreeNode subDirectory = new DefaultMutableTreeNode(file.getName());
+                //add the subdirectory to the root node
+                root.add(subDirectory);
+            }
+        }
         //create the tree by passing in the root node
         projectTree = new JTree(root);
-
         // Add a TreeSelectionListener to the JTree
         projectTree.addTreeSelectionListener(new TreeSelectionListener() {
             @Override
@@ -212,11 +226,11 @@ public class ProjectFrame implements GUIFrame{
                     //Will need to change this to support subprojects and other activities
 
                     //open budget panel
-                    if (selectedNode.getUserObject().equals("Budget")) {
+                    if (selectedNode.getUserObject().equals("Budget.txt")) {
                         myCardLayout.show(activityContainerPanel, "0");
                     }
                     //open description panel
-                    else if (selectedNode.getUserObject().equals("Description")) {
+                    else if (selectedNode.getUserObject().equals("Description.txt")) {
                         myCardLayout.show(activityContainerPanel, "1");
                     }
                     //open todo list panel
@@ -233,15 +247,13 @@ public class ProjectFrame implements GUIFrame{
 
         //initialize the scroll pane
         projectTreeScrollPane = new JScrollPane(projectTree);
-
         //add the scroll pane to the projectListPanel
         projectTreePanel.add(projectTreeScrollPane, BorderLayout.CENTER);
-
         JButton newItemButton = new JButton("New Item");
         projectTreePanel.add(newItemButton, BorderLayout.SOUTH);
         projectTreePanel.setVisible(true);
-
     }
+
 
     /**
      * @author Taylor Merwin
