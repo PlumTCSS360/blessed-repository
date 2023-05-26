@@ -51,20 +51,17 @@ public class NewFrame implements GUIFrame {
      * This method will set up the InfoFrame how I want it atn
      */
     private void start() {
-        //Set the size.
-        final double screenWidth = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
-        final double screenHeight = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
-        final Dimension frameSize = new Dimension((int) screenWidth / 4, (int) screenHeight / 2);
-        frame.setSize(frameSize);
-        frame.setResizable(false);
-        //Center it.
-        frame.setLocationRelativeTo(null);
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         //Show everything I want it to show.
         frame.setLayout(new BorderLayout());
         frame.add(displayText(),BorderLayout.CENTER);
         frame.add(buttonCreator(),BorderLayout.SOUTH);
         frame.add(greetingPanel(), BorderLayout.NORTH);
+        //Set the size
+        frame.pack();
+        frame.setResizable(false);
+        //Center it.
+        frame.setLocationRelativeTo(null);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         //Make it show up.
         frame.setVisible(true);
     }
@@ -196,14 +193,7 @@ public class NewFrame implements GUIFrame {
         userBudget = budgetBox.getText();
         userDescription = descriptionBox.getText();
 
-        int idx = userBudget.indexOf(".");
         int countDot = 0;
-        String afterDot = userBudget.substring(idx+1);
-
-        if(afterDot.length() > 2){
-            JOptionPane.showMessageDialog(null, "Budget Error: Your Budget can't have more than 2 floating point");
-            hasFailed = true;
-        }
 
         for(int i = 0; i < userBudget.length(); i++){
             if((userBudget.charAt(i) <48 && userBudget.charAt(i) != 46) || (userBudget.charAt(i) > 57 && userBudget.charAt(i) != 46)){
@@ -222,10 +212,10 @@ public class NewFrame implements GUIFrame {
         if (!hasFailed) {
             BigDecimal theBudget = new BigDecimal(userBudget);
 
-            createProject(userName, theBudget, userDescription);
-
-            frame.dispose();
+            if(createProject(userName, theBudget, userDescription)) {
+                frame.dispose();
 //            new WelcomeFrame();
+            }
         }
         else {
             hasFailed = false;

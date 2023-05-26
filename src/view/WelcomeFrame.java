@@ -90,7 +90,6 @@ public class WelcomeFrame extends JFrame  implements GUIFrame {
             public void actionPerformed(ActionEvent e) {
 
                 dispose();
-                new LoadFrame();
             }
         });
 
@@ -219,6 +218,11 @@ public class WelcomeFrame extends JFrame  implements GUIFrame {
         }
     }
 
+    /**
+     * Allows the user to select a location to export the user info as txt file.
+     *
+     * @author Jiameng Li
+     */
     public static void exportUserInfo() {
         // Get content from the user info file
         final String s = FileAccessor.readTxtFile("data/user_info.txt");
@@ -239,6 +243,15 @@ public class WelcomeFrame extends JFrame  implements GUIFrame {
         }
     }
 
+    /**
+     * Opens a file chooser that allows the user to select a project to export,
+     * then opens another file chooser that allows the user to select a location
+     * to export the selected project.
+     * If the user selected a project and a location, the project will be exported
+     * to the location as a zip file.
+     *
+     * @author Jiameng Li
+     */
     public static void exportProject() {
         // Select a project to export
         String name;
@@ -280,6 +293,13 @@ public class WelcomeFrame extends JFrame  implements GUIFrame {
         }
     }
 
+    /**
+     * A helper method that zip the project.
+     *
+     * @param theZos Output stream that write to the zip file.
+     * @param theFile The file that contains the data to write to the zip file.
+     * @param theParent The parent directory.
+     */
     private static void zipProject(final ZipOutputStream theZos, final File theFile, final String theParent) {
         String name = theFile.getName();
         // Set file path

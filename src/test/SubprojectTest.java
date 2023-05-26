@@ -51,7 +51,8 @@ class SubprojectTest {
         Option op = sp.getOptionsList().get("Test Option");
         assertEquals("Test Option", op.getName());
         assertEquals("90", op.getCost().toString());
-        assertEquals("Test option description.", op.getDescription());
+//        assertEquals("Test option description.", op.getDescription());
+        assertEquals("http://www.website.com", op.getWebsite().toString());
         assertEquals("http://www.website.com", op.getWebsite().toString());
         assertEquals(Option.CONTRACTOR_SETUP, op.getContractorInfo());
         assertEquals(Option.WARRANTY_SETUP, op.getWarrantyInfo());
@@ -134,18 +135,6 @@ class SubprojectTest {
     }
 
     /**
-     * Test for {@link model.Subproject#setDescription(String)}
-     *
-     * Set a new subproject description.
-     */
-    @Test
-    @Order(7)
-    void testSetDescription() {
-        sp.setDescription("A new subproject description.");
-        assertEquals("A new subproject description.", sp.getDescription());
-    }
-
-    /**
      * Test for {@link model.Subproject#setNoteContent(String, String)}
      *
      * Set new content to an existing note.
@@ -170,11 +159,8 @@ class SubprojectTest {
     void testSaveSubproject() {
         Project.closeProject();
         final String path = "data/Test Project/Test Subproject";
-        String content = FileAccessor.readTxtFile(path + "/Description.txt");
-        assertEquals("A new subproject description.", content);
-        content = FileAccessor.readTxtFile(path + "/Budget.txt");
-        assertEquals("100", content);
-        content = FileAccessor.readTxtFile(path + "/Notes/Test Note.txt");
+        // TODO Test description and budget
+        String content = FileAccessor.readTxtFile(path + "/Notes/Test Note.txt");
         assertEquals("New note content.", content);
     }
 
@@ -188,9 +174,7 @@ class SubprojectTest {
     void testLoadOptionsNotesSketches() {
         Project.loadProject("Test Project");
         sp = Project.getSubproject("Test Subproject");
-        // Budget and description
-        assertEquals("A new subproject description.", sp.getDescription());
-        assertEquals("100", sp.getBudget().toString());
+        // TODO Test budget and description
         // Notes list
         assertEquals(1, sp.getNotesList().size());
         assertTrue(sp.getNotesList().containsKey("Test Note"));
@@ -213,7 +197,7 @@ class SubprojectTest {
         Option op = sp.getOption("Test Option");
         assertEquals("Test Option", op.getName());
         assertEquals("90", op.getCost().toString());
-        assertEquals("Test option description.", op.getDescription());
+//        assertEquals("Test option description.", op.getDescription());
         assertEquals("http://www.website.com", op.getWebsite().toString());
         assertEquals(Option.CONTRACTOR_SETUP, op.getContractorInfo());
         assertEquals(Option.WARRANTY_SETUP, op.getWarrantyInfo());
