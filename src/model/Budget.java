@@ -18,6 +18,8 @@ import java.util.Scanner;
  */
 public class Budget {
 
+    public static final String FILE_NAME = "/budget.txt";
+
     /** This is the total amount that you would like to spend on your Project. */
     private BigDecimal spendingLimit;
 
@@ -197,6 +199,7 @@ public class Budget {
                 theBudget.addExpense(theName, theCost, theChecked);
                 thisExpense = s.nextLine();
             }
+            s.close();
         }
         catch (FileNotFoundException e) {
             System.out.println("Invalid file path!");

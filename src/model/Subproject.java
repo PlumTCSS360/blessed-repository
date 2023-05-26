@@ -21,10 +21,10 @@ public class Subproject {
     private final String myName;
 
     /** The budget of the subproject. */
-    private BigDecimal myBudget;
+    private final Budget myBudget;
 
     /** The description of the subproject. */
-    private String myDescription;
+    private final Description myDescription;
 
     /** The list of options in subproject. */
     private final Map<String,Option> myOptions;
@@ -41,19 +41,14 @@ public class Subproject {
     /** Name of sketches been modified since last save. */
     private final Set<String> myModifiedSketches;
 
-    /** Contents (budget and description) been modified since last save. */
-    private final Map<String, String> myModifiedContents;
-
     /**
      * Construct a subproject with given name, budget, and description.
      *
      * @param theName The name of the subproject.
      * @param theBudget The budget of the subproject.
      * @param theDescription The description of the subproject.
-     * @param theLoad Whether the program is loading the subproject.
      */
-    public Subproject(final String theName, final BigDecimal theBudget, final String theDescription,
-                      final boolean theLoad) {
+    public Subproject(final String theName, final Budget theBudget, final Description theDescription) {
         super();
         myName = theName;
         myBudget = theBudget;
@@ -63,12 +58,6 @@ public class Subproject {
         myModifiedNotes = new HashSet<>();
         mySketches = new TreeMap<>();
         myModifiedSketches = new HashSet<>();
-        myModifiedContents = new HashMap<>();
-        // If the subproject is created instead of loaded, record the changes
-        if (!theLoad) {
-            myModifiedContents.put("Budget", theBudget.toString());
-            myModifiedContents.put("Description", theDescription);
-        }
     }
 
 
@@ -88,7 +77,7 @@ public class Subproject {
      *
      * @return The budget of the subproject.
      */
-    public BigDecimal getBudget() {
+    public Budget getBudget() {
         return myBudget;
     }
 
@@ -97,7 +86,7 @@ public class Subproject {
      *
      * @return The description of the subproject.
      */
-    public String getDescription() {
+    public Description getDescription() {
         return myDescription;
     }
 
@@ -160,18 +149,6 @@ public class Subproject {
 
 
     // Setters
-
-    // TODO Add setter method for budget
-
-    /**
-     * Set a new subproject description and record the change.
-     *
-     * @param theDescription The new subproject description.
-     */
-    public void setDescription(final String theDescription) {
-        myDescription = theDescription;
-        myModifiedContents.put("Description", theDescription);
-    }
 
     /**
      * Replace the old content in a note with the new content and record the change.
@@ -255,7 +232,8 @@ public class Subproject {
                 }
             }
 
-            op = new Option(theName, theCost, theDescription, theWebsite, Option.CONTRACTOR_SETUP,
+            final Description desc = new Description(path, theDescription);
+            op = new Option(theName, theCost, desc, theWebsite, Option.CONTRACTOR_SETUP,
                     Option.WARRANTY_SETUP, false);
             myOptions.put(theName, op);
         }
@@ -346,7 +324,7 @@ public class Subproject {
      */
     public void deleteOption(final String theName) {
         myOptions.remove(theName);
-        Project.deleteProject(String.format("/%s/%s/Options/%s", Project.getProjectName(), myName, theName));
+        Project.deleteProject(String.format("%s/%s/Options/%s", Project.getProjectName(), myName, theName));
     }
 
     /**
@@ -419,16 +397,16 @@ public class Subproject {
             final String name = theOption.getName();
 
             // Load the option cost
-            File file = new File(path + "/Cost.txt");
+            File file = new File(path + "/cost.txt");
             Scanner scanner = new Scanner(file);
             final BigDecimal cost = scanner.nextBigDecimal();
             scanner.close();
 
             // Load the description, website, contractor information, and warranty information for the option
-            final String description = FileAccessor.readTxtFile(path + "/Description.txt");
-            final String website = FileAccessor.readTxtFile(path + "/Website.txt");
-            final String contractor = FileAccessor.readTxtFile(path + "/Contractor.txt");
-            final String warranty = FileAccessor.readTxtFile(path + "/Warranty.txt");
+            final Description description = Description.loadDescriptionFromTXT(path + Description.FILE_NAME);
+            final String website = FileAccessor.readTxtFile(path + "/website.txt");
+            final String contractor = FileAccessor.readTxtFile(path + "/contractor.txt");
+            final String warranty = FileAccessor.readTxtFile(path + "/warranty.txt");
 
             myOptions.put(name, new Option(name, cost, description, website, contractor, warranty, true));
         } catch (IOException e) {
@@ -448,9 +426,8 @@ public class Subproject {
         String path = String.format("data/%s/%s", Project.getProjectName(), myName);
 
         // Save budget and description
-        for (String s : myModifiedContents.keySet()) {
-            FileAccessor.writeTxtFile(String.format("%s/%s.txt", path, s), myModifiedContents.get(s));
-        }
+        myBudget.writeToTXT();
+        myDescription.writeToTXT();
 
         // Save options
         for (Option op : myOptions.values()) {
@@ -470,7 +447,6 @@ public class Subproject {
         }
 
         // Clear the recorded changes
-        myModifiedContents.clear();
         myModifiedNotes.clear();
         myModifiedSketches.clear();
     }

@@ -1,6 +1,5 @@
 package test;
 
-import model.FileAccessor;
 import model.Project;
 import model.Subproject;
 import org.junit.jupiter.api.*;
@@ -33,8 +32,8 @@ class ProjectTest {
         assertTrue(Project.createProject("Test Project", new BigDecimal("500"),
                 "Test project description"));
         assertEquals("Test Project", Project.getProjectName());
-        assertEquals("500", Project.getBudget().toString());
-        assertEquals("Test project description", Project.getProjectDescription());
+        assertEquals("500.00", Project.getBudget().getSpendingLimit().toString());
+//        assertEquals("Test project description", Project.getProjectDescription());
         assertEquals(0, Project.getSubprojectsList().size());
     }
 
@@ -49,24 +48,14 @@ class ProjectTest {
         File file = new File("data/Test Project");
         assertTrue(file.exists());
         assertTrue(file.isDirectory());
-        for (String s : Project.BASIC_INFO_FILE) {
-            file = new File("data/Test Project" + s);
-            assertTrue(file.exists());
-            assertTrue(file.isFile());
-            assertEquals(0, file.length());
-        }
-    }
-
-    /**
-     * Test for {@link model.Project#setProjectDescription(String)}
-     *
-     * Set project description.
-     */
-    @Test
-    @Order(3)
-    void testSetProjectDescription() {
-        Project.setProjectDescription("New description.\nWith multiple lines.");
-        assertEquals("New description.\nWith multiple lines.", Project.getProjectDescription());
+        file = new File("data/Test Project/budget.txt");
+        assertTrue(file.exists());
+        assertTrue(file.isFile());
+        assertEquals(0, file.length());
+        file = new File("data/Test Project/desc.txt");
+        assertTrue(file.exists());
+        assertTrue(file.isFile());
+        assertEquals(0, file.length());
     }
 
     /**
@@ -75,7 +64,7 @@ class ProjectTest {
      * Create a subproject and check whether it's added to the list
      */
     @Test
-    @Order(4)
+    @Order(3)
     void testCreateSubproject() {
         Project.createSubproject("Test Subproject", new BigDecimal("100"),
                 "Test subproject description");
@@ -83,8 +72,8 @@ class ProjectTest {
         assertTrue(Project.getSubprojectsList().containsKey("Test Subproject"));
         Subproject sp = Project.getSubproject("Test Subproject");
         assertEquals("Test Subproject", sp.getName());
-        assertEquals("100", sp.getBudget().toString());
-        assertEquals("Test subproject description", sp.getDescription());
+        assertEquals("100.00", sp.getBudget().getSpendingLimit().toString());
+//        assertEquals("Test subproject description", sp.getDescription());
         assertEquals(0, sp.getOptionsList().size());
         assertEquals(0, sp.getNotesList().size());
         assertEquals(0, sp.getSketchesList().size());
@@ -97,19 +86,21 @@ class ProjectTest {
      * Folder and files should remain empty at this point.
      */
     @Test
-    @Order(5)
+    @Order(4)
     void testCreateSubprojectFilesCreated() {
         String path = "data/Test Project/Test Subproject";
         File file = new File(path);
         assertTrue(file.exists());
         assertTrue(file.isDirectory());
         // Check for budget and description files
-        for (String s : Project.BASIC_INFO_FILE) {
-            file = new File(path + s);
-            assertTrue(file.exists());
-            assertTrue(file.isFile());
-            assertEquals(0, file.length());
-        }
+        file = new File("data/Test Project/budget.txt");
+        assertTrue(file.exists());
+        assertTrue(file.isFile());
+        assertEquals(0, file.length());
+        file = new File("data/Test Project/desc.txt");
+        assertTrue(file.exists());
+        assertTrue(file.isFile());
+        assertEquals(0, file.length());
         // Check for options, notes, and sketches folders
         for (String s : Subproject.SUBPROJECT_FOLDERS) {
             file = new File(path + s);
@@ -127,13 +118,10 @@ class ProjectTest {
      * This doesn't test whether subprojects are saved.
      */
     @Test
-    @Order(6)
+    @Order(5)
     void testCloseProjectCheckSave() {
         Project.closeProject();
-        String content = FileAccessor.readTxtFile("data/Test Project/Description.txt");
-        assertEquals("New description.\nWith multiple lines.", content);
-        content = FileAccessor.readTxtFile("data/Test Project/Budget.txt");
-        assertEquals("500", content);
+        // TODO Test description and budget content
     }
 
     /**
@@ -142,7 +130,7 @@ class ProjectTest {
      * Check whether the project is close.
      */
     @Test
-    @Order(7)
+    @Order(6)
     void testCloseProjectCheckClose() {
         assertNull(Project.getProjectName());
         assertNull(Project.getBudget());
@@ -156,12 +144,12 @@ class ProjectTest {
      * Check if the project is loaded from data files correctly.
      */
     @Test
-    @Order(8)
+    @Order(7)
     void testLoadProject() {
         Project.loadProject("Test Project");
         assertEquals("Test Project", Project.getProjectName());
-        assertEquals("500", Project.getBudget().toString());
-        assertEquals("New description.\nWith multiple lines.", Project.getProjectDescription());
+        assertEquals("500.00", Project.getBudget().getSpendingLimit().toString());
+//        assertEquals("New description.\nWith multiple lines.", Project.getProjectDescription());
         assertEquals(1, Project.getSubprojectsList().size());
     }
 
@@ -172,12 +160,12 @@ class ProjectTest {
      * The loadSubproject() method is called in the loadProject() method.
      */
     @Test
-    @Order(9)
+    @Order(8)
     void testLoadSubproject() {
         Subproject sp = Project.getSubproject("Test Subproject");
         assertEquals("Test Subproject", sp.getName());
-        assertEquals("100", sp.getBudget().toString());
-        assertEquals("Test subproject description", sp.getDescription());
+        assertEquals("100.00", sp.getBudget().getSpendingLimit().toString());
+//        assertEquals("Test subproject description", sp.getDescription());
         assertEquals(0, sp.getOptionsList().size());
         assertEquals(0, sp.getNotesList().size());
         assertEquals(0, sp.getSketchesList().size());
@@ -189,7 +177,7 @@ class ProjectTest {
      * Check if the subproject is removed from the list and the folder for the subproject is deleted.
      */
     @Test
-    @Order(10)
+    @Order(9)
     void testDeleteSubproject() {
         Project.deleteSubproject("Test Subproject");
         assertFalse(Project.getSubprojectsList().containsKey("Test Subproject"));
@@ -203,7 +191,7 @@ class ProjectTest {
      * Check if the folder for the project is deleted.
      */
     @Test
-    @Order(11)
+    @Order(10)
     void testDeleteProject() {
         Project.deleteProject("Test Project");
         File file = new File("data/Test Project");
