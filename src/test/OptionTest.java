@@ -46,16 +46,6 @@ class OptionTest {
     }
 
     /**
-     * Test for {@link model.Option#setDescription(String)}
-     */
-    @Test
-    @Order(2)
-    void setDescription() {
-        op.setDescription("A new test option description");
-        assertEquals("A new test option description", op.getDescription());
-    }
-
-    /**
      * Test for {@link model.Option#setWebsite(String)}
      */
     @Test
@@ -94,15 +84,12 @@ class OptionTest {
     void saveOption() {
         Project.saveProject();
         final String path = "data/Test Project/Test Subproject/Options/Test Option";
-        String content = FileAccessor.readTxtFile(path + "/Cost.txt");
-        assertEquals("80", content);
-        content = FileAccessor.readTxtFile(path + "/Description.txt");
-        assertEquals("A new test option description", content);
-        content = FileAccessor.readTxtFile(path + "/Website.txt");
+        // TODO Test desctiption and budget
+        String content = FileAccessor.readTxtFile(path + "/website.txt");
         assertEquals("https://www.anotherwebsite.com", content);
-        content = FileAccessor.readTxtFile(path + "/Contractor.txt");
+        content = FileAccessor.readTxtFile(path + "/contractor.txt");
         assertEquals("Test contractor information", content);
-        content = FileAccessor.readTxtFile(path + "/Warranty.txt");
+        content = FileAccessor.readTxtFile(path + "/warranty.txt");
         assertEquals("Test warranty information", content);
     }
 

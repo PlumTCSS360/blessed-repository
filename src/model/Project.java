@@ -16,25 +16,19 @@ import java.util.*;
  */
 public final class Project {
 
-    /** File name for the necessary files for the project and subproject. */
-    public static final String[] BASIC_INFO_FILE = {"/Budget.txt", "/Description.txt"};
-
     // These name, budget, and description will be null if there's no opened project.
 
     /** The name of the currently opened project. */
     private static String myName;
 
     /** The total budget of the currently opened project. */
-    private static BigDecimal myBudget;
+    private static Budget myBudget;
 
     /** The description of the currently opened project. */
-    private static String myDescription;
+    private static Description myDescription;
 
     /** The subprojects in the currently opened project. */
     private static final Map<String, Subproject> mySubprojects = new TreeMap<>();
-
-    /** Contents (budget and description) been modified since last save. */
-    private static final Map<String, String> myModifiedContents = new HashMap<>();
 
     /**
      * Private constructor that prevent initialization of this class.
@@ -59,7 +53,7 @@ public final class Project {
      *
      * @return The project budget.
      */
-    public static BigDecimal getBudget() {
+    public static Budget getBudget() {
         return myBudget;
     }
 
@@ -68,7 +62,7 @@ public final class Project {
      *
      * @return The project description.
      */
-    public static String getProjectDescription() {
+    public static Description getProjectDescription() {
         return myDescription;
     }
 
@@ -90,58 +84,6 @@ public final class Project {
     public static Map<String, Subproject> getSubprojectsList() {
         return Map.copyOf(mySubprojects);
     }
-
-    /**
-     * Get a list of all existing projects with project name and budget and expense.
-     * The list will be return as a 2D array that looks like this
-     * [project name 1][expense / budget]
-     * [project name 2][expense / budget]
-     * [project name 3][expense / budget]
-     * ...
-     * If there's no existing project, it returns an array with zero row and zero column.
-     * The expense and budget will be returned as a string in the format "expense / budget".
-     *
-     * @return A 2D array of string that represent the list of all existing projects.
-     */
-    public static String[][] getProjectList() {
-        String[][] projectList = new String[0][0];
-        File file = new File("data");
-
-        // Only accept directories (projects) in the data folder
-        File[] projects = file.listFiles(File::isDirectory);
-
-        if (projects != null && projects.length > 0) {
-            // Goes through all the project and read their name, budget and expense.
-            projectList = new String[projects.length][2];
-            for (int i = 0; i < projects.length; i++) {
-                if (projects[i].isDirectory()) {
-                    // Read the project name
-                    projectList[i][0] = projects[i].getName();
-                    // Read the budget
-                    projectList[i][1] = FileAccessor.readTxtFile(projects[i].getPath() + "/Budget.txt");
-
-                }
-            }
-        }
-
-        return projectList;
-    }
-
-
-    // Setters
-
-    // TODO Create a method to set the budget and expense
-
-    /**
-     * Set a new project description and record change.
-     *
-     * @param theDescription The new project description.
-     */
-    public static void setProjectDescription(final String theDescription) {
-        myDescription = theDescription;
-        myModifiedContents.put("Description", theDescription);
-    }
-
 
     // Methods for creating, deleting, loading, saving, and closing project
 
@@ -179,21 +121,18 @@ public final class Project {
             } else {
                 // Assigning project name, budget, expense, and description
                 myName = theName;
-                myBudget = theBudget;
-                myDescription = theDescription;
-                // Record changes
-                myModifiedContents.put("Budget", theBudget.toString());
-                myModifiedContents.put("Description", theDescription);
+                myBudget = new Budget("data/" + theName, theBudget);
+                myDescription = new Description("data/" + theName, theDescription);
 
                 projectCreated = file.mkdirs();
                 // If successfully created a directory for the project, then create text files
-                for (int i = 0; i < BASIC_INFO_FILE.length && projectCreated; i++) {
-                    file = new File(path + BASIC_INFO_FILE[i]);
-                    try {
-                        projectCreated = file.createNewFile();
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
+                try {
+                    file = new File(path + Budget.FILE_NAME);
+                    file.createNewFile();
+                    file = new File(path + Description.FILE_NAME);
+                    file.createNewFile();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
                 }
             }
         }
@@ -237,9 +176,8 @@ public final class Project {
         String path = "data/" + myName;
 
         // Save budget and description
-        for (String s : myModifiedContents.keySet()) {
-            FileAccessor.writeTxtFile(String.format("%s/%s.txt", path, s), myModifiedContents.get(s));
-        }
+        myDescription.writeToTXT();
+        myBudget.writeToTXT();
 
         // Save subprojects
         for (Subproject sp : mySubprojects.values()) {
@@ -264,16 +202,13 @@ public final class Project {
             myName = theName;
 
             // Load project budget and expense
-            File file = new File(path + "/Budget.txt");
-            Scanner scanner = new Scanner(file);
-            myBudget = scanner.nextBigDecimal();
-            scanner.close();
+            myBudget = Budget.loadBudgetFromTXT(path + Budget.FILE_NAME);
 
             // Load project description
-            myDescription = FileAccessor.readTxtFile(path + "/Description.txt");
+            myDescription = Description.loadDescriptionFromTXT(path + Description.FILE_NAME);
 
             // Load subprojects
-            file = new File(path);
+            File file = new File(path);
             File[] subprojects = file.listFiles(File::isDirectory);
             for (File subproject : Objects.requireNonNull(subprojects)) {
                 loadSubproject(subproject);
@@ -331,13 +266,13 @@ public final class Project {
             file.mkdirs();
 
             // Create text files for budget and description
-            for (String s : BASIC_INFO_FILE) {
-                file = new File(path + s);
-                try {
-                    file.createNewFile();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+            try {
+                file = new File(path + Budget.FILE_NAME);
+                file.createNewFile();
+                file = new File(path + Description.FILE_NAME);
+                file.createNewFile();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
 
             // Create subfolder for option, notes, and sketches
@@ -346,7 +281,9 @@ public final class Project {
                 file.mkdirs();
             }
 
-            sp = new Subproject(theName, theBudget, theDescription, false);
+            final Budget budget = new Budget(path, theBudget);
+            final Description desc = new Description(path, theDescription);
+            sp = new Subproject(theName, budget, desc);
             mySubprojects.put(theName, sp);
         }
         return sp;
@@ -377,16 +314,13 @@ public final class Project {
             final String name = theSubproject.getName();
 
             // Load the subproject budget
-            File file = new File(path + "/Budget.txt");
-            Scanner scanner = new Scanner(file);
-            final BigDecimal budget = scanner.nextBigDecimal();
-            scanner.close();
+            final Budget budget = Budget.loadBudgetFromTXT(path + Budget.FILE_NAME);
 
             // Load subproject description
-            final String description = FileAccessor.readTxtFile(path + "/Description.txt");
+            final Description description = Description.loadDescriptionFromTXT(path + Description.FILE_NAME);
 
             // Load other information and add subproject to the list
-            final Subproject subproject = new Subproject(name, budget, description, true);
+            final Subproject subproject = new Subproject(name, budget, description);
             subproject.loadOptionsNotesSketches();
             mySubprojects.put(name, subproject);
 

@@ -16,8 +16,8 @@ import java.util.Map;
 public class Option {
 
     /** The text files needed to store data for the option. */
-    public static final String[] OPTION_FILE = {"/Cost.txt", "/Description.txt", "/Website.txt",
-                "/Contractor.txt", "/Warranty.txt"};
+    public static final String[] OPTION_FILE = {"/cost.txt", "/desc.txt", "/website.txt",
+                "/contractor.txt", "/warranty.txt"};
 
     /** The setup text for contractor information in a new option. */
     public static final String CONTRACTOR_SETUP = """
@@ -43,7 +43,7 @@ public class Option {
     private BigDecimal myCost;
 
     /** The description of the option. */
-    private String myDescription;
+    private Description myDescription;
 
     /** The website of the option. */
     private URI myWebsite;
@@ -69,7 +69,7 @@ public class Option {
      * @param theWarrantyInfo The warranty information of the option.
      * @param theLoad Whether the program is loading the option.
      */
-    public Option(final String theName, final BigDecimal theCost, final String theDescription,
+    public Option(final String theName, final BigDecimal theCost, final Description theDescription,
                   final String theWebsite, final String theContractorInfo, final String theWarrantyInfo,
                   final boolean theLoad) {
         super();
@@ -89,11 +89,10 @@ public class Option {
         myModifiedContents = new HashMap<>();
         // If the option is created instead of loaded, record the changes
         if (!theLoad) {
-            myModifiedContents.put("Cost", theCost.toString());
-            myModifiedContents.put("Description", theDescription);
-            myModifiedContents.put("Website", theWebsite);
-            myModifiedContents.put("Contractor", theContractorInfo);
-            myModifiedContents.put("Warranty", theWarrantyInfo);
+            myModifiedContents.put("cost", theCost.toString());
+            myModifiedContents.put("website", theWebsite);
+            myModifiedContents.put("contractor", theContractorInfo);
+            myModifiedContents.put("warranty", theWarrantyInfo);
         }
     }
 
@@ -123,7 +122,7 @@ public class Option {
      *
      * @return The description of the option.
      */
-    public String getDescription() {
+    public Description getDescription() {
         return myDescription;
     }
 
@@ -164,17 +163,7 @@ public class Option {
      */
     public void setCost(final BigDecimal theCost) {
         myCost = theCost;
-        myModifiedContents.put("Cost", theCost.toString());
-    }
-
-    /**
-     * Set a new description for the option and record the change.
-     *
-     * @param theDescription The new description for the option.
-     */
-    public void setDescription(final String theDescription) {
-        myDescription = theDescription;
-        myModifiedContents.put("Description", theDescription);
+        myModifiedContents.put("cost", theCost.toString());
     }
 
     /**
@@ -199,7 +188,7 @@ public class Option {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-            myModifiedContents.put("Website", theWebsite);
+            myModifiedContents.put("website", theWebsite);
         }
     }
 
@@ -210,7 +199,7 @@ public class Option {
      */
     public void setContractorInfo(final String theContractorInfo) {
         myContractorInfo = theContractorInfo;
-        myModifiedContents.put("Contractor", theContractorInfo);
+        myModifiedContents.put("contractor", theContractorInfo);
     }
 
     /**
@@ -220,7 +209,7 @@ public class Option {
      */
     public void setWarrantyInfo(final String theWarrantyInfo) {
         myWarrantyInfo = theWarrantyInfo;
-        myModifiedContents.put("Warranty", theWarrantyInfo);
+        myModifiedContents.put("warranty", theWarrantyInfo);
     }
 
     /**
@@ -234,6 +223,7 @@ public class Option {
         String path = String.format("data/%s/%s/Options/%s", Project.getProjectName(), theSubprojectName, myName);
 
         // Save cost, description, website, contractor information, and warranty information
+        myDescription.writeToTXT();
         for (String s : myModifiedContents.keySet()) {
             FileAccessor.writeTxtFile(String.format("%s/%s.txt", path, s), myModifiedContents.get(s));
         }

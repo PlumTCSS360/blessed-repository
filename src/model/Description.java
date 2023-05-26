@@ -13,6 +13,8 @@ import java.util.Scanner;
  */
 public class Description {
 
+    public static final String FILE_NAME = "/desc.txt";
+
     private final String description;
 
     private final String parentFilePath;
@@ -47,6 +49,7 @@ public class Description {
             sb.append(s.nextLine());
         }
         String theDesc = sb.toString();
+        s.close();
         return new Description(thePFP, theDesc);
     }
 
