@@ -5,87 +5,75 @@ import model.Person;
 
 import javax.swing.*;
 import java.awt.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 /**
- * This class will show a Frame with the user's information (name and email) as well as the information of the
- * developers.
- * @author Devin Peevy
- * @version 0.1
+ * Display's the user's information and system information on the screen.
+ * @author Taylor Merwin
+ * @version 0.2
  */
 public final class AboutFrame {
 
     /** This holds all the information which is presented on the screen. */
-    private final About about;
-
-    /** This is the frame on which everything is presented. */
-    private final JFrame frame;
+   private final About about;
 
     /**
      * This constructor creates a new instance of an AboutFrame.
+     * @author Taylor Merwin
      */
     public AboutFrame() {
-        //Initialize parameters
-        about = new About();
-        frame = new JFrame("Crafty Companion v" + about.getVersion() + " - About");
-        //Display the frame.
-        start();
-    }
 
-    /**
-     * This method sets the close operation and size, centers and displays the frame.
-     */
-    public void start() {
-        //Set the size.
+        about = new About();
+        JFrame frame = new JFrame("Crafty Companion - About");
+        JPanel panel = new JPanel(new GridLayout(4, 1));
+        frame.add(panel);
+
+        String os = System.getProperty("os.name");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy");
+        LocalDate today = LocalDate.now();
+        String dateString = today.format(formatter);
         final double screenWidth = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
         final double screenHeight = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
         final Dimension frameSize = new Dimension( (int) screenWidth/3,  (int) screenHeight/3);
+
         frame.setSize(frameSize);
         frame.setResizable(false);
         frame.setLocationRelativeTo(null);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        displayInfo();
-        //Make it show up.
         frame.setVisible(true);
-    }
 
-    /**
-     * This private method builds the content onto the frame.
-     */
-    private void displayInfo() {
-        JPanel panel = new JPanel();
         panel.setBackground(Color.DARK_GRAY);
         panel.setForeground(Color.LIGHT_GRAY);
-        String text = compileText();
-        JLabel textBlock = new JLabel(text);
-        panel.add(textBlock);
-        frame.add(panel);
+
+        JLabel nameLabel = new JLabel(getName());
+        JLabel emailLabel = new JLabel(getEmail());
+        JLabel osLabel = new JLabel(os);
+        JLabel dateLabel = new JLabel(dateString);
+
+        JLabel[] labels = {nameLabel, emailLabel, osLabel, dateLabel};
+        for (JLabel label : labels) {
+        	label.setFont(new Font("Arial", Font.BOLD, (int) screenHeight/ 30));
+            label.setForeground(Color.WHITE);
+            label.setHorizontalAlignment(JLabel.CENTER);
+            panel.add(label);
+        }
     }
 
     /**
-     * This private method assembles the text to be presented on the frame.
-     * @return A string (with many newline characters) with all the necessary information.
+     * @return the name of the user.
+     * @author Taylor Merwin
      */
-    private String compileText() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Version number: ").append(about.getVersion()).append("\n");
-        sb.append("\n");
-        sb.append("User information:\n");
-        sb.append(about.getUser()).append("\n");
-        sb.append("\n");
-        sb.append("Developer information:\n");
-        for (Person dev : about.getDevelopers()) {
-            sb.append(dev).append("\n");
-        }
-        return sb.toString();
+    private String getName() {
+        return about.getUser().getName();
     }
 
-    public static void main(String[] args) {
-        EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-//                new WelcomeFrame();
-                new AboutFrame();
-            }
-        });
+    /**
+     * @return the email of the user.
+     * @author Taylor Merwin
+     */
+    private String getEmail() {
+        return about.getUser().getEmail();
     }
+
+
 }
