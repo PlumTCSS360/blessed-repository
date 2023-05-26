@@ -10,6 +10,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.Objects;
 
 /**
  * The main UI for the project.
@@ -50,12 +51,13 @@ public class ProjectFrame implements GUIFrame{
      * Constructor for the ProjectFrame class
      * Initializes all the top level objects in the Class
      * Call methods to set the GUI
+     * @param projectName the name of the project
      * @author Taylor Merwin
      */
-    public ProjectFrame(Project theProject) {
+    public ProjectFrame(String projectName) {
 
         //Set the project name
-        projectName = theProject.getProjectName();
+        //projectName = theProject.getProjectName();
 
         // Initialize ProjectFame and set frame title
         projectFrame = new JFrame("Crafty Companion - " + projectName);
@@ -77,7 +79,7 @@ public class ProjectFrame implements GUIFrame{
         //create panels
         //createProjectPanel();
         //createListPanel();
-        createTreePanel();
+        createTreePanel(projectName);
         createActivityPanels();
         createButtonsPanel();
         //create buttons for bottom panel
@@ -180,16 +182,15 @@ public class ProjectFrame implements GUIFrame{
      * Creates the tree panel showing the project directory
      * @author Taylor Merwin
      */
-    private void createTreePanel() {
+    private void createTreePanel(String projectName) {
         //Create the root node from the project directory in the data folder
         //we will use the literal project name for now
-        String projectFolder = "sampleImport";
-        DefaultMutableTreeNode root = new DefaultMutableTreeNode(projectFolder);
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode(projectName);
         //Create the child nodes from the subdirectories in the project directory
         //Start from the data folder
-        File projectDirectory = new File("data/" + projectFolder);
+        File projectDirectory = new File("data/" + projectName);
         //for each file and subdirectory in the project directory create a DefaultMutableTreeNode
-        for (File file : projectDirectory.listFiles()) {
+        for (File file : Objects.requireNonNull(projectDirectory.listFiles())) {
             //if the file is a directory
             if (file.isDirectory()) {
                 //create a new DefaultMutableTreeNode with the name of the file
@@ -199,17 +200,17 @@ public class ProjectFrame implements GUIFrame{
                 //for each file in the subdirectory
                 for (File subFile : file.listFiles()) {
                     //create a new DefaultMutableTreeNode with the name of the file
-                    DefaultMutableTreeNode subSubDirectory = new DefaultMutableTreeNode(subFile.getName());
+                    DefaultMutableTreeNode projectFile = new DefaultMutableTreeNode(subFile.getName());
                     //add the subdirectory to the root node
-                    subDirectory.add(subSubDirectory);
+                    subDirectory.add(projectFile);
                 }
             }
             //if the file is not a directory
             else {
                 //create a new DefaultMutableTreeNode with the name of the file
-                DefaultMutableTreeNode subDirectory = new DefaultMutableTreeNode(file.getName());
+                DefaultMutableTreeNode projectFile = new DefaultMutableTreeNode(file.getName());
                 //add the subdirectory to the root node
-                root.add(subDirectory);
+                root.add(projectFile);
             }
         }
         //create the tree by passing in the root node
@@ -300,6 +301,8 @@ public class ProjectFrame implements GUIFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                 System.out.println("Save Project Button Pressed");
+
+                Project.saveProject();
             }
         });
         //add button to buttons panel
