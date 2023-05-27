@@ -70,22 +70,24 @@ public class DescriptionPanel extends JPanel implements WorkPanel, PropertyChang
 
     // MAIN METHOD (FOR TESTING)
 
-    public static void main(final String[] args) throws FileNotFoundException {
-        JFrame frame = new JFrame();
-        frame.add(new DescriptionPanel(Description.loadDescriptionFromTXT("data/sample/desc.txt")));
-        EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-//                new WelcomeFrame();
-//                new AboutFrame();
-                frame.setSize(700, 700);
-                frame.setBackground(BACKGROUND_COLOR);
-                frame.setLocationRelativeTo(null);
-                frame.setVisible(true);
-                frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-            }
-        });
-    }
+//    public static void main(final String[] args) throws FileNotFoundException {
+//        JFrame frame = new JFrame();
+//        Description desc = new Description("data/Kitchen Remodel", "This is my long description.");
+//        desc.writeToTXT();
+//        frame.add(new DescriptionPanel(Description.loadDescriptionFromTXT("data/Kitchen Remodel/desc.txt")));
+//        EventQueue.invokeLater(new Runnable() {
+//            @Override
+//            public void run() {
+////                new WelcomeFrame();
+////                new AboutFrame();
+//                frame.setSize(700, 700);
+//                frame.setBackground(BACKGROUND_COLOR);
+//                frame.setLocationRelativeTo(null);
+//                frame.setVisible(true);
+//                frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+//            }
+//        });
+//    }
 
     @Override
     public void propertyChange(PropertyChangeEvent pce) {
@@ -93,9 +95,9 @@ public class DescriptionPanel extends JPanel implements WorkPanel, PropertyChang
         description.setDescription(newDesc);
         description.writeToTXT();
         removeAll();
-        validate();
         arrangePanel();
-        validate();
+        revalidate();
+        repaint();
         setVisible(true);
     }
 }

@@ -83,7 +83,6 @@ public class EditDescriptionFrame extends JFrame implements GUIFrame {
     private void applyAction() {
         pcs.firePropertyChange("editDescription", description.getDescription(), descriptionField.getText());
         dispose();
-        System.out.println("editDescription, " + description.getDescription() + ", " + descriptionField.getText());
     }
 
     private JLabel textArea(final String text, final float alignmentX, final Font font) {
