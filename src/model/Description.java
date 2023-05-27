@@ -13,16 +13,49 @@ import java.util.Scanner;
  */
 public class Description {
 
-    public static final String FILE_NAME = "/desc.txt";
+    // STATIC FIELDS
 
-    private final String description;
+    public static final String FILE_NAME = "desc.txt";
+
+    // INSTANCE FIELDS
+
+    private String description;
 
     private final String parentFilePath;
+
+    // CONSTRUCTORS
 
     public Description(String parentFilePath, String description) {
         this.description = description;
         this.parentFilePath = parentFilePath;
     }
+
+    // GETTERS AND SETTERS
+
+    public String getDescription() {
+        return this.description;
+    }
+
+    public void setDescription(String newDescription) {
+        this.description = newDescription;
+    }
+
+    public String getFilePath() {
+        return this.parentFilePath + "/desc.txt";
+    }
+
+    public String getProjectName() {
+        final char[] array = parentFilePath.toCharArray();
+        int lastSlash = 0;
+        for (int i = 0; i < array.length; i++) {
+            if (array[i] == '/') {
+                lastSlash = i;
+            }
+        }
+        return parentFilePath.substring(lastSlash + 1);
+    }
+
+    // OTHER INSTANCE METHODS
 
     public void writeToTXT() {
         try {
@@ -34,6 +67,8 @@ public class Description {
             throw new IllegalArgumentException("ParentFilePath is invalid!");
         }
     }
+
+    // STATIC METHODS
 
     public static Description loadDescriptionFromTXT(String filePath) throws FileNotFoundException {
         Scanner s;
@@ -49,24 +84,12 @@ public class Description {
             sb.append(s.nextLine());
         }
         String theDesc = sb.toString();
-        s.close();
         return new Description(thePFP, theDesc);
     }
 
-
-    public String getFilePath() {
-        return this.parentFilePath + "/desc.txt";
-    }
+    // MAIN METHOD (FOR TESTING)
 
     public static void main(String[] args) {
-        Description desc = new Description("data/sample", "This is a description of sample.");
-        desc.writeToTXT();
-        try {
-            Description desc2 = Description.loadDescriptionFromTXT("data/sample/desc.txt");
-            System.out.println(desc2.description);
-            System.out.println(desc2.parentFilePath);
-        } catch (FileNotFoundException e) {
-            throw new IllegalArgumentException();
-        }
+
     }
 }
