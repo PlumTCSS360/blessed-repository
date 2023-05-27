@@ -2,6 +2,7 @@ package controller;
 
 import model.About;
 import view.AboutFrame;
+import view.InfoFrame;
 import view.WelcomeFrame;
 
 import java.awt.*;
@@ -24,14 +25,13 @@ public class Driver {
                 @Override
                 public void run() {
                     new WelcomeFrame();
-//                    new AboutFrame();
                 }
             });
         } else {
             EventQueue.invokeLater(new Runnable() {
                 @Override
                 public void run() {
-                    //new InfoFrame();
+                    new InfoFrame();
                 }
             });
         }
