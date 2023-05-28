@@ -5,20 +5,25 @@ import java.math.RoundingMode;
 
 /**
  * An expense has a name and a cost, as well as a boolean whether it is active or not. It is used by the Budget class
- * to see where the money is going.
+ * to see where the money is going. An Expense is an immutable Object - to override one, you must simply construct a new
+ * one over it.
  * @author Devin Peevy
  * @version 1.0
  */
-public class Expense {
+public final class Expense {
+
+    // INSTANCE FIELDS
 
     /** The name of the Expense. */
-    private String name;
+    final private String name;
 
     /** How much the Expense costs. */
-    private BigDecimal cost;
+    final private BigDecimal cost;
 
     /** Whether the expense should be counted when doing budget calculations. */
-    private boolean isChecked;
+    final private boolean isChecked;
+
+    // CONSTRUCTOR
 
     /**
      * This constructor creates a new Expense.
@@ -32,6 +37,8 @@ public class Expense {
         this.cost = cost.setScale(2, RoundingMode.HALF_UP);
         this.isChecked = isChecked;
     }
+
+    // GETTERS
 
     /**
      * @author Devin Peevy
@@ -56,6 +63,8 @@ public class Expense {
     public boolean isChecked() {
         return this.isChecked;
     }
+
+    // OTHER INSTANCE METHODS
 
     /**
      * @author Devin Peevy
