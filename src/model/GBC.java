@@ -20,6 +20,7 @@ public final class GBC extends GridBagConstraints {
         super();
         this.gridx = gridx;
         this.gridy = gridy;
+        this.insets = new Insets(5, 5, 5, 5);
     }
 
     /**
@@ -35,5 +36,6 @@ public final class GBC extends GridBagConstraints {
         this.gridy = gridy;
         this.gridwidth = gridwidth;
         this.gridheight = gridheight;
+        this.insets = new Insets(5, 5, 5, 5);
     }
 }
