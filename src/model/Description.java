@@ -13,7 +13,7 @@ import java.util.Scanner;
  * @author Devin Peevy
  * @version 1.0
  */
-public class Description {
+public final class Description {
 
     // STATIC FIELDS
 
