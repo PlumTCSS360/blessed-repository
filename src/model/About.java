@@ -18,6 +18,8 @@ public final class About {
     /** This is the Person who is using the application. */
     private final Person user;
 
+    private final Person[] developers = new Person[5];
+
     /** Scanner used to parse the user_info.txt file. */
     private Scanner fileScanner;
 
@@ -26,6 +28,7 @@ public final class About {
      */
     public About() {
         user = determineUser();
+        fillDevelopers();
     }
 
     /**
@@ -35,6 +38,13 @@ public final class About {
         return user;
     }
 
+
+    /**
+     * @return Developers of project.
+     */
+    public Person[] getDevelopers() {
+        return developers;
+    }
     /**
      * This method will parse user_info.txt for the name and email of the user.
      * @return a Person object representing the application's user.
@@ -55,4 +65,15 @@ public final class About {
          String userEmail = fileScanner.next();
          return new Person(userName, userEmail);
      }
+
+    /**
+     * This method will fill the developers array with the developers of the program.
+     */
+    private void fillDevelopers() {
+        developers[0] = new Person("Devin Peevy", "dpeevy@uw.edu");
+        developers[1] = new Person("Junghyon Jo", "whwheoeo2015@gmail.com");
+        developers[2] = new Person("Taylor Merwin", "tmerwin@uw.edu");
+        developers[3] = new Person("Jiameng Li", "jli39@uw.edu");
+        developers[4] = new Person("Cameron Gregoire", "cgrego2@uw.edu");
+    }
 }
