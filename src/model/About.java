@@ -72,6 +72,10 @@ public final class About {
     /**
      * This method will fill the developers array with the developers of the program.
      * @author Devin Peevy
+     * @author Junghyon Jo
+     * @author Taylor Merwin
+     * @author Jiameng Li
+     * @author Cameron Gregoire
      */
     private void fillDevelopers() {
         developers[0] = new Person("Devin Peevy", "dpeevy@uw.edu");
