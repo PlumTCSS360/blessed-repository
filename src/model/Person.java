@@ -2,16 +2,21 @@ package model;
 
 /**
  * The Person class will store a name and an email to represent the necessary information regarding all Persons on the
- * AboutFrame.
+ * AboutFrame. A Person is an immutable Object.
  * @author Devin Peevy
  * @version 0.1
  */
 public final class Person {
+
+    // INSTANCE FIELDS
+
     /** The name of the Person. */
     String name;
 
     /** The email address of the person */
     String email;
+
+    // CONSTRUCTORS
 
     /**
      * This constructor creates a new Person object.
@@ -22,6 +27,8 @@ public final class Person {
         this.name = name;
         this.email = email;
     }
+
+    // GETTERS
 
     /**
      * @return the name of the Person.
@@ -36,6 +43,8 @@ public final class Person {
     public String getEmail() {
         return email;
     }
+
+    // OTHER INSTANCE METHODS
 
     @Override
     public String toString() {

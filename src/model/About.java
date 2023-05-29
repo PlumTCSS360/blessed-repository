@@ -12,8 +12,12 @@ import java.util.Scanner;
  */
 public final class About {
 
+    // STATIC FIELDS
+
     /** This is a path to the file containing the user's name and email. */
     public static final String USER_INFO_FILE_PATH = "data/user_info.txt";
+
+    // INSTANCE FIELDS
 
     /** This is the Person who is using the application. */
     private final Person user;
@@ -21,10 +25,14 @@ public final class About {
     /** This is the team of developers who created the application. */
     private final Person[] developers;
 
+    /** This is the version number of the program. */
     private final double version;
+
+    // CONSTRUCTOR
 
     /**
      * This constructor constructs a new About object.
+     * @author Devin Peevy
      */
     public About() {
         user = determineUser();
@@ -33,7 +41,10 @@ public final class About {
         version = 0.1;
     }
 
+    // GETTERS
+
     /**
+     * @author Devin Peevy
      * @return user.
      */
     public Person getUser() {
@@ -41,6 +52,7 @@ public final class About {
     }
 
     /**
+     * @author Devin Peevy
      * @return developers.
      */
     public Person[] getDevelopers() {
@@ -48,14 +60,22 @@ public final class About {
     }
 
     /**
+     * @author Devin Peevy
      * @return version.
      */
     public double getVersion() {
         return version;
     }
 
+    // PRIVATE METHODS
+
     /**
      * This method will fill the developers array with the developers of the program.
+     * @author Devin Peevy
+     * @author Junghyon Jo
+     * @author Taylor Merwin
+     * @author Jiameng Li
+     * @author Cameron Gregoire
      */
     private void fillDevelopers() {
         developers[0] = new Person("Devin Peevy", "dpeevy@uw.edu");
@@ -67,6 +87,7 @@ public final class About {
 
     /**
      * This method will parse user_info.txt for the name and email of the user.
+     * @author Devin Peevy
      * @return a Person object representing the application's user.
      */
      private Person determineUser() {

@@ -32,16 +32,6 @@ class BudgetTest {
     }
 
     @Test
-    void setParentFilePath() {
-        BigDecimal spendingLimit = new BigDecimal("1000.50");
-        String filePath = "This is the file path";
-        Budget budgetTest = new Budget(filePath, spendingLimit);
-        String newFilePath = "This is the second correct file path";
-        budgetTest.setParentFilePath(newFilePath);
-        assertEquals("This is the second correct file path"+ "/budget.txt", budgetTest.getFilePath());
-    }
-
-    @Test
     void getSpendingLimit() {
         BigDecimal spendingLimit = new BigDecimal("1000.50");
         String filePath = "This is the file path";

@@ -16,9 +16,13 @@ import java.util.Scanner;
  * @author Devin Peevy
  * @version 1.0
  */
-public class Budget {
+public final class Budget {
+
+    // STATIC FIELDS
 
     public static final String FILE_NAME = "/budget.txt";
+
+    // INSTANCE FIELDS
 
     /** This is the total amount that you would like to spend on your Project. */
     private BigDecimal spendingLimit;
@@ -27,7 +31,9 @@ public class Budget {
     private final LinkedList<Expense> expenses;
 
     /** This is the path of the parent Project or Subproject. */
-    private String parentFilePath;
+    final private String parentFilePath;
+
+    // CONSTRUCTOR
 
     /**
      * This constructor creates a new Budget with a custom spendingLimit, which has acquired no Expenses yet.
@@ -40,8 +46,71 @@ public class Budget {
         this.parentFilePath = parentFilePath;
     }
 
+    // GETTERS
+
     /**
-     * This method updates the spending limit of the Budget.
+     * @author Devin Peevy
+     * @return spendingLimit
+     */
+    public BigDecimal getSpendingLimit() {
+        return spendingLimit;
+    }
+
+    /**
+     * @author Devin Peevy
+     * @return expenses
+     */
+    public LinkedList<Expense> getExpenses() {
+        return expenses;
+    }
+
+    /**
+     * @author Devin Peevy
+     * @return the file path to get to this budget.txt file.
+     */
+    public String getFilePath() {
+        return parentFilePath + "/budget.txt";
+    }
+
+    public LinkedList<Expense> getCheckedExpenses() {
+        LinkedList<Expense> checkedExpenses = new LinkedList<>();
+        for (Expense e : expenses) {
+            if (e.isChecked()) {
+                checkedExpenses.add(e);
+            }
+        }
+        return checkedExpenses;
+    }
+
+    public LinkedList<Expense> getUncheckedExpenses() {
+        LinkedList<Expense> uncheckedExpenses = new LinkedList<>();
+        for (Expense e : expenses) {
+            if (!e.isChecked()) {
+                uncheckedExpenses.add(e);
+            }
+        }
+        return uncheckedExpenses;
+    }
+
+    /**
+     * This method will subtract the expenses which are checked from the spending limit to get the
+     * amount of available funds.
+     * @author Devin Peevy
+     * @return The amount of available funds (A negative means your expenses exceed your spending limit).
+     */
+    public BigDecimal getRemainingAmount() {
+        BigDecimal remaining = spendingLimit;
+        for (Expense e : expenses) {
+            if (e.isChecked()) {
+                remaining = remaining.subtract(e.getCost());
+            }
+        }
+        return remaining;
+    }
+
+    // SETTERS
+
+    /**
      * @author Devin Peevy
      * @param spendingLimit the new spending limit.
      */
@@ -49,17 +118,7 @@ public class Budget {
         this.spendingLimit = spendingLimit.setScale(2, RoundingMode.HALF_UP);
     }
 
-    public void setParentFilePath(String parentFilePath) {
-        this.parentFilePath = parentFilePath;
-    }
-
-    public BigDecimal getSpendingLimit() {
-        return spendingLimit;
-    }
-
-    public LinkedList<Expense> getExpenses() {
-        return expenses;
-    }
+    // INSTANCE METHODS
 
     /**
      * This method updates an Expense within the Budget, replacing it with a new Expense.
@@ -104,23 +163,7 @@ public class Budget {
     }
 
     /**
-     * This method will subtract the expenses which are checked from the spending limit to get the
-     * amount of available funds.
-     * @author Devin Peevy
-     * @return The amount of available funds (A negative means your expenses exceed your spending limit).
-     */
-    public BigDecimal getRemainingAmount() {
-        BigDecimal remaining = spendingLimit;
-        for (Expense e : expenses) {
-            if (e.isChecked()) {
-                remaining = remaining.subtract(e.getCost());
-            }
-        }
-        return remaining;
-    }
-
-    /**
-     * This method will write a Budget to a txt file.
+     * This method will write a Budget to a txt file located at its filePath
      * @author Devin Peevy
      */
     public void writeToTXT() {
@@ -134,43 +177,7 @@ public class Budget {
 
     }
 
-    /**
-     * This private method is used by writeToTXT in order to turn a Budget into a String.
-     * @author Devin Peevy
-     * @param budget The budget which is being transformed.
-     * @return The String which can be written interpreted as a Budget
-     */
-    private static String toTXT(Budget budget) {
-
-        /*
-        A budget.txt File is written in the following format:
-
-        <parentFilePath>
-        spending limit:<spendingLimit>
-        <expense1Name,expense1Cost,expense1IsChecked>
-        ...
-        <expenseNName,expenseNCost,expenseNIsChecked>
-        end
-         */
-
-        StringBuilder sb = new StringBuilder(100);
-        // Write the parent file path
-        sb.append(budget.getParentFilePath()).append("\n");
-        // Write the spending limit
-        sb.append("spending limit").append(":").append(budget.spendingLimit).append("\n");
-        // Write each of the expenses.
-        for (Expense e : budget.expenses) {
-            sb.append(e.getName());
-            sb.append(",");
-            sb.append(e.getCost());
-            sb.append(",");
-            sb.append(e.isChecked());
-            sb.append("\n");
-        }
-        // End the document.
-        sb.append("end");
-        return sb.toString();
-    }
+    // STATIC METHODS
 
     /**
      * This method is used to create a new Budget object from an existing txt file.
@@ -207,52 +214,44 @@ public class Budget {
         return theBudget;
     }
 
-    public static void main(String[] args) {
-        Budget c = new Budget("data/sample", new BigDecimal(12000));
-        c.addExpense("Radiator", BigDecimal.valueOf(1049.30284058), true);
-        c.addExpense("Engine", BigDecimal.valueOf(2500), true);
-        c.addExpense("Gear Shift", BigDecimal.valueOf(575.9), true);
-        c.removeExpense(1);
-        c.changeExpense(0, new Expense("Radiator", BigDecimal.valueOf(1400), true));
-        c.changeExpense(1, new Expense("Gear Shift", BigDecimal.valueOf(500), true));
-        c.addExpense("Tint windows", BigDecimal.valueOf(295), false);
-        c.addExpense("New tires", BigDecimal.valueOf(859.35), false);
-        System.out.println(Budget.toTXT(c));
-        c.writeToTXT();
-        Budget d = Budget.loadBudgetFromTXT(c.getFilePath());
-
-        System.out.println(Budget.toTXT(d));
-    }
+    // PRIVATE METHODS
 
     /**
+     * This private method is used by writeToTXT in order to turn a Budget into a String.
      * @author Devin Peevy
-     * @return the file path to get to this budget.txt file.
+     * @param budget The budget which is being transformed.
+     * @return The String which can be written interpreted as a Budget
      */
-    public String getFilePath() {
-        return parentFilePath + "/budget.txt";
-    }
+    private static String toTXT(Budget budget) {
 
-    private String getParentFilePath() {
-        return this.parentFilePath;
-    }
+        /*
+        A budget.txt File is written in the following format:
 
-    public LinkedList<Expense> getCheckedExpenses() {
-        LinkedList<Expense> checkedExpenses = new LinkedList<>();
-        for (Expense e : expenses) {
-            if (e.isChecked()) {
-                checkedExpenses.add(e);
-            }
+        <parentFilePath>
+        spending limit:<spendingLimit>
+        <expense1Name,expense1Cost,expense1IsChecked>
+        ...
+        <expenseNName,expenseNCost,expenseNIsChecked>
+        end
+         */
+
+        StringBuilder sb = new StringBuilder(100);
+        // Write the parent file path
+        sb.append(budget.parentFilePath).append("\n");
+        // Write the spending limit
+        sb.append("spending limit").append(":").append(budget.spendingLimit).append("\n");
+        // Write each of the expenses.
+        for (Expense e : budget.expenses) {
+            sb.append(e.getName());
+            sb.append(",");
+            sb.append(e.getCost());
+            sb.append(",");
+            sb.append(e.isChecked());
+            sb.append("\n");
         }
-        return checkedExpenses;
+        // End the document.
+        sb.append("end");
+        return sb.toString();
     }
 
-    public LinkedList<Expense> getUncheckedExpenses() {
-        LinkedList<Expense> uncheckedExpenses = new LinkedList<>();
-        for (Expense e : expenses) {
-            if (!e.isChecked()) {
-                uncheckedExpenses.add(e);
-            }
-        }
-        return uncheckedExpenses;
-    }
 }

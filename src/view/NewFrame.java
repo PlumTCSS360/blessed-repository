@@ -44,6 +44,8 @@ public class NewFrame implements GUIFrame {
         budgetBox = new JTextField(20);
         descriptionBox = new JTextArea(10,20);
         descriptionBox.setLineWrap(true);
+        // Next line by Devin
+        descriptionBox.setWrapStyleWord(true);
         start();
     }
 
