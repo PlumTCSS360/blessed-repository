@@ -22,8 +22,11 @@ public final class About {
     /** This is the Person who is using the application. */
     private final Person user;
 
-    /** This is the team of developers who created the application. */
-    private final Person[] developers;
+    private final Person[] developers = new Person[5];
+
+
+    /** Scanner used to parse the user_info.txt file. */
+    private Scanner fileScanner;
 
     /** This is the version number of the program. */
     private final double version;
@@ -36,9 +39,7 @@ public final class About {
      */
     public About() {
         user = determineUser();
-        developers = new Person[5];
         fillDevelopers();
-        version = 0.1;
     }
 
     // GETTERS
@@ -51,9 +52,10 @@ public final class About {
         return user;
     }
 
+
     /**
+     * @return Developers of project.
      * @author Devin Peevy
-     * @return developers.
      */
     public Person[] getDevelopers() {
         return developers;
@@ -92,19 +94,29 @@ public final class About {
      */
      private Person determineUser() {
         File userInfoFile = new File(USER_INFO_FILE_PATH);
-        //Declare a new Scanner.
-         Scanner s;
+
          //Catch Exception if userInfoFile doesn't exist.
          try {
-             s = new Scanner(userInfoFile);
+             fileScanner = new Scanner(userInfoFile);
          } catch (FileNotFoundException e) {
              throw new RuntimeException(e);
          }
          //Skip the first line, because it will be a header.
-         s.nextLine();
-         s.useDelimiter(",");
-         String userName = s.next();
-         String userEmail = s.next();
+         fileScanner.nextLine();
+         fileScanner.useDelimiter(",");
+         String userName = fileScanner.next();
+         String userEmail = fileScanner.next();
          return new Person(userName, userEmail);
      }
+
+    /**
+     * This method will fill the developers array with the developers of the program.
+     */
+    private void fillDevelopers() {
+        developers[0] = new Person("Devin Peevy", "dpeevy@uw.edu");
+        developers[1] = new Person("Junghyon Jo", "whwheoeo2015@gmail.com");
+        developers[2] = new Person("Taylor Merwin", "tmerwin@uw.edu");
+        developers[3] = new Person("Jiameng Li", "jli39@uw.edu");
+        developers[4] = new Person("Cameron Gregoire", "cgrego2@uw.edu");
+    }
 }

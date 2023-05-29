@@ -7,13 +7,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.awt.BorderLayout;
 import java.math.BigDecimal;
-
-import static model.Project.createProject;
 
 /**
  * This class creates a window allowing the user to create a new project from scratch.
@@ -28,7 +23,7 @@ public class NewFrame implements GUIFrame {
 
     private final JTextArea descriptionBox;
 
-    private String userName;
+    private String userProjectName;
 
     private String userBudget;
 
@@ -40,7 +35,7 @@ public class NewFrame implements GUIFrame {
         frame = new JFrame("Crafty Companion - New");
         userBudget = null;
         userDescription = null;
-        userName = null;
+        userProjectName = null;
         nameBox = new JTextField(20);
         budgetBox = new JTextField(20);
         descriptionBox = new JTextArea(10,20);
@@ -192,7 +187,7 @@ public class NewFrame implements GUIFrame {
     }
     private void createAction() {
         boolean hasFailed = false;
-        userName = nameBox.getText();
+        userProjectName = nameBox.getText();
         userBudget = budgetBox.getText();
         userDescription = descriptionBox.getText();
 
@@ -215,11 +210,13 @@ public class NewFrame implements GUIFrame {
         if (!hasFailed) {
             BigDecimal theBudget = new BigDecimal(userBudget);
 
-            if(Project.createProject(userName, theBudget, userDescription)) {
+
+
+                Project.createProject(userProjectName, theBudget, userDescription);
                 Project.saveProject();
                 frame.dispose();
-                new WelcomeFrame();
-            }
+                new ProjectFrame(userProjectName);
+
         }
         else {
             hasFailed = false;

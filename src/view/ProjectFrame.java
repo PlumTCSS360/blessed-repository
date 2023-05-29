@@ -47,6 +47,7 @@ public class ProjectFrame implements GUIFrame{
     //Scroll pane for the projectTree
     JScrollPane projectTreeScrollPane;
 
+
     /**
      * Constructor for the ProjectFrame class
      * Initializes all the top level objects in the Class
@@ -56,16 +57,13 @@ public class ProjectFrame implements GUIFrame{
      */
     public ProjectFrame(String projectName) {
 
-        //Set the project name
-        //projectName = theProject.getProjectName();
-
         // Initialize ProjectFame and set frame title
         projectFrame = new JFrame("Crafty Companion - " + projectName);
 
         //Initialize the layout manager for the activities
         myCardLayout = new CardLayout();
 
-        //initialize panels
+
 
         //create project tree panel with border layout
         projectTreePanel = new JPanel(new BorderLayout());
@@ -87,6 +85,9 @@ public class ProjectFrame implements GUIFrame{
         createSaveButton();
         // Set frame properties
         setUpProjectFrame();
+
+        //Used to test what values are initialized in Project
+        setUpProjectFiles();
     }
 
     /**
@@ -180,6 +181,7 @@ public class ProjectFrame implements GUIFrame{
 
     /**
      * Creates the tree panel showing the project directory
+     * TODO: Use the project class methods to read the project directory
      * @author Taylor Merwin
      */
     private void createTreePanel(String projectName) {
@@ -227,11 +229,11 @@ public class ProjectFrame implements GUIFrame{
                     //Will need to change this to support subprojects and other activities
 
                     //open budget panel
-                    if (selectedNode.getUserObject().equals("Budget.txt")) {
+                    if (selectedNode.getUserObject().equals("budget.txt")) {
                         myCardLayout.show(activityContainerPanel, "0");
                     }
                     //open description panel
-                    else if (selectedNode.getUserObject().equals("Description.txt")) {
+                    else if (selectedNode.getUserObject().equals("desc.txt")) {
                         myCardLayout.show(activityContainerPanel, "1");
                     }
                     //open todo list panel
@@ -270,19 +272,17 @@ public class ProjectFrame implements GUIFrame{
         exitProjectButton = new JButton("Exit Project");
 
         //add Action listener to button
-        //When clicked, the ProjectFrame is disposed and returned to welcome frame
+        //When clicked, the Project is saved, ProjectFrame is disposed and returned to welcome frame
         exitProjectButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                int response = JOptionPane.showConfirmDialog(projectFrame,
-                        "Unsaved Changes will be lost, Are you sure you want to exit the project?",
-                        "Exit Project", JOptionPane.YES_NO_OPTION);
-
-                if (response == JOptionPane.OK_OPTION) {
-                    projectFrame.dispose();
-                    new WelcomeFrame();
-                }
+                //Save project
+                Project.saveProject();
+                //dispose of project frame
+                projectFrame.dispose();
+                //create a new welcome frame
+                new WelcomeFrame();
             }
         });
 
@@ -300,7 +300,6 @@ public class ProjectFrame implements GUIFrame{
         saveProjectButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("Save Project Button Pressed");
 
                 Project.saveProject();
             }
@@ -330,6 +329,14 @@ public class ProjectFrame implements GUIFrame{
         projectFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         projectFrame.setLocationRelativeTo(null);
         projectFrame.setVisible(true);
+    }
+
+
+    //Let's print out all the values that are initialized in the Project class lol
+    public void setUpProjectFiles() {
+        System.out.println("The project name: " + Project.getProjectName());
+        System.out.println("The project desc: " + Project.getProjectDescription());
+        System.out.println("The project budget: " + Project.getBudget());
     }
 
 }

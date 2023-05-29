@@ -163,6 +163,8 @@ public class LoadFrame extends JFrame implements GUIFrame {
         } else {
             JOptionPane.showMessageDialog(null, "Select a project to delete.",
                     "Delete Project", JOptionPane.WARNING_MESSAGE);
+
+
         }
     }
 
@@ -179,10 +181,11 @@ public class LoadFrame extends JFrame implements GUIFrame {
         } else {
             JOptionPane.showMessageDialog(null, "Please select a project to load.",
                     "Load Project", JOptionPane.WARNING_MESSAGE);
+
         }
     }
 
-    /**
+
      * Refreshes the project list after deletion.
      *
      * @author Cameron Gregoire
@@ -250,4 +253,3 @@ public class LoadFrame extends JFrame implements GUIFrame {
         });
     }
 }
-

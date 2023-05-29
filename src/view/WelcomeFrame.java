@@ -15,10 +15,6 @@ import java.util.zip.ZipOutputStream;
  * This class will create a new WelcomeFrame, the initial GUI.
  * @author Taylor Merwin
  */
-
-//TODO: Make the font size dynamic
-
-
 public class WelcomeFrame extends JFrame  implements GUIFrame {
 
     /**
@@ -30,64 +26,55 @@ public class WelcomeFrame extends JFrame  implements GUIFrame {
         final double screenWidth = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
         final double screenHeight = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
         final Dimension frameSize = new Dimension((int) screenWidth / 2, (int) screenHeight / 2);
-
         // Set frame properties
         setTitle("Crafty Companion");
         setSize(frameSize);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null); // Center the frame
+        setLocationRelativeTo(null);
 
         //Create center panel and add it to the frame
-        JPanel centerPanel = new JPanel();
-        add(centerPanel, BorderLayout.CENTER);
+        JPanel centerPanel = new JPanel(new GridBagLayout());
+        getContentPane().add(centerPanel);
         //Create south panel and add it to the frame
-        JPanel southPanel = new JPanel();
+        JPanel southPanel = new JPanel(new GridLayout(1, 5));
         add(southPanel, BorderLayout.SOUTH);
-
         //Create components
-        JLabel welcomeLabel = new JLabel("Welcome to Crafty Companion!", SwingConstants.CENTER);
+        //welcome label should be centered in the center panel and span the entire width of the frame
+        JLabel welcomeLabel = new JLabel("Welcome to Crafty Companion!");
         JButton newButton = new JButton("New");
         JButton loadButton = new JButton("Load");
         JButton importButton = new JButton("Import");
         JButton exportButton = new JButton("Export");
+        JButton aboutButton = new JButton("About");
+        //buttons will be placed in JButton array
+        JButton[] buttons = {newButton, loadButton, importButton, exportButton, aboutButton};
 
         Font buttonFont = new Font("Arial", Font.PLAIN, (int) (frameSize.getHeight() / 30));
-        Font labelFont = new Font("Arial", Font.BOLD, (int) (frameSize.getHeight() / 20));
-
-        //Set fonts
+        Font labelFont = new Font("Arial", Font.BOLD, (int) (frameSize.getHeight() / 12));
+        //Set label fonts
         welcomeLabel.setFont(labelFont);
-        newButton.setFont(buttonFont);
-        loadButton.setFont(buttonFont);
-        importButton.setFont(buttonFont);
-        exportButton.setFont(buttonFont);
-
+        //Set button fonts
+        for (JButton button : buttons) {
+            button.setFont(buttonFont);
+        }
         //Set colors
         centerPanel.setBackground(BACKGROUND_COLOR);
         centerPanel.setForeground(FOREGROUND_COLOR);
         southPanel.setBackground(BACKGROUND_COLOR);
         southPanel.setForeground(FOREGROUND_COLOR);
         welcomeLabel.setForeground(FOREGROUND_COLOR);
-        newButton.setBackground(FOREGROUND_COLOR);
-        newButton.setForeground(BACKGROUND_COLOR);
-        loadButton.setBackground(FOREGROUND_COLOR);
-        loadButton.setForeground(BACKGROUND_COLOR);
-        importButton.setBackground(FOREGROUND_COLOR);
-        importButton.setForeground(BACKGROUND_COLOR);
-        exportButton.setBackground(FOREGROUND_COLOR);
-        exportButton.setForeground(BACKGROUND_COLOR);
 
-        // Add components to panels
-
+        //set button colors
+        for (JButton button : buttons) {
+            button.setBackground(FOREGROUND_COLOR);
+            button.setForeground(BACKGROUND_COLOR);
+        }
         // Add welcome label with dynamic font size
-        centerPanel.add(welcomeLabel, BorderLayout.CENTER);
-        // Add New button with dynamic resizing
-        southPanel.add(newButton);
-        // Add Load button with dynamic resizing
-        southPanel.add(loadButton);
-        // Add Import button with dynamic resizing
-        southPanel.add(importButton);
-        // Add Export button with dynamic resizing
-        southPanel.add(exportButton);
+        centerPanel.add(welcomeLabel);
+        //Add each button to the south panel
+        for (JButton button : buttons) {
+            southPanel.add(button);
+        }
 
         // Add event listeners to buttons
         newButton.addActionListener(new ActionListener() {
@@ -101,11 +88,11 @@ public class WelcomeFrame extends JFrame  implements GUIFrame {
         loadButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
                 new LoadFrame();
                 dispose();
             }
         });
-
 
         importButton.addActionListener(new ActionListener() {
             @Override
@@ -145,6 +132,13 @@ public class WelcomeFrame extends JFrame  implements GUIFrame {
                 else if (choice == JOptionPane.NO_OPTION) {
                     exportUserInfo();
                 }
+            }
+        });
+
+        aboutButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new AboutFrame();
             }
         });
 
