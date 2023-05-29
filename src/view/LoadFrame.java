@@ -176,6 +176,7 @@ public class LoadFrame extends JFrame implements GUIFrame {
     private void loadSelectedProject() {
         String selectedProject = (String) projectList.getClientProperty("projectName");
         if (selectedProject != null) {
+            Project.loadProject(selectedProject);
             dispose();
             new ProjectFrame(selectedProject);
         } else {
@@ -186,10 +187,10 @@ public class LoadFrame extends JFrame implements GUIFrame {
     }
 
 
-     * Refreshes the project list after deletion.
-     *
-     * @author Cameron Gregoire
-     */
+//     * Refreshes the project list after deletion.
+//     *
+//     * @author Cameron Gregoire
+//     */
     private void refreshProjectList() {
         String[][] projects = Project.getProjectList();
         List<String> projectData = new ArrayList<>();
