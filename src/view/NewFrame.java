@@ -1,6 +1,7 @@
 package view;
 
 import model.GBC;
+import model.Project;
 
 import javax.swing.*;
 import java.awt.*;
@@ -169,7 +170,7 @@ public class NewFrame implements GUIFrame {
     }
 
     private JButton cancelButton() {
-        JButton cancel = new JButton("cancel");
+        JButton cancel = new JButton("Cancel");
         cancel.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -214,9 +215,10 @@ public class NewFrame implements GUIFrame {
         if (!hasFailed) {
             BigDecimal theBudget = new BigDecimal(userBudget);
 
-            if(createProject(userName, theBudget, userDescription)) {
+            if(Project.createProject(userName, theBudget, userDescription)) {
+                Project.saveProject();
                 frame.dispose();
-//            new WelcomeFrame();
+                new WelcomeFrame();
             }
         }
         else {
