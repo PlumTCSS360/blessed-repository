@@ -40,6 +40,8 @@ public class NewFrame implements GUIFrame {
         budgetBox = new JTextField(20);
         descriptionBox = new JTextArea(10,20);
         descriptionBox.setLineWrap(true);
+        // Next line by Devin
+        descriptionBox.setWrapStyleWord(true);
         start();
     }
 
@@ -208,18 +210,12 @@ public class NewFrame implements GUIFrame {
         if (!hasFailed) {
             BigDecimal theBudget = new BigDecimal(userBudget);
 
-//            if(Project.createProject(userName, theBudget, userDescription)) {
-//                Project.saveProject();
-//                frame.dispose();
-//                new WelcomeFrame();
-//            }
+
 
                 Project.createProject(userProjectName, theBudget, userDescription);
                 Project.saveProject();
                 frame.dispose();
                 new ProjectFrame(userProjectName);
-
-
 
         }
         else {

@@ -140,6 +140,43 @@ public final class Project {
     }
 
     /**
+     * Get a list of all existing projects with project name and budget and expense.
+     * The list will be return as a 2D array that looks like this
+     * [project name 1][expense / budget]
+     * [project name 2][expense / budget]
+     * [project name 3][expense / budget]
+     * ...
+     * If there's no existing project, it returns an array with zero row and zero column.
+     * The expense and budget will be returned as a string in the format "expense / budget".
+     *
+     * @return A 2D array of string that represent the list of all existing projects.
+     */
+    public static String[][] getProjectList() {
+        String[][] projectList = new String[0][0];
+        File file = new File("data");
+
+        // Only accept directories (projects) in the data folder
+        File[] projects = file.listFiles(File::isDirectory);
+
+        if (projects != null && projects.length > 0) {
+            // Goes through all the project and read their name, budget, and expense.
+            projectList = new String[projects.length][2];
+            for (int i = 0; i < projects.length; i++) {
+                if (projects[i].isDirectory()) {
+                    // Read the project name
+                    projectList[i][0] = projects[i].getName();
+                    // Read the budget
+                    String budgetFilePath = projects[i].getPath() + Budget.FILE_NAME;
+                    Budget budget = Budget.loadBudgetFromTXT(budgetFilePath);
+                    projectList[i][1] = budget.getSpendingLimit().toString();
+                }
+            }
+        }
+
+        return projectList;
+    }
+
+    /**
      * Delete the project and the folder that store its data.
      *
      * @param theName The name of the project to be deleted.

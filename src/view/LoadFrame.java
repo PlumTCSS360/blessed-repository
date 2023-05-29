@@ -163,6 +163,8 @@ public class LoadFrame extends JFrame implements GUIFrame {
         } else {
             JOptionPane.showMessageDialog(null, "Select a project to delete.",
                     "Delete Project", JOptionPane.WARNING_MESSAGE);
+
+
         }
     }
 
@@ -174,17 +176,16 @@ public class LoadFrame extends JFrame implements GUIFrame {
     private void loadSelectedProject() {
         String selectedProject = (String) projectList.getClientProperty("projectName");
         if (selectedProject != null) {
-
-            Project.loadProject(selectedProject);
             dispose();
             new ProjectFrame(selectedProject);
         } else {
             JOptionPane.showMessageDialog(null, "Please select a project to load.",
                     "Load Project", JOptionPane.WARNING_MESSAGE);
+
         }
     }
 
-    /**
+
      * Refreshes the project list after deletion.
      *
      * @author Cameron Gregoire

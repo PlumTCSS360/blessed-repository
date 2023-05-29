@@ -3,9 +3,13 @@ package model;
 import java.awt.*;
 
 /**
- * This class is used to make GridBag
+ * This class is used to make GridBagConstraints a little more efficient. This will allow the most common fields to be
+ * set using a single constructor.
+ * @author Devin Peevy
  */
-public class GBC extends GridBagConstraints {
+public final class GBC extends GridBagConstraints {
+
+    // CONSTRUCTORS
 
     /**
      * This constructor creates a new GBC. The default gridwidth and gridheight are 1.
@@ -16,6 +20,7 @@ public class GBC extends GridBagConstraints {
         super();
         this.gridx = gridx;
         this.gridy = gridy;
+        this.insets = new Insets(5, 5, 5, 5);
     }
 
     /**
@@ -31,5 +36,6 @@ public class GBC extends GridBagConstraints {
         this.gridy = gridy;
         this.gridwidth = gridwidth;
         this.gridheight = gridheight;
+        this.insets = new Insets(5, 5, 5, 5);
     }
 }
