@@ -89,6 +89,7 @@ public class WelcomeFrame extends JFrame  implements GUIFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
 
+                new LoadFrame();
                 dispose();
             }
         });
