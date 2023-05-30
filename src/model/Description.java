@@ -18,7 +18,7 @@ public final class Description {
     // STATIC FIELDS
 
     /** The name of every Description File. */
-    public static final String FILE_NAME = "desc.txt";
+    public static final String FILE_NAME = "/desc.txt";
 
     // INSTANCE FIELDS
 

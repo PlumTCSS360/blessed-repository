@@ -29,7 +29,7 @@ public final class About {
     private Scanner fileScanner;
 
     /** This is the version number of the program. */
-    private final double version;
+    private final double version = 0.3;
 
     // CONSTRUCTOR
 
@@ -109,14 +109,4 @@ public final class About {
          return new Person(userName, userEmail);
      }
 
-    /**
-     * This method will fill the developers array with the developers of the program.
-     */
-    private void fillDevelopers() {
-        developers[0] = new Person("Devin Peevy", "dpeevy@uw.edu");
-        developers[1] = new Person("Junghyon Jo", "whwheoeo2015@gmail.com");
-        developers[2] = new Person("Taylor Merwin", "tmerwin@uw.edu");
-        developers[3] = new Person("Jiameng Li", "jli39@uw.edu");
-        developers[4] = new Person("Cameron Gregoire", "cgrego2@uw.edu");
-    }
 }
