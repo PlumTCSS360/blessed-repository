@@ -28,14 +28,13 @@ The code we have selected supports the following stories:
 
 The code to be reviewed is located at:
 
-	[WelcomeFrame](https://github.com/PlumTCSS360/blessed-repository/blob/main/src/view/WelcomeFrame.java)
-	
-	[NewFrame](https://github.com/PlumTCSS360/blessed-repository/blob/main/src/view/NewFrame.java)
-
-[LoadFrame](https://github.com/PlumTCSS360/blessed-repository/blob/main/src/view/LoadFrame.java)
-
 [Project](https://github.com/PlumTCSS360/blessed-repository/blob/main/src/model/Project.java)
 
+[NewFrame](https://github.com/PlumTCSS360/blessed-repository/blob/main/src/view/NewFrame.java)
+
+[WelcomeFrame](https://github.com/PlumTCSS360/blessed-repository/blob/main/src/view/WelcomeFrame.java)
+
+[LoadFrame](https://github.com/PlumTCSS360/blessed-repository/blob/main/src/view/LoadFrame.java)
 
 
 ## Instructions for Code Review
