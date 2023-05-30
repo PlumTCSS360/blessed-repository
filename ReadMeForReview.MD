@@ -28,7 +28,8 @@ The code we have selected supports the following stories:
 
 The code to be reviewed is located at:
 
-	[welcomeFrame]https://github.com/PlumTCSS360/blessed-repository/blob/main/src/view/WelcomeFrame.java)
+	[WelcomeFrame](https://github.com/PlumTCSS360/blessed-repository/blob/main/src/view/WelcomeFrame.java)
+	
 	[NewFrame](https://github.com/PlumTCSS360/blessed-repository/blob/main/src/view/NewFrame.java)
 
 [LoadFrame](https://github.com/PlumTCSS360/blessed-repository/blob/main/src/view/LoadFrame.java)
