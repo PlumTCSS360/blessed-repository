@@ -53,9 +53,8 @@ Guidelines for reviewing our code:
 
 ## Outstanding Questions and Thoughts from the Team
 
-       +Our UI uses BorderLayout to place New, Load, Export, and Import buttons in the South. I wonder if we can put these buttons a little more practical.
++Our UI uses BorderLayout to place New, Load, Export, and Import buttons in the South. I wonder if we can put these buttons a little more practical.
 
-       +We would like to know whether our UI of WelcomeFrame, NewFrame, or LoadFrame works properly on different resolutions. 
++We would like to know whether our UI of WelcomeFrame, NewFrame, or LoadFrame works properly on different resolutions.
 
-
-       +Our NewFrame class will catch invalid input such as non numerical value and negative value. However, It can’t catch a positive value with more than two floating values such as 2000.1234. We wonder if it's appropriate for us to catch this wrong input. If we had to, we'd like to know how.
++Our NewFrame class will catch invalid input such as non numerical value and negative value. However, It can’t catch a positive value with more than two floating values such as 2000.1234. We wonder if it's appropriate for us to catch this wrong input. If we had to, we'd like to know how.
