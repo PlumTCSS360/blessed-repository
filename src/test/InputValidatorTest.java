@@ -5,14 +5,24 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
-
+/**
+ * Junit Test for InputValidator class
+ * @author Junghyon Jo
+ *
+ */
 class InputValidatorTest {
 
+    /**
+     * Before test, It creates InputValidator object
+     */
     @BeforeEach
     void setUp() {
         InputValidator validator = new InputValidator();
     }
 
+    /**
+     * Test for validName() method
+     */
     @Test
     void validName() {
 //        {
