@@ -185,7 +185,7 @@ public class LoadFrame extends JFrame implements GUIFrame {
         }
     }
 
-
+    /**
      * Refreshes the project list after deletion.
      *
      * @author Cameron Gregoire

@@ -12,7 +12,7 @@ import java.util.*;
  * It also contains the necessary methods for creating, deleting, and loading subprojects.
  *
  * @author Jiameng Li
- * @version v0.1
+ * @version 0.3
  */
 public final class Project {
 
@@ -42,6 +42,7 @@ public final class Project {
     /**
      * Get the project name.
      *
+     * @author Jiameng Li
      * @return The project name.
      */
     public static String getProjectName() {
@@ -51,6 +52,7 @@ public final class Project {
     /**
      * Get the project budget.
      *
+     * @author Jiameng Li
      * @return The project budget.
      */
     public static Budget getBudget() {
@@ -60,6 +62,7 @@ public final class Project {
     /**
      * Get the project description.
      *
+     * @author Jiameng Li
      * @return The project description.
      */
     public static Description getProjectDescription() {
@@ -69,6 +72,7 @@ public final class Project {
     /**
      * Get a subproject from the list by the subproject name.
      *
+     * @author Jiameng Li
      * @param theName The name of the subproject to get.
      * @return A subproject with given name, if there's such subproject.
      */
@@ -79,6 +83,7 @@ public final class Project {
     /**
      * Get a copy of the list of subproject.
      *
+     * @author Jiameng Li
      * @return A copy of the list of subproject.
      */
     public static Map<String, Subproject> getSubprojectsList() {
@@ -98,6 +103,7 @@ public final class Project {
      *      2. The name of the project must not be blank, longer than 25 characters, or contains illegal characters.
      * </p>
      *
+     * @author Jiameng Li
      * @param theName The name of the new project.
      * @param theBudget The total budget of the new project.
      * @param theDescription The description of the new project.
@@ -140,15 +146,15 @@ public final class Project {
     }
 
     /**
-     * Get a list of all existing projects with project name and budget and expense.
+     * Get a list of all existing projects with project name and budget.
      * The list will be return as a 2D array that looks like this
-     * [project name 1][expense / budget]
-     * [project name 2][expense / budget]
-     * [project name 3][expense / budget]
+     * [project name 1][budget]
+     * [project name 2][budget]
+     * [project name 3][budget]
      * ...
      * If there's no existing project, it returns an array with zero row and zero column.
-     * The expense and budget will be returned as a string in the format "expense / budget".
      *
+     * @author Jiameng Li
      * @return A 2D array of string that represent the list of all existing projects.
      */
     public static String[][] getProjectList() {
@@ -179,6 +185,7 @@ public final class Project {
     /**
      * Delete the project and the folder that store its data.
      *
+     * @author Jiameng Li
      * @param theName The name of the project to be deleted.
      */
     public static void deleteProject(final String theName) {
@@ -207,6 +214,8 @@ public final class Project {
      * <p>
      *     Precondition: The project to be saved is currently opened.
      * </p>
+     *
+     * @author Jiameng Li
      */
     public static void saveProject() {
         // Path to the folder where project information will be stored.
@@ -228,6 +237,7 @@ public final class Project {
      *     Precondition: The selected project exists.
      * </p>
      *
+     * @author Jiameng Li
      * @param theName The name of the project to be loaded.
      */
     public static void loadProject(final String theName) {
@@ -259,6 +269,8 @@ public final class Project {
      * Close the project by setting project name, budget, and description to null,
      * and clear the list of subprojects.
      * This method auto save the project before it close.
+     *
+     * @author Jiameng Li
      */
     public static void closeProject() {
         saveProject();
@@ -282,6 +294,7 @@ public final class Project {
      *     2. The name of the subproject must not be blank, longer than 25 characters, or contains illegal characters.
      * </p>
      *
+     * @author Jiameng Li
      * @param theName The name of the new subproject.
      * @param theBudget The budget of the new subproject.
      * @param theDescription The description of the new subproject.
@@ -329,6 +342,7 @@ public final class Project {
     /**
      * Delete the subproject and the folder that stores its data.
      *
+     * @author Jiameng Li
      * @param theName The name of the subproject to be deleted.
      */
     public static void deleteSubproject(final String theName) {
@@ -341,6 +355,7 @@ public final class Project {
      * This method is declared private because it should only be called within the
      * loadProject() method. The program should not load a subproject without loading a project.
      *
+     * @author Jiameng Li
      * @param theSubproject The directory where the subproject is saved.
      */
     private static void loadSubproject(final File theSubproject) {
@@ -364,14 +379,6 @@ public final class Project {
         } catch (IOException e) {
             System.out.println("Can't load subproject :" + e);
         }
-    }
-
-    /**model/Project.java:394
-     * @author Devin Peevy
-     * @return The name of the project.
-     */
-    public String getMyName() {
-        return myName;
     }
 
 }

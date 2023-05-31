@@ -1,9 +1,6 @@
 package test;
 
-import model.FileAccessor;
-import model.Option;
-import model.Project;
-import model.Subproject;
+import model.*;
 import org.junit.jupiter.api.*;
 
 import java.io.File;
@@ -27,6 +24,8 @@ class SubprojectTest {
     /**
      * Before the test, create a test project and test subproject.
      * Set up the image that will be used in tests for sketches. The same image is saved as TestImage.png.
+     *
+     * @author Jiameng Li
      */
     @BeforeAll
     static void setupTest() {
@@ -38,8 +37,9 @@ class SubprojectTest {
 
     /**
      * Test for {@link model.Subproject#createOption(String, BigDecimal, String, String)}
-     *
      * Create an option and add it to the options list.
+     *
+     * @author Jiameng Li
      */
     @Test
     @Order(1)
@@ -51,7 +51,7 @@ class SubprojectTest {
         Option op = sp.getOptionsList().get("Test Option");
         assertEquals("Test Option", op.getName());
         assertEquals("90", op.getCost().toString());
-//        assertEquals("Test option description.", op.getDescription());
+        assertEquals("Test option description.", op.getDescription().getDescription());
         assertEquals("http://www.website.com", op.getWebsite().toString());
         assertEquals("http://www.website.com", op.getWebsite().toString());
         assertEquals(Option.CONTRACTOR_SETUP, op.getContractorInfo());
@@ -60,8 +60,9 @@ class SubprojectTest {
 
     /**
      * Test for {@link model.Subproject#createOption(String, BigDecimal, String, String)}
-     *
      * Check if the folder and empty text files for the new option are created.
+     *
+     * @author Jiameng Li
      */
     @Test
     @Order(2)
@@ -80,8 +81,9 @@ class SubprojectTest {
 
     /**
      * Test for {@link model.Subproject#createNote(String, String)}
-     *
      * Create a note and add it to the notes list.
+     *
+     * @author Jiameng Li
      */
     @Test
     @Order(3)
@@ -94,8 +96,9 @@ class SubprojectTest {
 
     /**
      * Test for {@link model.Subproject#createNote(String, String)}
-     *
      * Check if the empty text file for the new note is created.
+     *
+     * @author Jiameng Li
      */
     @Test
     @Order(4)
@@ -108,9 +111,10 @@ class SubprojectTest {
 
     /**
      * Test for {@link model.Subproject#createSketch(String, String)}
-     *
      * Create a sketch and add it the sketches list.
      * The content in the list is checked manually for convenient.
+     *
+     * @author Jiameng Li
      */
     @Test
     @Order(5)
@@ -122,8 +126,9 @@ class SubprojectTest {
 
     /**
      * Test for {@link model.Subproject#createSketch(String, String)}
-     *
      * Check if the empty png file for new sketch is created.
+     *
+     * @author Jiameng Li
      */
     @Test
     @Order(6)
@@ -136,8 +141,9 @@ class SubprojectTest {
 
     /**
      * Test for {@link model.Subproject#setNoteContent(String, String)}
-     *
      * Set new content to an existing note.
+     *
+     * @author Jiameng Li
      */
     @Test
     @Order(8)
@@ -153,14 +159,26 @@ class SubprojectTest {
      * Check whether the budget, description, and notes are saved correctly.
      * This method doesn't check whether options are saved.
      * Sketches are checked manually for convenient.
+     *
+     * @author Jiameng Li
      */
     @Test
     @Order(9)
     void testSaveSubproject() {
         Project.closeProject();
         final String path = "data/Test Project/Test Subproject";
-        // TODO Test description and budget
-        String content = FileAccessor.readTxtFile(path + "/Notes/Test Note.txt");
+        String content = FileAccessor.readTxtFile(path + Budget.FILE_NAME);
+        String expected = """
+                data/Test Project/Test Subproject
+                spending limit:100.00
+                end""";
+        assertEquals(expected, content);
+        content = FileAccessor.readTxtFile(path + Description.FILE_NAME);
+        expected = """
+                data/Test Project/Test Subproject
+                Test subproject description.""";
+        assertEquals(expected, content);
+        content = FileAccessor.readTxtFile(path + "/Notes/Test Note.txt");
         assertEquals("New note content.", content);
     }
 
@@ -168,13 +186,14 @@ class SubprojectTest {
      * Test for loadOptionsNotesSketches() in Subproject class.
      * Check whether the subproject is loaded correctly from data files.
      * This doesn't check whether the options list is loaded.
+     *
+     * @author Jiameng Li
      */
     @Test
     @Order(10)
     void testLoadOptionsNotesSketches() {
         Project.loadProject("Test Project");
         sp = Project.getSubproject("Test Subproject");
-        // TODO Test budget and description
         // Notes list
         assertEquals(1, sp.getNotesList().size());
         assertTrue(sp.getNotesList().containsKey("Test Note"));
@@ -186,7 +205,9 @@ class SubprojectTest {
 
     /**
      * Test for loadOption() in Subproject class.
-     * Check if the options list is loaded from data files correctly
+     * Check if the options list is loaded from data files correctly.
+     *
+     * @author Jiameng Li
      */
     @Test
     @Order(11)
@@ -205,8 +226,9 @@ class SubprojectTest {
 
     /**
      * Test for {@link model.Subproject#deleteOption(String)}
-     *
      * Check if the deleted option is removed from the link and if the folder is deleted.
+     *
+     * @author Jiameng Li
      */
     @Test
     @Order(12)
@@ -219,8 +241,9 @@ class SubprojectTest {
 
     /**
      * Test for {@link model.Subproject#deleteNote(String)}
-     *
      * Check if the deleted note is removed from the link and if the file is deleted.
+     *
+     * @author Jiameng Li
      */
     @Test
     @Order(13)
@@ -233,8 +256,9 @@ class SubprojectTest {
 
     /**
      * Test for {@link model.Subproject#deleteSketch(String)}
-     *
      * Check if the deleted sketch is removed from the link and if the file is deleted.
+     *
+     * @author Jiameng Li
      */
     @Test
     @Order(14)
@@ -247,6 +271,8 @@ class SubprojectTest {
 
     /**
      * Delete the test project when finishing teh test.
+     *
+     * @author Jiameng Li
      */
     @AfterAll
     static void finishTest() {

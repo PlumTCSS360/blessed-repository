@@ -88,9 +88,8 @@ public class WelcomeFrame extends JFrame  implements GUIFrame {
         loadButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
-                new LoadFrame();
                 dispose();
+                new LoadFrame();
             }
         });
 
@@ -177,22 +176,36 @@ public class WelcomeFrame extends JFrame  implements GUIFrame {
         final int option = myFolderChooser.showOpenDialog(null);
         if (option == JFileChooser.APPROVE_OPTION) {
             File selectedDir = myFolderChooser.getSelectedFile();
-            File newDir = new File("data/" + selectedDir.getName());
-            newDir.mkdir();
+            if (isValidProject(selectedDir.getPath())) {
+                File newDir = new File("data/" + selectedDir.getName());
+                newDir.mkdir();
 
-            //copy the contents of the selected directory to the new directory
-            try {
-                File[] files = selectedDir.listFiles();
-                for (File file : files) {
-                    if (file.isDirectory()) {
-                        File newSubDir = new File(newDir.getAbsolutePath() + "/" + file.getName());
-                        newSubDir.mkdir();
-                        File[] subFiles = file.listFiles();
-                        for (File subFile : subFiles) {
-                            File newSubFile = new File(newSubDir.getAbsolutePath() + "/" + subFile.getName());
-                            newSubFile.createNewFile();
-                            FileReader in = new FileReader(subFile);
-                            FileWriter out = new FileWriter(newSubFile);
+                //copy the contents of the selected directory to the new directory
+                try {
+                    File[] files = selectedDir.listFiles();
+                    for (File file : Objects.requireNonNull(files)) {
+                        if (file.isDirectory()) {
+                            File newSubDir = new File(newDir.getAbsolutePath() + "/" + file.getName());
+                            newSubDir.mkdir();
+                            File[] subFiles = file.listFiles();
+                            for (File subFile : Objects.requireNonNull(subFiles)) {
+                                File newSubFile = new File(newSubDir.getAbsolutePath() + "/" +
+                                        subFile.getName());
+                                newSubFile.createNewFile();
+                                FileReader in = new FileReader(subFile);
+                                FileWriter out = new FileWriter(newSubFile);
+                                int c;
+                                while ((c = in.read()) != -1) {
+                                    out.write(c);
+                                }
+                                in.close();
+                                out.close();
+                            }
+                        } else {
+                            File newFile = new File(newDir.getAbsolutePath() + "/" + file.getName());
+                            newFile.createNewFile();
+                            FileReader in = new FileReader(file);
+                            FileWriter out = new FileWriter(newFile);
                             int c;
                             while ((c = in.read()) != -1) {
                                 out.write(c);
@@ -200,21 +213,14 @@ public class WelcomeFrame extends JFrame  implements GUIFrame {
                             in.close();
                             out.close();
                         }
-                    } else {
-                        File newFile = new File(newDir.getAbsolutePath() + "/" + file.getName());
-                        newFile.createNewFile();
-                        FileReader in = new FileReader(file);
-                        FileWriter out = new FileWriter(newFile);
-                        int c;
-                        while ((c = in.read()) != -1) {
-                            out.write(c);
-                        }
-                        in.close();
-                        out.close();
                     }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
                 }
-            } catch (Exception ex) {
-                ex.printStackTrace();
+            } else {
+                JOptionPane.showMessageDialog(null,
+                        "The folder you selected is not a valid project", "Invalid Project",
+                        JOptionPane.ERROR_MESSAGE);
             }
         }
     }
@@ -297,6 +303,7 @@ public class WelcomeFrame extends JFrame  implements GUIFrame {
     /**
      * A helper method that zip the project.
      *
+     * @author Jiameng Li
      * @param theZos Output stream that write to the zip file.
      * @param theFile The file that contains the data to write to the zip file.
      * @param theParent The parent directory.
@@ -330,5 +337,69 @@ public class WelcomeFrame extends JFrame  implements GUIFrame {
         }
     }
 
+    /**
+     * Check if the folder in the given path is a valid project to import.
+     * <p>
+     *     A valid project should contains budget.txt and desc.txt files.
+     *     It's subprojects should also contains these two files as well as Notes, Sketches, and Options folders.
+     *     Options folder should only contains other folder that store information about each option.
+     *     In each option folder, there should be five txt files: desc.txt, cost.txt, contractor.txt, warranty.txt,
+     *     and website.txt.
+     * </p>
+     *
+     * @author Jiameng Li
+     * @param thePath The path to the project folder.
+     * @return The folder in the given path is a valid project to import.
+     */
+    private static boolean isValidProject(final String thePath) {
+        boolean isValid = true;
+        // Name of data files for budget and description
+        final String[] filesNeeded = {"/budget.txt", "/desc.txt"};
+        // Check if the project contains data files for budget and description
+        for (int i = 0; i < filesNeeded.length && isValid; i++) {
+            File file = new File(thePath + filesNeeded[i]);
+            isValid = file.exists() && file.length() > 0;
+        }
+        // Check whether each subproject contains necessary folders and files
+        if (isValid) {
+            File file = new File(thePath);
+            for (File subproject : Objects.requireNonNull(file.listFiles(File::isDirectory))) {
+                String path = subproject.getPath();
+                // Check if the subproject contains data files for budget and description
+                for (int i = 0; i < filesNeeded.length && isValid; i++) {
+                    file = new File(path + filesNeeded[i]);
+                    isValid = file.exists() && file.length() > 0;
+                }
+                // Check if the subproject contains "Notes" folder that only contains text files
+                file = new File(path + "/Notes");
+                if (isValid && file.exists()) {
+                    File[] invalidFiles = file.listFiles((dir, name) -> !name.endsWith(".txt"));
+                    isValid = Objects.requireNonNull(invalidFiles).length == 0;
+                }
+                // Check if the subproject contains "Sketches" folder that only contains png files
+                file = new File(path + "/Sketches");
+                if (isValid && file.exists()) {
+                    File[] invalidFiles = file.listFiles((dir, name) -> !name.endsWith(".png"));
+                    isValid = Objects.requireNonNull(invalidFiles).length == 0;
+                }
+                // Check if the subproject contains "Options" folder
+                file = new File(path + "/Options");
+                if (isValid && file.exists()) {
+                    final String[] necessaryFiles = {"/desc.txt", "/cost.txt", "/contractor.txt", "/warranty.txt",
+                            "/website.txt"};
+                    File[] options = file.listFiles();      // All options in the Options folder
+                    // Check if each option contains necessary files for the option
+                    for (File op : options) {
+                        path = op.getPath();
+                        for (int i = 0; i < necessaryFiles.length && isValid; i++) {
+                            file = new File(path + necessaryFiles[i]);
+                            isValid = file.exists();
+                        }
+                    }
+                }
+            }
+        }
+        return isValid;
+    }
 
 }

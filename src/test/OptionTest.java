@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * JUnit test for the Option class.
  *
  * @author Jiameng Li
- * @version v0.1
+ * @version 0.3
  */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class OptionTest {
@@ -24,19 +24,23 @@ class OptionTest {
 
     /**
      * Before the test, create a test project, a test subproject, and a test option.
+     *
+     * @author Jiameng Li
      */
     @BeforeAll
     static void setupTest() {
         Project.createProject("Test Project", new BigDecimal("500"),
-                "Test project description.");
+                "Test project description");
         final Subproject sp = Project.createSubproject("Test Subproject", new BigDecimal("100"),
-                "Test subproject description.");
+                "Test subproject description");
         op = sp.createOption("Test Option", new BigDecimal("90"), "Test option description",
                 "http://www.website.com");
     }
 
     /**
      * Test for {@link model.Option#setCost(BigDecimal)}
+     *
+     * @author Jiameng Li
      */
     @Test
     @Order(1)
@@ -47,6 +51,8 @@ class OptionTest {
 
     /**
      * Test for {@link model.Option#setWebsite(String)}
+     *
+     * @author Jiameng Li
      */
     @Test
     @Order(3)
@@ -57,6 +63,8 @@ class OptionTest {
 
     /**
      * Test for {@link model.Option#setContractorInfo(String)}
+     *
+     * @author Jiameng Li
      */
     @Test
     @Order(4)
@@ -67,6 +75,8 @@ class OptionTest {
 
     /**
      * Test for {@link model.Option#setWarrantyInfo(String)}
+     *
+     * @author Jiameng Li
      */
     @Test
     @Order(5)
@@ -78,14 +88,22 @@ class OptionTest {
     /**
      * Test for saveOption() in Option class.
      * Check if information about the option are saved correctly.
+     *
+     * @author Jiameng Li
      */
     @Test
     @Order(6)
     void saveOption() {
         Project.saveProject();
         final String path = "data/Test Project/Test Subproject/Options/Test Option";
-        // TODO Test desctiption and budget
-        String content = FileAccessor.readTxtFile(path + "/website.txt");
+        String content = FileAccessor.readTxtFile(path + "/desc.txt");
+        String expected = """
+                data/Test Project/Test Subproject/Options/Test Option
+                Test option description""";
+        assertEquals(expected, content);
+        content = FileAccessor.readTxtFile(path + "/cost.txt");
+        assertEquals("80", content);
+        content = FileAccessor.readTxtFile(path + "/website.txt");
         assertEquals("https://www.anotherwebsite.com", content);
         content = FileAccessor.readTxtFile(path + "/contractor.txt");
         assertEquals("Test contractor information", content);
@@ -95,6 +113,8 @@ class OptionTest {
 
     /**
      * Delete the test project when finishing teh test.
+     *
+     * @author Jiameng Li
      */
     @AfterAll
     static void finishTest() {
