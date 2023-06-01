@@ -8,7 +8,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeSupport;
-import java.io.FileNotFoundException;
 
 public class EditDescriptionFrame extends JFrame implements GUIFrame {
 
@@ -18,7 +17,7 @@ public class EditDescriptionFrame extends JFrame implements GUIFrame {
 
     private DescriptionPanel listener;
 
-    private JTextField descriptionField;
+    private JTextArea descriptionArea;
 
     private PropertyChangeSupport pcs;
 
@@ -28,8 +27,13 @@ public class EditDescriptionFrame extends JFrame implements GUIFrame {
         super(description.getProjectName() + " - Edit Description");
         this.description = description;
         this.listener = listener;
-        this.descriptionField = new JTextField(description.getDescription(), 20);
+        this.descriptionArea = new JTextArea(description.getDescription(), 10, 20);
         this.pcs = new PropertyChangeSupport(this);
+
+        // Enable line wrap and word wrap
+        descriptionArea.setLineWrap(true);
+        descriptionArea.setWrapStyleWord(true);
+
         start();
     }
 
@@ -38,7 +42,7 @@ public class EditDescriptionFrame extends JFrame implements GUIFrame {
     private void start() {
         pcs.addPropertyChangeListener(listener);
         int width = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth() / 4;
-        int height = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight() / 4;
+        int height = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight() / 2;
         setSize(new Dimension(width, height));
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -57,10 +61,15 @@ public class EditDescriptionFrame extends JFrame implements GUIFrame {
         String title = description.getProjectName() + ": Description";
         panel.add(textArea(title, CENTER_ALIGNMENT, HEADING_FONT), gbc);
         gbc = new GBC(0, 1, 2, 1);
-        panel.add(descriptionField, gbc);
+        panel.add(new JScrollPane(descriptionArea), gbc); // Use a JScrollPane for the text area
 
         JButton cancel = new JButton("Cancel");
         JButton apply = new JButton("Apply");
+
+        Dimension buttonSize = new Dimension(100, 30);
+        cancel.setPreferredSize(buttonSize);
+        apply.setPreferredSize(buttonSize);
+
         cancel.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -81,7 +90,7 @@ public class EditDescriptionFrame extends JFrame implements GUIFrame {
     }
 
     private void applyAction() {
-        pcs.firePropertyChange("editDescription", description.getDescription(), descriptionField.getText());
+        pcs.firePropertyChange("editDescription", description.getDescription(), descriptionArea.getText()); // Change: Use descriptionArea.getText()
         dispose();
     }
 
@@ -92,9 +101,5 @@ public class EditDescriptionFrame extends JFrame implements GUIFrame {
         textArea.setBackground(BACKGROUND_COLOR);
         textArea.setForeground(FOREGROUND_COLOR);
         return textArea;
-    }
-
-    public static void main(String[] args) throws FileNotFoundException {
-        new EditDescriptionFrame(Description.loadDescriptionFromTXT("data/sample/desc.txt"), new DescriptionPanel(Description.loadDescriptionFromTXT("data/sample/desc.txt")));
     }
 }
