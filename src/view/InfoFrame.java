@@ -59,16 +59,17 @@ public final class InfoFrame implements GUIFrame {
      */
     private void start() {
         //Set the size.
-        final double screenWidth = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
-        final double screenHeight = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
-        final Dimension frameSize = new Dimension((int) screenWidth / 3, (int) screenHeight / 3);
-        frame.setSize(frameSize);
+//        final double screenWidth = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
+//        final double screenHeight = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
+//        final Dimension frameSize = new Dimension((int) screenWidth / 3, (int) screenHeight / 3);
+//        frame.setSize(frameSize);
         frame.setResizable(false);
         //Center it.
         frame.setLocationRelativeTo(null);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         //Show everything I want it to show.
         displayText();
+        frame.pack();
         //Make it show up.
         frame.setVisible(true);
     }
