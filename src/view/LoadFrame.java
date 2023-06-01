@@ -176,6 +176,7 @@ public class LoadFrame extends JFrame implements GUIFrame {
     private void loadSelectedProject() {
         String selectedProject = (String) projectList.getClientProperty("projectName");
         if (selectedProject != null) {
+            Project.loadProject(selectedProject);
             dispose();
             new ProjectFrame(selectedProject);
         } else {

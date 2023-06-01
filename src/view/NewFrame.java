@@ -1,5 +1,7 @@
 package view;
 
+import model.Budget;
+import model.Description;
 import model.GBC;
 import model.Project;
 
@@ -7,11 +9,17 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.awt.BorderLayout;
 import java.math.BigDecimal;
 
+import static model.Project.createProject;
+
 /**
- * This class creates a window allowing the user to create a new project from scratch.
+ * This class creates New window so that users can create new project with
+ * their own input, name of project, spending limit, and description of project.
  */
 public class NewFrame implements GUIFrame {
 
@@ -23,11 +31,9 @@ public class NewFrame implements GUIFrame {
 
     private final JTextArea descriptionBox;
 
-    private String userProjectName;
+    private String userName;
 
     private String userBudget;
-
-    private String userExpense;
 
     private String userDescription;
 
@@ -35,19 +41,14 @@ public class NewFrame implements GUIFrame {
         frame = new JFrame("Crafty Companion - New");
         userBudget = null;
         userDescription = null;
-        userProjectName = null;
+        userName = null;
         nameBox = new JTextField(20);
         budgetBox = new JTextField(20);
         descriptionBox = new JTextArea(10,20);
         descriptionBox.setLineWrap(true);
-        // Next line by Devin
-        descriptionBox.setWrapStyleWord(true);
         start();
     }
 
-    /**
-     * This method will set up the InfoFrame how I want it atn
-     */
     private void start() {
         //Show everything I want it to show.
         frame.setLayout(new BorderLayout());
@@ -63,6 +64,10 @@ public class NewFrame implements GUIFrame {
         //Make it show up.
         frame.setVisible(true);
     }
+    /**
+     *  Method to create button
+     *  @return panel
+     */
     private JPanel buttonCreator() {
         JPanel panel = new JPanel();
         panel.setSize(frame.getSize());
@@ -73,6 +78,11 @@ public class NewFrame implements GUIFrame {
 
         return panel;
     }
+
+    /**
+     * Method to create panel to display questions and to get user input
+     * @return panel
+     */
     private JPanel displayText() {
         //Initiate the panel
         JPanel panel = new JPanel();
@@ -115,6 +125,10 @@ public class NewFrame implements GUIFrame {
         return panel;
     }
 
+    /**
+     *  Method to create panel for greeting
+     * @return panel
+     */
     private JPanel greetingPanel() {
 
         JPanel panel = new JPanel();
@@ -124,6 +138,11 @@ public class NewFrame implements GUIFrame {
 
         return panel;
     }
+
+    /**
+     * method to create displaying message
+     * @return greeting
+     */
     private JLabel greeting() {
         JLabel greeting = new JLabel("You are creating your new project!");
         greeting.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -133,24 +152,38 @@ public class NewFrame implements GUIFrame {
         return greeting;
     }
 
+    /**
+     * method to create question message
+     * @return nameQ
+     */
     private JLabel nameQ() {
         JLabel nameQ = textArea("What is your name of your project?", JLabel.LEFT_ALIGNMENT,
                 BODY_FONT);
         return nameQ;
     }
-
+    /**
+     * method to create question message
+     * @return budgetQ
+     */
     private JLabel budgetQ() {
         JLabel budgetQ = textArea("What is your spending limit?", JLabel.LEFT_ALIGNMENT,
                 BODY_FONT);
         return budgetQ;
     }
-
+    /**
+     * method to create question message
+     * @return descriptionM
+     */
     private JLabel descriptionM() {
         JLabel descriptionM = textArea("Write any description of your project please.", JTextArea.LEFT_ALIGNMENT,
                 BODY_FONT);
         return descriptionM;
     }
 
+    /**
+     * method to add create button with how it is supposed to work
+     * @return create
+     */
     private JButton createButton() {
         JButton create = new JButton("Create");
         create.addActionListener(new ActionListener() {
@@ -163,7 +196,10 @@ public class NewFrame implements GUIFrame {
         create.setForeground(BACKGROUND_COLOR);
         return create;
     }
-
+    /**
+     * method to add cancel button with how it is supposed to work
+     * @return cancel
+     */
     private JButton cancelButton() {
         JButton cancel = new JButton("Cancel");
         cancel.addActionListener(new ActionListener() {
@@ -176,6 +212,10 @@ public class NewFrame implements GUIFrame {
         cancel.setForeground(BACKGROUND_COLOR);
         return cancel;
     }
+
+    /**
+     * method to add action of cancel button as it is clicked by user
+     */
     private void cancelAction(){
         int result = JOptionPane.showConfirmDialog(null, "Do you want to cancel?");
 
@@ -185,14 +225,18 @@ public class NewFrame implements GUIFrame {
         }
 
     }
+    /**
+     * method to add action of create button as it is clicked by user
+     */
     private void createAction() {
         boolean hasFailed = false;
-        userProjectName = nameBox.getText();
+        userName = nameBox.getText();
         userBudget = budgetBox.getText();
         userDescription = descriptionBox.getText();
 
         int countDot = 0;
 
+        //it catches the invalid input if user enter negative number and non-numeric value.
         for(int i = 0; i < userBudget.length(); i++){
             if((userBudget.charAt(i) <48 && userBudget.charAt(i) != 46) || (userBudget.charAt(i) > 57 && userBudget.charAt(i) != 46)){
                 JOptionPane.showMessageDialog(null, "Budget Error: You entered invalid budget!");
@@ -212,11 +256,16 @@ public class NewFrame implements GUIFrame {
 
 
 
-                Project.createProject(userProjectName, theBudget, userDescription);
-                Project.saveProject();
-                frame.dispose();
-                new ProjectFrame(userProjectName);
+            if(createProject(userName, theBudget, userDescription)) {
+                Budget mybudget = new Budget("data/" + userName + "/", theBudget);
+                Description myDescription = new Description("data/" + userName, userDescription);
+                mybudget.writeToTXT();
+                myDescription.writeToTXT();
 
+                frame.dispose();
+                Project.loadProject(userName);
+                new ProjectFrame(userName);
+            }
         }
         else {
             hasFailed = false;

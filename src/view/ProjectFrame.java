@@ -31,8 +31,8 @@ public class ProjectFrame implements GUIFrame{
     JPanel activityContainerPanel;
     JPanel buttonsPanel;
     //Activity panels to display in the activity panel
-    JPanel budgetPanel;
-    JPanel descriptionPanel;
+    BudgetPanel budgetPanel;
+    DescriptionPanel descriptionPanel;
     JPanel todoListPanel;
     JPanel imagePanel;
     //array of activity panels
@@ -117,8 +117,8 @@ public class ProjectFrame implements GUIFrame{
         activityContainerPanel.setVisible(true);
 
         //initialize activity panels
-        budgetPanel = new JPanel();
-        descriptionPanel = new JPanel();
+        budgetPanel = new BudgetPanel(Project.getBudget());
+        descriptionPanel = new DescriptionPanel(Project.getProjectDescription());
         todoListPanel = new JPanel();
         imagePanel = new JPanel();
 
@@ -148,7 +148,6 @@ public class ProjectFrame implements GUIFrame{
      */
     private void createBudgetPanel() {
         budgetPanel.add(new JLabel("Budget Panel"));
-        budgetPanel.setBackground(Color.cyan);
         budgetPanel.setVisible(true);
     }
 
@@ -157,7 +156,6 @@ public class ProjectFrame implements GUIFrame{
      */
     private void createDescriptionPanel() {
         descriptionPanel.add(new JLabel("Description Panel"));
-        descriptionPanel.setBackground(Color.yellow);
         descriptionPanel.setVisible(true);
     }
 

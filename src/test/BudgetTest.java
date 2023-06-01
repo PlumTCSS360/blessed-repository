@@ -10,9 +10,17 @@ import java.math.RoundingMode;
 import java.util.LinkedList;
 
 import static org.junit.jupiter.api.Assertions.*;
-
+/**
+ * Junit Test for Budget class
+ * @author Junghyon Jo
+ *
+ */
 class BudgetTest {
 
+    /**
+     * Before test, It creates Budget Object.
+     * Test constructor works properly
+     */
     @BeforeEach
     void setUp() {
         BigDecimal spendingLimit = new BigDecimal("1000.50");
@@ -22,6 +30,9 @@ class BudgetTest {
         assertEquals("This is the file path"+ "/budget.txt", budgetTest.getFilePath());
     }
 
+    /**
+     * Test for setSpendingLimit() method
+     */
     @Test
     void setSpendingLimit() {
         BigDecimal spendingLimit = new BigDecimal("1000.50");
@@ -31,6 +42,9 @@ class BudgetTest {
         assertEquals(new BigDecimal("5000.50").setScale(2, RoundingMode.HALF_UP), budgetTest.getSpendingLimit());
     }
 
+    /**
+     * Test for getSpendingLimit() method
+     */
     @Test
     void getSpendingLimit() {
         BigDecimal spendingLimit = new BigDecimal("1000.50");
@@ -39,6 +53,9 @@ class BudgetTest {
         assertEquals(new BigDecimal("1000.50").setScale(2, RoundingMode.HALF_UP), budgetTest.getSpendingLimit());
     }
 
+    /**
+     * Test for getExpenses() method
+     */
     @Test
     void getExpenses() {
         BigDecimal spendingLimit = new BigDecimal("1000.50");
@@ -66,6 +83,9 @@ class BudgetTest {
 
     }
 
+    /**
+     * Test for changeExpense() method
+     */
     @Test
     void changeExpense() {
         BigDecimal spendingLimit = new BigDecimal("1000.50");
@@ -106,7 +126,9 @@ class BudgetTest {
         assertEquals(expenses.get(1).isChecked(), budgetTest.getExpenses().get(1).isChecked());
         assertEquals(expenses.get(2).isChecked(), budgetTest.getExpenses().get(2).isChecked());
     }
-
+    /**
+     * Test for addExpense() method
+     */
     @Test
     void addExpense() {
         BigDecimal spendingLimit = new BigDecimal("1000.50");
@@ -135,7 +157,9 @@ class BudgetTest {
         assertEquals(expenses.get(1).isChecked(), budgetTest.getExpenses().get(1).isChecked());
         assertEquals(expenses.get(2).isChecked(), budgetTest.getExpenses().get(2).isChecked());
     }
-
+    /**
+     * Test for removeExpense() method
+     */
     @Test
     void removeExpense() {
         BigDecimal spendingLimit = new BigDecimal("1000.50");
@@ -171,6 +195,9 @@ class BudgetTest {
         assertEquals(expenses.get(2).isChecked(), budgetTest.getExpenses().get(2).isChecked());
     }
 
+    /**
+     * Test for getRemainingAmount() method
+     */
     @Test
     void getRemainingAmount() {
         BigDecimal spendingLimit = new BigDecimal("1000.50");
@@ -184,15 +211,9 @@ class BudgetTest {
 
         assertEquals(new BigDecimal("200.50").setScale(2, RoundingMode.HALF_UP), budgetTest.getRemainingAmount());
     }
-
-//    @Test
-//    void writeToTXT() {
-//    }
-//
-//    @Test
-//    void loadBudgetFromTXT() {
-//    }
-
+    /**
+     * Test for getFilePath() method
+     */
     @Test
     void getFilePath() {
         BigDecimal spendingLimit = new BigDecimal("1000.50");
@@ -200,7 +221,9 @@ class BudgetTest {
         Budget budgetTest = new Budget(filePath, spendingLimit);
         assertEquals("This is the file path"+ "/budget.txt", budgetTest.getFilePath());
     }
-
+    /**
+     * Test for getCheckedExpenses() method
+     */
     @Test
     void getCheckedExpenses() {
         BigDecimal spendingLimit = new BigDecimal("1000.50");
@@ -233,7 +256,9 @@ class BudgetTest {
         assertEquals(checkedExpenses.get(1).isChecked(), checkedList.get(1).isChecked());
         assertEquals(checkedExpenses.get(2).isChecked(), checkedList.get(2).isChecked());
     }
-
+    /**
+     * Test for getUncheckedExpenses() method
+     */
     @Test
     void getUncheckedExpenses() {
         BigDecimal spendingLimit = new BigDecimal("1000.50");
