@@ -88,9 +88,8 @@ public class WelcomeFrame extends JFrame  implements GUIFrame {
         loadButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
-                new LoadFrame();
                 dispose();
+                new LoadFrame();
             }
         });
 
@@ -170,52 +169,71 @@ public class WelcomeFrame extends JFrame  implements GUIFrame {
 
     }
 
+    /**
+     * Allows the user to choose a folder that contains a project to import.
+     *
+     * @author Taylor Merwin
+     * @author Jiameng Li
+     */
     public static void importProject() {
+        // Display a file chooser
         JFileChooser myFolderChooser = new JFileChooser();
         myFolderChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
         final int option = myFolderChooser.showOpenDialog(null);
         if (option == JFileChooser.APPROVE_OPTION) {
             File selectedDir = myFolderChooser.getSelectedFile();
-            File newDir = new File("data/" + selectedDir.getName());
-            newDir.mkdir();
-
-            //copy the contents of the selected directory to the new directory
-            try {
-                File[] files = selectedDir.listFiles();
-                for (File file : files) {
-                    if (file.isDirectory()) {
-                        File newSubDir = new File(newDir.getAbsolutePath() + "/" + file.getName());
-                        newSubDir.mkdir();
-                        File[] subFiles = file.listFiles();
-                        for (File subFile : subFiles) {
-                            File newSubFile = new File(newSubDir.getAbsolutePath() + "/" + subFile.getName());
-                            newSubFile.createNewFile();
-                            FileReader in = new FileReader(subFile);
-                            FileWriter out = new FileWriter(newSubFile);
-                            int c;
-                            while ((c = in.read()) != -1) {
-                                out.write(c);
-                            }
-                            in.close();
-                            out.close();
-                        }
-                    } else {
-                        File newFile = new File(newDir.getAbsolutePath() + "/" + file.getName());
-                        newFile.createNewFile();
-                        FileReader in = new FileReader(file);
-                        FileWriter out = new FileWriter(newFile);
-                        int c;
-                        while ((c = in.read()) != -1) {
-                            out.write(c);
-                        }
-                        in.close();
-                        out.close();
-                    }
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
+            // Check if the selected folder is a valid project to import
+            if (isValidProject(selectedDir.getPath())) {
+                // Create a folder in database for the imported project
+                File newDir = new File("data/" + selectedDir.getName());
+                newDir.mkdir();
+                importProjectHelper(selectedDir, newDir);
+            } else {
+                // Invalid project folder selected
+                JOptionPane.showMessageDialog(null,
+                        "The folder you selected is not a valid project", "Invalid Project",
+                        JOptionPane.ERROR_MESSAGE);
             }
+        }
+    }
+
+    /**
+     * A helper method that recursively read the data in a project folder to import that project.
+     * Copy the contents of the selected directory to the new directory.
+     *
+     * @author Taylor Merwin
+     * @auther Jiameng Li
+     * @param theSelected The file or folder to be imported.
+     * @param theDest The destination where the imported file or folder will be stored.
+     */
+    public static void importProjectHelper(final File theSelected, final File theDest) {
+        try {
+            // Goes through each folder and file in the selected folder.
+            File[] files = theSelected.listFiles();
+            for (File file : Objects.requireNonNull(files)) {
+                // If the file is a directory, create a new folder in destination
+                // and call this helper method again
+                if (file.isDirectory()) {
+                    File newSubDir = new File(theDest.getAbsolutePath() + "/" + file.getName());
+                    newSubDir.mkdir();
+                    importProjectHelper(file, newSubDir);
+                } else {
+                    // If it's a normal file, copy the file to the destination
+                    File newFile = new File(theDest.getAbsolutePath() + "/" + file.getName());
+                    newFile.createNewFile();
+                    FileInputStream in = new FileInputStream(file);
+                    FileOutputStream out = new FileOutputStream(newFile);
+                    int c;
+                    while ((c = in.read()) != -1) {
+                        out.write(c);
+                    }
+                    in.close();
+                    out.close();
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 
@@ -297,6 +315,7 @@ public class WelcomeFrame extends JFrame  implements GUIFrame {
     /**
      * A helper method that zip the project.
      *
+     * @author Jiameng Li
      * @param theZos Output stream that write to the zip file.
      * @param theFile The file that contains the data to write to the zip file.
      * @param theParent The parent directory.
@@ -330,5 +349,69 @@ public class WelcomeFrame extends JFrame  implements GUIFrame {
         }
     }
 
+    /**
+     * Check if the folder in the given path is a valid project to import.
+     * <p>
+     *     A valid project should contains budget.txt and desc.txt files.
+     *     It's subprojects should also contains these two files as well as Notes, Sketches, and Options folders.
+     *     Options folder should only contains other folder that store information about each option.
+     *     In each option folder, there should be five txt files: desc.txt, cost.txt, contractor.txt, warranty.txt,
+     *     and website.txt.
+     * </p>
+     *
+     * @author Jiameng Li
+     * @param thePath The path to the project folder.
+     * @return The folder in the given path is a valid project to import.
+     */
+    private static boolean isValidProject(final String thePath) {
+        boolean isValid = true;
+        // Name of data files for budget and description
+        final String[] filesNeeded = {"/budget.txt", "/desc.txt"};
+        // Check if the project contains data files for budget and description
+        for (int i = 0; i < filesNeeded.length && isValid; i++) {
+            File file = new File(thePath + filesNeeded[i]);
+            isValid = file.exists() && file.length() > 0;
+        }
+        // Check whether each subproject contains necessary folders and files
+        if (isValid) {
+            File file = new File(thePath);
+            for (File subproject : Objects.requireNonNull(file.listFiles(File::isDirectory))) {
+                String path = subproject.getPath();
+                // Check if the subproject contains data files for budget and description
+                for (int i = 0; i < filesNeeded.length && isValid; i++) {
+                    file = new File(path + filesNeeded[i]);
+                    isValid = file.exists() && file.length() > 0;
+                }
+                // Check if the subproject contains "Notes" folder that only contains text files
+                file = new File(path + "/Notes");
+                if (isValid && file.exists()) {
+                    File[] invalidFiles = file.listFiles((dir, name) -> !name.endsWith(".txt"));
+                    isValid = Objects.requireNonNull(invalidFiles).length == 0;
+                }
+                // Check if the subproject contains "Sketches" folder that only contains png files
+                file = new File(path + "/Sketches");
+                if (isValid && file.exists()) {
+                    File[] invalidFiles = file.listFiles((dir, name) -> !name.endsWith(".png"));
+                    isValid = Objects.requireNonNull(invalidFiles).length == 0;
+                }
+                // Check if the subproject contains "Options" folder
+                file = new File(path + "/Options");
+                if (isValid && file.exists()) {
+                    final String[] necessaryFiles = {"/desc.txt", "/cost.txt", "/contractor.txt", "/warranty.txt",
+                            "/website.txt"};
+                    File[] options = file.listFiles();      // All options in the Options folder
+                    // Check if each option contains necessary files for the option
+                    for (File op : Objects.requireNonNull(options)) {
+                        path = op.getPath();
+                        for (int i = 0; i < necessaryFiles.length && isValid; i++) {
+                            file = new File(path + necessaryFiles[i]);
+                            isValid = file.exists();
+                        }
+                    }
+                }
+            }
+        }
+        return isValid;
+    }
 
 }

@@ -116,6 +116,7 @@ public final class Description {
             sb.append(s.nextLine());
         }
         String theDesc = sb.toString();
+        s.close();
         return new Description(thePFP, theDesc);
     }
 

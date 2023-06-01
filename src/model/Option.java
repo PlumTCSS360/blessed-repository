@@ -11,7 +11,7 @@ import java.util.Map;
  * Represent an option in a subproject.
  *
  * @author Jiameng Li
- * @version v0.1
+ * @version 0.3
  */
 public class Option {
 
@@ -61,6 +61,7 @@ public class Option {
      * Create an option with given name, cost, description, website, contractor information,
      * and warranty information.
      *
+     * @author Jiameng Li
      * @param theName The name of the option.
      * @param theCost The cost of the option.
      * @param theDescription The description of the option.
@@ -76,6 +77,7 @@ public class Option {
         myName = theName;
         myCost = theCost;
         myDescription = theDescription;
+        // Create a URI using the given link
         if (theWebsite.length() > 0) {
             try {
                 URL link = new URL(theWebsite);
@@ -111,6 +113,7 @@ public class Option {
     /**
      * Get the cost of the option.
      *
+     * @author Jiameng Li
      * @return The cost of the option.
      */
     public BigDecimal getCost() {
@@ -120,6 +123,7 @@ public class Option {
     /**
      * Get the description of the option.
      *
+     * @author Jiameng Li
      * @return The description of the option.
      */
     public Description getDescription() {
@@ -129,6 +133,7 @@ public class Option {
     /**
      * Get the link to the website of the option.
      *
+     * @author Jiameng Li
      * @return The link to the website of the option.
      */
     public URI getWebsite() {
@@ -138,6 +143,7 @@ public class Option {
     /**
      * Get the contractor information of the option.
      *
+     * @author Jiameng Li
      * @return The contractor information of the option.
      */
     public String getContractorInfo() {
@@ -147,6 +153,7 @@ public class Option {
     /**
      * Get the warranty information of the option.
      *
+     * @author Jiameng Li
      * @return The warranty information of the option.
      */
     public String getWarrantyInfo() {
@@ -159,6 +166,7 @@ public class Option {
     /**
      * Set a new cost for the option and record the change.
      *
+     * @author Jiameng Li
      * @param theCost The new cost for the option.
      */
     public void setCost(final BigDecimal theCost) {
@@ -174,6 +182,7 @@ public class Option {
      *     Precondition: The given url is valid or blank.
      * </p>
      *
+     * @author Jiameng Li
      * @param theWebsite The new link of the website for the option.
      */
     public void setWebsite(final String theWebsite) {
@@ -195,6 +204,7 @@ public class Option {
     /**
      * Set a new contractor information for the option and record the change.
      *
+     * @author Jiameng Li
      * @param theContractorInfo The new contractor information for the option.
      */
     public void setContractorInfo(final String theContractorInfo) {
@@ -205,6 +215,7 @@ public class Option {
     /**
      * Set a new warranty information for the option and record the change.
      *
+     * @author Jiameng Li
      * @param theWarrantyInfo The new warranty information for the option.
      */
     public void setWarrantyInfo(final String theWarrantyInfo) {
@@ -216,6 +227,7 @@ public class Option {
      * Save the information about the option in the txt files
      * Use the list of modified content to identify changes.
      *
+     * @author Jiameng Li
      * @param theSubprojectName The name of the subproject the option belongs to.
      */
     protected void saveOption(final String theSubprojectName) {

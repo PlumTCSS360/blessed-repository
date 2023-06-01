@@ -186,11 +186,11 @@ public class LoadFrame extends JFrame implements GUIFrame {
         }
     }
 
-
-//     * Refreshes the project list after deletion.
-//     *
-//     * @author Cameron Gregoire
-//     */
+    /**
+     * Refreshes the project list after deletion.
+     *
+     * @author Cameron Gregoire
+     */
     private void refreshProjectList() {
         String[][] projects = Project.getProjectList();
         List<String> projectData = new ArrayList<>();
