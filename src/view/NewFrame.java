@@ -216,15 +216,16 @@ public class NewFrame implements GUIFrame {
     /**
      * method to add action of cancel button as it is clicked by user
      */
-    private void cancelAction(){
-        int result = JOptionPane.showConfirmDialog(null, "Do you want to cancel?");
+    private void cancelAction() {
+        int result = JOptionPane.showOptionDialog(null, "Do you want to cancel?", "Confirmation",
+                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
 
-        if(result == JOptionPane.YES_OPTION){
+        if (result == JOptionPane.YES_OPTION) {
             frame.dispose();
             new WelcomeFrame();
         }
-
     }
+
     /**
      * method to add action of create button as it is clicked by user
      */

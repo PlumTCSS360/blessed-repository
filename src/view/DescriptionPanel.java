@@ -3,7 +3,6 @@ package view;
 import javax.swing.*;
 
 import model.Description;
-import model.GBC;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -53,13 +52,21 @@ public class DescriptionPanel extends JPanel implements WorkPanel, PropertyChang
     // PRIVATE HELPER METHODS
 
     private void arrangePanel() {
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBackground(BACKGROUND_COLOR);
         setForeground(FOREGROUND_COLOR);
-        setLayout(new GridBagLayout());
-        GBC gbc = new GBC(0, 0);
-        add(textArea(description.getProjectName() + " : Description", CENTER_ALIGNMENT, HEADING_FONT), gbc);
-        gbc = new GBC(0, 1);
-        gbc.fill = GBC.HORIZONTAL;
+
+        // Create a panel for the name label
+        JPanel nameLabelPanel = new JPanel();
+        nameLabelPanel.setOpaque(false);
+        nameLabelPanel.setAlignmentX(CENTER_ALIGNMENT);
+        JLabel nameLabel = textArea(description.getProjectName() + " : Description", CENTER_ALIGNMENT, HEADING_FONT);
+        nameLabelPanel.add(nameLabel);
+
+        // Create a panel for the description text
+        JPanel descriptionPanel = new JPanel();
+        descriptionPanel.setOpaque(false);
+        descriptionPanel.setLayout(new BorderLayout());
         JTextArea descriptionText = new JTextArea(description.getDescription());
         descriptionText.setFont(BODY_FONT);
         descriptionText.setBackground(BACKGROUND_COLOR);
@@ -67,9 +74,17 @@ public class DescriptionPanel extends JPanel implements WorkPanel, PropertyChang
         descriptionText.setLineWrap(true);
         descriptionText.setEditable(false);
         descriptionText.setWrapStyleWord(true);
-        descriptionText.setSize(this.getWidth(), this.getHeight());
-        add(descriptionText, gbc);
-        gbc = new GBC(0, 2);
+
+        // Add padding/margins to the description panel
+        int padding = 15;
+        descriptionPanel.setBorder(BorderFactory.createEmptyBorder(padding, padding, padding, padding));
+
+        descriptionPanel.add(descriptionText, BorderLayout.CENTER);
+
+        // Create a panel for the edit button
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setOpaque(false);
+        buttonPanel.setAlignmentX(CENTER_ALIGNMENT);
         JButton editButton = new JButton("Edit");
         editButton.addActionListener(new ActionListener() {
             @Override
@@ -77,8 +92,16 @@ public class DescriptionPanel extends JPanel implements WorkPanel, PropertyChang
                 editAction();
             }
         });
-        add(editButton, gbc);
+        buttonPanel.add(editButton);
 
+        // Add the sub-panels to the main panel
+        add(Box.createVerticalGlue());
+        add(nameLabelPanel);
+        add(Box.createVerticalStrut(10));
+        add(descriptionPanel);
+        add(Box.createVerticalStrut(10));
+        add(buttonPanel);
+        add(Box.createVerticalGlue());
     }
 
     /**
@@ -105,26 +128,5 @@ public class DescriptionPanel extends JPanel implements WorkPanel, PropertyChang
         textArea.setForeground(FOREGROUND_COLOR);
         return textArea;
     }
-
-    // MAIN METHOD (FOR TESTING)
-
-    /*
-    public static void main(final String[] args) throws FileNotFoundException {
-        JFrame frame = new JFrame();
-        Description desc = Description.loadDescriptionFromTXT("data/Kitchen Remodel/desc.txt");
-        //desc.writeToTXT();
-        frame.add(new DescriptionPanel(desc));
-        EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                frame.setSize(700, 700);
-                frame.setBackground(BACKGROUND_COLOR);
-                frame.setLocationRelativeTo(null);
-                frame.setVisible(true);
-                frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-            }
-        });
-    }
-    */
 
 }
