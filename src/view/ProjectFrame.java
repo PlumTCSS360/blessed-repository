@@ -284,6 +284,22 @@ public class ProjectFrame implements GUIFrame{
         newItemButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                String[] options = {"Sub Project", "Item"};
+                int choice = JOptionPane.showOptionDialog(projectFrame, "What would you like to create?",
+                        "New Item", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+
+                if (choice == JOptionPane.YES_OPTION) {
+                    //System.out.println("LOL");
+                    //TODO: Create a new subproject
+                }
+
+                else if (choice == JOptionPane.NO_OPTION) {
+                    //System.out.println("ROFL");
+                    //Open a new dialog giving a list of item types to create
+                    String[] itemOptions = {"Note", "Sketch", "Option"};
+                    int itemChoice = JOptionPane.showOptionDialog(projectFrame, "What type of item would you like to create?",
+                            "New Item", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, itemOptions, itemOptions[0]);
+                }
 
             }
         });
