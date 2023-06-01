@@ -201,7 +201,7 @@ public class NewFrame implements GUIFrame {
      * @return cancel
      */
     private JButton cancelButton() {
-        JButton cancel = new JButton("cancel");
+        JButton cancel = new JButton("Cancel");
         cancel.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -263,7 +263,8 @@ public class NewFrame implements GUIFrame {
                 myDescription.writeToTXT();
 
                 frame.dispose();
-//            new WelcomeFrame();
+                Project.loadProject(userName);
+                new ProjectFrame(userName);
             }
         }
         else {
