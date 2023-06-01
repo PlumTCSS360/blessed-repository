@@ -8,13 +8,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
- * @author Owner
+ * Junit Test for About class
+ * @author Junghyon Jo
  *
  */
 class AboutTest {
 
     /**
-     * @throws java.lang.Exception
+     * Before test, It creates About object.
      */
     @BeforeEach
     void setUp() throws Exception {
