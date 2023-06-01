@@ -108,6 +108,25 @@ public final class Budget {
         return remaining;
     }
 
+    /**
+     * @author Devin Peevy
+     * @return The name of the Project OR Subproject to which this Budget belongs.
+     */
+    public String getProjectName() {
+        final char[] array = parentFilePath.toCharArray();
+        int lastSlash = 0;
+        for (int i = 0; i < array.length; i++) {
+            if (array[i] == '/') {
+                lastSlash = i;
+            }
+        }
+        return parentFilePath.substring(lastSlash + 1);
+    }
+
+    public String getParentFilePath() {
+        return parentFilePath;
+    }
+
     // SETTERS
 
     /**
