@@ -169,59 +169,71 @@ public class WelcomeFrame extends JFrame  implements GUIFrame {
 
     }
 
+    /**
+     * Allows the user to choose a folder that contains a project to import.
+     *
+     * @author Taylor Merwin
+     * @auther Jiameng Li
+     */
     public static void importProject() {
+        // Display a file chooser
         JFileChooser myFolderChooser = new JFileChooser();
         myFolderChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
         final int option = myFolderChooser.showOpenDialog(null);
         if (option == JFileChooser.APPROVE_OPTION) {
             File selectedDir = myFolderChooser.getSelectedFile();
+            // Check if the selected folder is a valid project to import
             if (isValidProject(selectedDir.getPath())) {
+                // Create a folder in database for the imported project
                 File newDir = new File("data/" + selectedDir.getName());
                 newDir.mkdir();
-
-                //copy the contents of the selected directory to the new directory
-                try {
-                    File[] files = selectedDir.listFiles();
-                    for (File file : Objects.requireNonNull(files)) {
-                        if (file.isDirectory()) {
-                            File newSubDir = new File(newDir.getAbsolutePath() + "/" + file.getName());
-                            newSubDir.mkdir();
-                            File[] subFiles = file.listFiles();
-                            for (File subFile : Objects.requireNonNull(subFiles)) {
-                                File newSubFile = new File(newSubDir.getAbsolutePath() + "/" +
-                                        subFile.getName());
-                                newSubFile.createNewFile();
-                                FileReader in = new FileReader(subFile);
-                                FileWriter out = new FileWriter(newSubFile);
-                                int c;
-                                while ((c = in.read()) != -1) {
-                                    out.write(c);
-                                }
-                                in.close();
-                                out.close();
-                            }
-                        } else {
-                            File newFile = new File(newDir.getAbsolutePath() + "/" + file.getName());
-                            newFile.createNewFile();
-                            FileReader in = new FileReader(file);
-                            FileWriter out = new FileWriter(newFile);
-                            int c;
-                            while ((c = in.read()) != -1) {
-                                out.write(c);
-                            }
-                            in.close();
-                            out.close();
-                        }
-                    }
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+                importProjectHelper(selectedDir, newDir);
             } else {
+                // Invalid project folder selected
                 JOptionPane.showMessageDialog(null,
                         "The folder you selected is not a valid project", "Invalid Project",
                         JOptionPane.ERROR_MESSAGE);
             }
+        }
+    }
+
+    /**
+     * A helper method that recursively read the data in a project folder to import that project.
+     * Copy the contents of the selected directory to the new directory.
+     *
+     * @author Taylor Merwin
+     * @auther Jiameng Li
+     * @param theSelected The file or folder to be imported.
+     * @param theDest The destination where the imported file or folder will be stored.
+     */
+    public static void importProjectHelper(final File theSelected, final File theDest) {
+        try {
+            // Goes through each folder and file in the selected folder.
+            File[] files = theSelected.listFiles();
+            for (File file : Objects.requireNonNull(files)) {
+                // If the file is a directory, create a new folder in destination
+                // and call this helper method again
+                if (file.isDirectory()) {
+                    File newSubDir = new File(theDest.getAbsolutePath() + "/" + file.getName());
+                    newSubDir.mkdir();
+                    importProjectHelper(file, newSubDir);
+                } else {
+                    // If it's a normal file, copy the file to the destination
+                    File newFile = new File(theDest.getAbsolutePath() + "/" + file.getName());
+                    newFile.createNewFile();
+                    FileInputStream in = new FileInputStream(file);
+                    FileOutputStream out = new FileOutputStream(newFile);
+                    int c;
+                    while ((c = in.read()) != -1) {
+                        out.write(c);
+                    }
+                    in.close();
+                    out.close();
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 
@@ -389,7 +401,7 @@ public class WelcomeFrame extends JFrame  implements GUIFrame {
                             "/website.txt"};
                     File[] options = file.listFiles();      // All options in the Options folder
                     // Check if each option contains necessary files for the option
-                    for (File op : options) {
+                    for (File op : Objects.requireNonNull(options)) {
                         path = op.getPath();
                         for (int i = 0; i < necessaryFiles.length && isValid; i++) {
                             file = new File(path + necessaryFiles[i]);
