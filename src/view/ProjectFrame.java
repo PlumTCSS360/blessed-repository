@@ -6,6 +6,7 @@ import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -102,9 +103,11 @@ public class ProjectFrame implements GUIFrame{
         final JMenuItem menuItem3 = new JMenuItem("Item 3");
 
         //add menu items to menu
-        menuBar.add(menuItem1);
-        menuBar.add(menuItem2);
-        menuBar.add(menuItem3);
+//        menuBar.add(menuItem1);
+////        menuBar.add(menuItem2);
+////        menuBar.add(menuItem3);
+
+        menuBar.setBackground(Color.LIGHT_GRAY);
     }
 
     /**
@@ -201,6 +204,7 @@ public class ProjectFrame implements GUIFrame{
                 for (File subFile : file.listFiles()) {
                     //create a new DefaultMutableTreeNode with the name of the file
                     DefaultMutableTreeNode projectFile = new DefaultMutableTreeNode(subFile.getName());
+
                     //add the subdirectory to the root node
                     subDirectory.add(projectFile);
                 }
@@ -215,6 +219,9 @@ public class ProjectFrame implements GUIFrame{
         }
         //create the tree by passing in the root node
         projectTree = new JTree(root);
+        projectTree.setBackground(Color.DARK_GRAY);
+        projectTree.setForeground(Color.RED);
+        //projectTree.
         // Add a TreeSelectionListener to the JTree
         projectTree.addTreeSelectionListener(new TreeSelectionListener() {
             @Override
@@ -245,14 +252,41 @@ public class ProjectFrame implements GUIFrame{
                 }
             }
         });
-
+        DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer();
+        renderer.setBackgroundNonSelectionColor(Color.DARK_GRAY);
+        renderer.setTextNonSelectionColor(Color.WHITE);
+        renderer.setTextSelectionColor(Color.BLUE);
+        projectTree.setCellRenderer(renderer);
         //initialize the scroll pane
         projectTreeScrollPane = new JScrollPane(projectTree);
+        projectTreeScrollPane.setBackground(Color.LIGHT_GRAY);
         //add the scroll pane to the projectListPanel
+        projectTreePanel.setBackground(Color.LIGHT_GRAY);
         projectTreePanel.add(projectTreeScrollPane, BorderLayout.CENTER);
-        JButton newItemButton = new JButton("New Item");
-        projectTreePanel.add(newItemButton, BorderLayout.SOUTH);
+
+        createNewItemButton();
+
         projectTreePanel.setVisible(true);
+    }
+
+
+    /**
+     * Creates a button that allows the user to choose a new item to create
+     * Opens a dialog to choose the item type
+     * @author Taylor Merwin
+     */
+    private void createNewItemButton(){
+        JButton newItemButton = new JButton("New Item");
+        newItemButton.setBackground(Color.LIGHT_GRAY);
+        projectTreePanel.add(newItemButton, BorderLayout.SOUTH);
+
+        //Create a new item when the button is clicked
+        newItemButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
     }
 
 
@@ -260,6 +294,7 @@ public class ProjectFrame implements GUIFrame{
      * @author Taylor Merwin
      */
     private void createButtonsPanel() {
+        buttonsPanel.setBackground(Color.DARK_GRAY);
         buttonsPanel.setVisible(true);
     }
 
@@ -268,6 +303,7 @@ public class ProjectFrame implements GUIFrame{
      */
     private void createExitButton() {
         exitProjectButton = new JButton("Exit Project");
+        exitProjectButton.setBackground(Color.LIGHT_GRAY);
 
         //add Action listener to button
         //When clicked, the Project is saved, ProjectFrame is disposed and returned to welcome frame
@@ -293,6 +329,7 @@ public class ProjectFrame implements GUIFrame{
      */
     private void createSaveButton() {
         saveProjectButton = new JButton("Save Project");
+        saveProjectButton.setBackground(Color.LIGHT_GRAY);
 
         //add action listener to button
         saveProjectButton.addActionListener(new ActionListener() {
