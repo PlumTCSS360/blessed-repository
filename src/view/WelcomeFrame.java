@@ -173,7 +173,7 @@ public class WelcomeFrame extends JFrame  implements GUIFrame {
      * Allows the user to choose a folder that contains a project to import.
      *
      * @author Taylor Merwin
-     * @auther Jiameng Li
+     * @author Jiameng Li
      */
     public static void importProject() {
         // Display a file chooser
