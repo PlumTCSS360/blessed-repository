@@ -226,6 +226,7 @@ public class Option {
     /**
      * Save the information about the option in the txt files
      * Use the list of modified content to identify changes.
+     * Description is auto saved.
      *
      * @author Jiameng Li
      * @param theSubprojectName The name of the subproject the option belongs to.
@@ -234,13 +235,23 @@ public class Option {
         // Path to the folder where project information will be stored.
         String path = String.format("data/%s/%s/Options/%s", Project.getProjectName(), theSubprojectName, myName);
 
-        // Save cost, description, website, contractor information, and warranty information
-        myDescription.writeToTXT();
+        // Save cost, website, contractor information, and warranty information
         for (String s : myModifiedContents.keySet()) {
             FileAccessor.writeTxtFile(String.format("%s/%s.txt", path, s), myModifiedContents.get(s));
         }
 
         // Clear the recorded changes
         myModifiedContents.clear();
+    }
+
+    /**
+     * Return a string that represent the option.
+     *
+     * @author Jiameng Li
+     * @return A string that represent the option.
+     */
+    @Override
+    public String toString() {
+        return myName;
     }
 }
