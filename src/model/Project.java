@@ -207,8 +207,6 @@ public final class Project {
 
     /**
      * Save the changes in the currently opened project since last save.
-     * It only save changes recorded in the list of modified content and deleting a subproject doesn't count
-     * as a change.
      * This method should not be called when there's no project opened. No data will be store into the
      * data file before this method is called.
      * <p>
@@ -220,10 +218,6 @@ public final class Project {
     public static void saveProject() {
         // Path to the folder where project information will be stored.
         String path = "data/" + myName;
-
-        // Save budget and description
-        myDescription.writeToTXT();
-        myBudget.writeToTXT();
 
         // Save subprojects
         for (Subproject sp : mySubprojects.values()) {
