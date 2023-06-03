@@ -5,10 +5,13 @@ import model.Project;
 import model.Subproject;
 
 import javax.swing.*;
+import javax.swing.event.TreeModelEvent;
+import javax.swing.event.TreeModelListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -61,6 +64,8 @@ public class ProjectFrame implements GUIFrame{
      * @author Taylor Merwin
      */
     public ProjectFrame(String projectName) {
+        super();
+        this.projectName = projectName;
 
         // Initialize ProjectFame and set frame title
         projectFrame = new JFrame("Crafty Companion - " + projectName);
@@ -205,7 +210,11 @@ public class ProjectFrame implements GUIFrame{
             spNode.add(new DefaultMutableTreeNode("Budget"));
             DefaultMutableTreeNode options = new DefaultMutableTreeNode("Options");
             for (Option op : sp.getOptionsList().values()) {
-                options.add(new DefaultMutableTreeNode(op));
+                DefaultMutableTreeNode opNode = new DefaultMutableTreeNode(op);
+                opNode.add(new DefaultMutableTreeNode("Description"));
+                opNode.add(new DefaultMutableTreeNode("Cost"));
+                // TODO Add another node for option information
+                options.add(opNode);
             }
             DefaultMutableTreeNode notes = new DefaultMutableTreeNode("Notes");
             for (String n : sp.getNotesList().keySet()) {
@@ -238,24 +247,29 @@ public class ProjectFrame implements GUIFrame{
 
                     //open budget panel
                     if (selectedNode.getUserObject().equals("Budget")) {
-                        if (selectedNode.getLevel() == 1) {
+                        if (selectedNode.getLevel() == 1) {     // Project budget
                             budgetPanel = new BudgetPanel(Project.getBudget());
-                        } else {
-                            Subproject sp = Project.getSubproject(selectedNode.getParent().toString());
+                        } else if (selectedNode.getLevel() == 2) {        // Subproject budget
+                            final Subproject sp = Project.getSubproject(selectedNode.getParent().toString());
                             budgetPanel = new BudgetPanel(sp.getBudget());
                         }
-                        refreshPanel(budgetPanel, "0");
+                        refreshActivityPanel(budgetPanel, "0");
                         myCardLayout.show(activityContainerPanel, "0");
                     }
                     //open description panel
                     else if (selectedNode.getUserObject().equals("Description")) {
-                        if (selectedNode.getLevel() == 1) {
+                        if (selectedNode.getLevel() == 1) {     // Project description
                             descriptionPanel = new DescriptionPanel(Project.getProjectDescription());
-                        } else {
-                            Subproject sp = Project.getSubproject(selectedNode.getParent().toString());
+                        } else if (selectedNode.getLevel() == 2) {      // Subproject description
+                            final Subproject sp = Project.getSubproject(selectedNode.getParent().toString());
                             descriptionPanel = new DescriptionPanel(sp.getDescription());
+                        } else if (selectedNode.getLevel() == 4) {      // Option description
+                            final String s = selectedNode.getParent().getParent().getParent().toString();
+                            final Subproject sp = Project.getSubproject(s);
+                            final Option op = sp.getOption(selectedNode.getParent().toString());
+                            descriptionPanel = new DescriptionPanel(op.getDescription());
                         }
-                        refreshPanel(descriptionPanel, "1");
+                        refreshActivityPanel(descriptionPanel, "1");
                         myCardLayout.show(activityContainerPanel, "1");
                     }
                     //open todo list panel
@@ -268,11 +282,36 @@ public class ProjectFrame implements GUIFrame{
                     }
                 } else if (selectedNode != null && selectedNode.getLevel() == 1) {
                     Subproject sp = Project.getSubproject(selectedNode.getUserObject().toString());
-                    subprojectPanel = new SubprojectPanel(sp);
-                    refreshPanel(subprojectPanel, "4");
+                    subprojectPanel = new SubprojectPanel(sp, projectTree);
+                    refreshActivityPanel(subprojectPanel, "4");
                     myCardLayout.show(activityContainerPanel, "4");
                 }
             }
+        });
+
+        DefaultTreeModel model = new DefaultTreeModel(root);
+        model.addTreeModelListener(new TreeModelListener() {
+            @Override
+            public void treeNodesChanged(TreeModelEvent e) {}
+
+            @Override
+            public void treeNodesInserted(TreeModelEvent e) {
+                projectTreePanel.removeAll();
+                createTreePanel(projectName);
+                projectTreePanel.revalidate();
+                projectTreePanel.repaint();
+            }
+
+            @Override
+            public void treeNodesRemoved(TreeModelEvent e) {
+                projectTreePanel.removeAll();
+                createTreePanel(projectName);
+                projectTreePanel.revalidate();
+                projectTreePanel.repaint();
+            }
+
+            @Override
+            public void treeStructureChanged(TreeModelEvent e) {}
         });
 
         DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer();
@@ -292,7 +331,7 @@ public class ProjectFrame implements GUIFrame{
         projectTreePanel.setVisible(true);
     }
 
-    private void refreshPanel(final JPanel thePanel, final String theIdx) {
+    private void refreshActivityPanel(final JPanel thePanel, final String theIdx) {
         activityContainerPanel.remove(thePanel);
         activityContainerPanel.add(thePanel, theIdx);
         activityContainerPanel.revalidate();
