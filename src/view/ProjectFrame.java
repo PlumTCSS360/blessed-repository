@@ -122,7 +122,7 @@ public class ProjectFrame implements GUIFrame{
         //initialize activity panels
         budgetPanel = new BudgetPanel(Project.getBudget());
         descriptionPanel = new DescriptionPanel(Project.getProjectDescription());
-        todoListPanel = new JPanel();
+        todoListPanel = new TodoPanel(Project.getProjectName());
         imagePanel = new JPanel();
 
         //set up array of activity panels
@@ -150,7 +150,7 @@ public class ProjectFrame implements GUIFrame{
      * @author Taylor Merwin
      */
     private void createBudgetPanel() {
-        budgetPanel.add(new JLabel("Budget Panel"));
+
         budgetPanel.setVisible(true);
     }
 
@@ -158,7 +158,7 @@ public class ProjectFrame implements GUIFrame{
      * @author Taylor Merwin
      */
     private void createDescriptionPanel() {
-        descriptionPanel.add(new JLabel("Description Panel"));
+
         descriptionPanel.setVisible(true);
     }
 
@@ -166,8 +166,7 @@ public class ProjectFrame implements GUIFrame{
      * @author Taylor Merwin
      */
     private void createTodoListPanel() {
-        todoListPanel.add(new JLabel("Todo List Panel"));
-        todoListPanel.setBackground(Color.orange);
+
         todoListPanel.setVisible(true);
     }
 
@@ -242,7 +241,7 @@ public class ProjectFrame implements GUIFrame{
                         myCardLayout.show(activityContainerPanel, "1");
                     }
                     //open todo list panel
-                    else if (selectedNode.getUserObject().equals("Todo List")) {
+                    else if (selectedNode.getUserObject().equals("todo.txt")) {
                         myCardLayout.show(activityContainerPanel, "2");
                     }
                     //open image panel
