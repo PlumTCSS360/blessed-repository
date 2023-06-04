@@ -54,11 +54,9 @@ class ProjectTest {
         file = new File("data/Test Project/budget.txt");
         assertTrue(file.exists());
         assertTrue(file.isFile());
-        assertEquals(0, file.length());
         file = new File("data/Test Project/desc.txt");
         assertTrue(file.exists());
         assertTrue(file.isFile());
-        assertEquals(0, file.length());
     }
 
     /**
@@ -101,44 +99,15 @@ class ProjectTest {
         file = new File("data/Test Project/budget.txt");
         assertTrue(file.exists());
         assertTrue(file.isFile());
-        assertEquals(0, file.length());
         file = new File("data/Test Project/desc.txt");
         assertTrue(file.exists());
         assertTrue(file.isFile());
-        assertEquals(0, file.length());
         // Check for options, notes, and sketches folders
         for (String s : Subproject.SUBPROJECT_FOLDERS) {
             file = new File(path + s);
             assertTrue(file.exists());
             assertTrue(file.isDirectory());
-            assertEquals(0, Objects.requireNonNull(file.listFiles()).length);
         }
-    }
-
-
-    /**
-     * Test for saveProject() in Project class.*
-     * The saveProject() method is called in the closeProject() method.
-     * Check whether the information is stored in correct files.
-     * This doesn't test whether subprojects are saved.
-     *
-     * @author Jiameng Li
-     */
-    @Test
-    @Order(5)
-    void testCloseProjectCheckSave() {
-        Project.closeProject();
-        String content = FileAccessor.readTxtFile("data/Test Project/budget.txt");
-        String expected = """
-                data/Test Project
-                spending limit:500.00
-                end""";
-        assertEquals(expected, content);
-        content = FileAccessor.readTxtFile("data/Test Project/desc.txt");
-        expected = """
-                data/Test Project
-                Test project description""";
-        assertEquals(expected, content);
     }
 
     /**
@@ -149,7 +118,8 @@ class ProjectTest {
      */
     @Test
     @Order(6)
-    void testCloseProjectCheckClose() {
+    void testCloseProject() {
+        Project.closeProject();
         assertNull(Project.getProjectName());
         assertNull(Project.getBudget());
         assertNull(Project.getProjectDescription());

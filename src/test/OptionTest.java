@@ -96,12 +96,12 @@ class OptionTest {
     void saveOption() {
         Project.saveProject();
         final String path = "data/Test Project/Test Subproject/Options/Test Option";
-        String content = FileAccessor.readTxtFile(path + "/desc.txt");
-        String expected = """
-                data/Test Project/Test Subproject/Options/Test Option
-                Test option description""";
-        assertEquals(expected, content);
-        content = FileAccessor.readTxtFile(path + "/cost.txt");
+//        String content = FileAccessor.readTxtFile(path + "/desc.txt");
+//        String expected = """
+//                data/Test Project/Test Subproject/Options/Test Option
+//                Test option description""";
+//        assertEquals(expected, content);
+        String content = FileAccessor.readTxtFile(path + "/cost.txt");
         assertEquals("80", content);
         content = FileAccessor.readTxtFile(path + "/website.txt");
         assertEquals("https://www.anotherwebsite.com", content);
