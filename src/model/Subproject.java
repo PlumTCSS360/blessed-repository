@@ -44,6 +44,7 @@ public class Subproject {
     /**
      * Construct a subproject with given name, budget, and description.
      *
+     * @author Jiameng Li
      * @param theName The name of the subproject.
      * @param theBudget The budget of the subproject.
      * @param theDescription The description of the subproject.
@@ -66,6 +67,7 @@ public class Subproject {
     /**
      * Get the name of the subproject.
      *
+     * @author Jiameng Li
      * @return The name of the subproject.
      */
     public String getName() {
@@ -75,6 +77,7 @@ public class Subproject {
     /**
      * Get the budget of the subproject.
      *
+     * @author Jiameng Li
      * @return The budget of the subproject.
      */
     public Budget getBudget() {
@@ -84,6 +87,7 @@ public class Subproject {
     /**
      * Get the description of the subproject.
      *
+     * @author Jiameng Li
      * @return The description of the subproject.
      */
     public Description getDescription() {
@@ -93,6 +97,7 @@ public class Subproject {
     /**
      * Get an option by name.
      *
+     * @author Jiameng Li
      * @param theName The name of the option.
      * @return The option with given name, if any.
      */
@@ -103,6 +108,7 @@ public class Subproject {
     /**
      * Get a copy of the list of options in the subproject.
      *
+     * @author Jiameng Li
      * @return A copy of the list of options in the subproject.
      */
     public Map<String, Option> getOptionsList() {
@@ -112,6 +118,7 @@ public class Subproject {
     /**
      * Get the content of a note by name.
      *
+     * @author Jiameng Li
      * @param theName The name of the note.
      * @return The content of the note with given name, if any.
      */
@@ -122,6 +129,7 @@ public class Subproject {
     /**
      * Get a copy of the list of notes in the subproject.
      *
+     * @author Jiameng Li
      * @return A copy of the list of notes in the subproject.
      */
     public Map<String, String> getNotesList() {
@@ -131,6 +139,7 @@ public class Subproject {
     /**
      * Get a sketch by name.
      *
+     * @author Jiameng Li
      * @param theName The name of the sketch.
      * @return The sketch with given name.
      */
@@ -141,6 +150,7 @@ public class Subproject {
     /**
      * Get a copy of the list of sketches in the subproject.
      *
+     * @author Jiameng Li
      * @return A copy of the list of sketches in the subproject.
      */
     public Map<String, ImageIcon> getSketchesList() {
@@ -153,6 +163,7 @@ public class Subproject {
     /**
      * Replace the old content in a note with the new content and record the change.
      *
+     * @author Jiameng Li
      * @param theName The name of the note.
      * @param theNote The new content in the note.
      */
@@ -170,6 +181,7 @@ public class Subproject {
      *     2. The file in the given path must be an image.
      * </p>
      *
+     * @author Jiameng Li
      * @param theName The name of the sketch.
      * @param thePath The path to the new sketch.
      */
@@ -199,6 +211,7 @@ public class Subproject {
      *     3. The link for the website must be a valid url.
      * </p>
      *
+     * @author Jiameng Li
      * @param theName The name of the new option.
      * @param theCost The cost of the new option.
      * @param theDescription The description of the new option.
@@ -251,14 +264,19 @@ public class Subproject {
      *     2. The name of the note must not be blank, longer than 25 characters, or contains illegal characters.
      * </p>
      *
+     * @author Jiameng Li
      * @param theName The name of the new note.
      * @param theNote The content of the note.
+     * @return Whether the note is created successfully
      */
-    public void createNote(final String theName, final String theNote) {
+    public boolean createNote(final String theName, final String theNote) {
+        boolean noteCreated = true;
         // Check for duplicate name
         if (!InputValidator.validName(theName)) {       // If the name is invalid
+            noteCreated = false;
             InputValidator.displayInvalidNameMessage();
         } else if (myNotes.containsKey(theName)) {      // If the note already existed
+            noteCreated = false;
             JOptionPane.showMessageDialog(null,
                     "Note \" " + theName + "\" already existed.", "Fail to Create Note",
                     JOptionPane.WARNING_MESSAGE);
@@ -273,6 +291,7 @@ public class Subproject {
             }
             myModifiedNotes.add(theName);
         }
+        return noteCreated;
     }
 
     /**
@@ -288,15 +307,21 @@ public class Subproject {
      *     3. The name of the sketch must not be blank, longer than 25 characters, or contains illegal characters.
      * </p>
      *
+     * @author Jiameng Li
      * @param theName The name of the new sketch.
      * @param thePath The path to the image file to be added.
+     * @return Whether the sketch is created successfully
      */
-    public void createSketch(final String theName, final String thePath) {
+    public boolean createSketch(final String theName, final String thePath) {
+        boolean sketchCreated = true;
         if (!InputValidator.validImageFile(thePath)) {          // If the file is not an image
+            sketchCreated = false;
             InputValidator.displayInvalidImageFileMessage();
         } else if (!InputValidator.validName(theName)) {       // If the name is invalid
+            sketchCreated = false;
             InputValidator.displayInvalidNameMessage();
         } else if (mySketches.containsKey(theName)) {           // If the sketch already existed
+            sketchCreated = false;
             JOptionPane.showMessageDialog(null,
                     "Sketch \" " + theName + "\" already existed.", "Name duplicate",
                     JOptionPane.WARNING_MESSAGE);
@@ -312,6 +337,7 @@ public class Subproject {
             }
             myModifiedSketches.add(theName);
         }
+        return sketchCreated;
     }
 
 
@@ -320,6 +346,7 @@ public class Subproject {
     /**
      * Delete an option by deleting all folders and files that store its data and remove it from the list.
      *
+     * @author Jiameng Li
      * @param theName The name of the option to be deleted.
      */
     public void deleteOption(final String theName) {
@@ -330,6 +357,7 @@ public class Subproject {
     /**
      * Delete a note by deleting the text file that store its data and remove it from the list.
      *
+     * @author Jiameng Li
      * @param theName The name of the note to be deleted.
      */
     public void deleteNote(final String theName) {
@@ -342,6 +370,7 @@ public class Subproject {
     /**
      * Delete a sketch by deleting the image file that store its data and remove it from the list.
      *
+     * @author Jiameng Li
      * @param theName The name of the sketch to be deleted.
      */
     public void deleteSketch(final String theName) {
@@ -355,6 +384,8 @@ public class Subproject {
      * Load the notes and sketches in the subproject by reading the contents in their files
      * and add them to the list.
      * This method should only be called in the loadSubproject() method in the Project class.
+     *
+     * @author Jiameng Li
      */
     protected void loadOptionsNotesSketches() {
         // Path to the subproject
@@ -387,6 +418,7 @@ public class Subproject {
     /**
      * Load an option from the folder that store its data and add it to the list.
      *
+     * @author Jiameng Li
      * @param theOption The directory that store the data of the option.
      */
     private void loadOption(final File theOption) {
@@ -419,15 +451,14 @@ public class Subproject {
 
     /**
      * Save the information about the subproject in files associated with it,
-     * include saving the current budget, description, options, notes, and sketches.
+     * include saving the current options, notes, and sketches.
+     * Budget and description are auto saved.
+     *
+     * @author Jiameng Li
      */
     protected void saveSubproject() {
         // Path to the folder where project information will be stored.
         String path = String.format("data/%s/%s", Project.getProjectName(), myName);
-
-        // Save budget and description
-        myBudget.writeToTXT();
-        myDescription.writeToTXT();
 
         // Save options
         for (Option op : myOptions.values()) {
@@ -449,6 +480,17 @@ public class Subproject {
         // Clear the recorded changes
         myModifiedNotes.clear();
         myModifiedSketches.clear();
+    }
+
+    /**
+     * Return a string that represent the subproject.
+     *
+     * @author Jiameng Li
+     * @return A string that represent the subproject.
+     */
+    @Override
+    public String toString() {
+        return myName;
     }
 
 }

@@ -1,17 +1,21 @@
 package view;
 
+import model.Option;
 import model.Project;
+import model.Subproject;
 
 import javax.swing.*;
+import javax.swing.event.TreeModelEvent;
+import javax.swing.event.TreeModelListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * The main UI for the project.
@@ -36,6 +40,9 @@ public class ProjectFrame implements GUIFrame{
     DescriptionPanel descriptionPanel;
     JPanel todoListPanel;
     JPanel imagePanel;
+
+    JPanel subprojectPanel;
+
     //array of activity panels
     JPanel[] activityPanels;
     //buttons to display in the buttons panel
@@ -57,6 +64,8 @@ public class ProjectFrame implements GUIFrame{
      * @author Taylor Merwin
      */
     public ProjectFrame(String projectName) {
+        super();
+        this.projectName = projectName;
 
         // Initialize ProjectFame and set frame title
         projectFrame = new JFrame("Crafty Companion - " + projectName);
@@ -124,17 +133,19 @@ public class ProjectFrame implements GUIFrame{
         descriptionPanel = new DescriptionPanel(Project.getProjectDescription());
         todoListPanel = new TodoPanel(Project.getProjectName());
         imagePanel = new JPanel();
+        subprojectPanel = new SubprojectPanel();
 
         //set up array of activity panels
-        activityPanels = new JPanel[4];
+        activityPanels = new JPanel[5];
         activityPanels[0] = budgetPanel;
         activityPanels[1] = descriptionPanel;
         activityPanels[2] = todoListPanel;
         activityPanels[3] = imagePanel;
+        activityPanels[4] = subprojectPanel;
 
         //create activity panels
-        createBudgetPanel();
-        createDescriptionPanel();
+//        createBudgetPanel();
+//        createDescriptionPanel();
         createTodoListPanel();
         createImagePanel();
 
@@ -188,33 +199,40 @@ public class ProjectFrame implements GUIFrame{
         //Create the root node from the project directory in the data folder
         //we will use the literal project name for now
         DefaultMutableTreeNode root = new DefaultMutableTreeNode(projectName);
-        //Create the child nodes from the subdirectories in the project directory
-        //Start from the data folder
-        File projectDirectory = new File("data/" + projectName);
-        //for each file and subdirectory in the project directory create a DefaultMutableTreeNode
-        for (File file : Objects.requireNonNull(projectDirectory.listFiles())) {
-            //if the file is a directory
-            if (file.isDirectory()) {
-                //create a new DefaultMutableTreeNode with the name of the file
-                DefaultMutableTreeNode subDirectory = new DefaultMutableTreeNode(file.getName());
-                //add the subdirectory to the root node
-                root.add(subDirectory);
-                //for each file in the subdirectory
-                for (File subFile : file.listFiles()) {
-                    //create a new DefaultMutableTreeNode with the name of the file
-                    DefaultMutableTreeNode projectFile = new DefaultMutableTreeNode(subFile.getName());
-
-                    //add the subdirectory to the root node
-                    subDirectory.add(projectFile);
-                }
+        root.add(new DefaultMutableTreeNode("Description"));
+        root.add(new DefaultMutableTreeNode("Budget"));
+        Map<String, Subproject> subprojects = new TreeMap<>(Project.getSubprojectsList());
+        //for each subproject add nodes for description, budget, options, notes, and sketches
+        for (Subproject sp : subprojects.values()) {
+            // Description and budget
+            DefaultMutableTreeNode spNode = new DefaultMutableTreeNode(sp);
+            spNode.add(new DefaultMutableTreeNode("Description"));
+            spNode.add(new DefaultMutableTreeNode("Budget"));
+            // Options
+            DefaultMutableTreeNode options = new DefaultMutableTreeNode("Options");
+            for (Option op : sp.getOptionsList().values()) {
+                DefaultMutableTreeNode opNode = new DefaultMutableTreeNode(op);
+                opNode.add(new DefaultMutableTreeNode("Description"));
+                opNode.add(new DefaultMutableTreeNode("Cost"));
+                // TODO Add another node for option information
+                options.add(opNode);
             }
-            //if the file is not a directory
-            else {
-                //create a new DefaultMutableTreeNode with the name of the file
-                DefaultMutableTreeNode projectFile = new DefaultMutableTreeNode(file.getName());
-                //add the subdirectory to the root node
-                root.add(projectFile);
+            // Notes
+            DefaultMutableTreeNode notes = new DefaultMutableTreeNode("Notes");
+            Set<String> noteList = new TreeSet<>(sp.getNotesList().keySet());
+            for (String n : noteList) {
+                notes.add(new DefaultMutableTreeNode(n, false));
             }
+            // Sketches
+            DefaultMutableTreeNode sketches = new DefaultMutableTreeNode("Sketches");
+            Set<String> sketchList = new TreeSet<>(sp.getSketchesList().keySet());
+            for (String s : sketchList) {
+                sketches.add(new DefaultMutableTreeNode(s, false));
+            }
+            spNode.add(options);
+            spNode.add(notes);
+            spNode.add(sketches);
+            root.add(spNode);
         }
         //create the tree by passing in the root node
         projectTree = new JTree(root);
@@ -222,6 +240,7 @@ public class ProjectFrame implements GUIFrame{
         projectTree.setForeground(Color.RED);
         //projectTree.
         // Add a TreeSelectionListener to the JTree
+        final ProjectFrame frame = this;
         projectTree.addTreeSelectionListener(new TreeSelectionListener() {
             @Override
             public void valueChanged(TreeSelectionEvent e) {
@@ -233,11 +252,30 @@ public class ProjectFrame implements GUIFrame{
                     //Will need to change this to support subprojects and other activities
 
                     //open budget panel
-                    if (selectedNode.getUserObject().equals("budget.txt")) {
+                    if (selectedNode.getUserObject().equals("Budget")) {
+                        if (selectedNode.getLevel() == 1) {     // Project budget
+                            budgetPanel = new BudgetPanel(Project.getBudget());
+                        } else if (selectedNode.getLevel() == 2) {        // Subproject budget
+                            final Subproject sp = Project.getSubproject(selectedNode.getParent().toString());
+                            budgetPanel = new BudgetPanel(sp.getBudget());
+                        }
+                        refreshActivityPanel(budgetPanel, "0");
                         myCardLayout.show(activityContainerPanel, "0");
                     }
                     //open description panel
-                    else if (selectedNode.getUserObject().equals("desc.txt")) {
+                    else if (selectedNode.getUserObject().equals("Description")) {
+                        if (selectedNode.getLevel() == 1) {     // Project description
+                            descriptionPanel = new DescriptionPanel(Project.getProjectDescription());
+                        } else if (selectedNode.getLevel() == 2) {      // Subproject description
+                            final Subproject sp = Project.getSubproject(selectedNode.getParent().toString());
+                            descriptionPanel = new DescriptionPanel(sp.getDescription());
+                        } else if (selectedNode.getLevel() == 4) {      // Option description
+                            final String s = selectedNode.getParent().getParent().getParent().toString();
+                            final Subproject sp = Project.getSubproject(s);
+                            final Option op = sp.getOption(selectedNode.getParent().toString());
+                            descriptionPanel = new DescriptionPanel(op.getDescription());
+                        }
+                        refreshActivityPanel(descriptionPanel, "1");
                         myCardLayout.show(activityContainerPanel, "1");
                     }
                     //open todo list panel
@@ -248,9 +286,17 @@ public class ProjectFrame implements GUIFrame{
                     else if (selectedNode.getUserObject().equals("Image")) {
                         myCardLayout.show(activityContainerPanel, "3");
                     }
+                    // TODO Add code to open notes, sketchs, and option info
+                } else if (selectedNode != null && selectedNode.getLevel() == 1) {
+                    // Open subproject panel
+                    Subproject sp = Project.getSubproject(selectedNode.getUserObject().toString());
+                    subprojectPanel = new SubprojectPanel(sp, frame);
+                    refreshActivityPanel(subprojectPanel, "4");
+                    myCardLayout.show(activityContainerPanel, "4");
                 }
             }
         });
+
         DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer();
         renderer.setBackgroundNonSelectionColor(Color.DARK_GRAY);
         renderer.setTextNonSelectionColor(Color.WHITE);
@@ -266,6 +312,20 @@ public class ProjectFrame implements GUIFrame{
         createNewItemButton();
 
         projectTreePanel.setVisible(true);
+    }
+
+    private void refreshActivityPanel(final JPanel thePanel, final String theIdx) {
+        activityContainerPanel.remove(thePanel);
+        activityContainerPanel.add(thePanel, theIdx);
+        activityContainerPanel.revalidate();
+        activityContainerPanel.repaint();
+    }
+
+    protected void refreshTreePanel() {
+        projectTreePanel.removeAll();
+        createTreePanel(projectName);
+        projectTreePanel.revalidate();
+        projectTreePanel.repaint();
     }
 
 
