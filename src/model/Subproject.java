@@ -267,12 +267,16 @@ public class Subproject {
      * @author Jiameng Li
      * @param theName The name of the new note.
      * @param theNote The content of the note.
+     * @return Whether the note is created successfully
      */
-    public void createNote(final String theName, final String theNote) {
+    public boolean createNote(final String theName, final String theNote) {
+        boolean noteCreated = true;
         // Check for duplicate name
         if (!InputValidator.validName(theName)) {       // If the name is invalid
+            noteCreated = false;
             InputValidator.displayInvalidNameMessage();
         } else if (myNotes.containsKey(theName)) {      // If the note already existed
+            noteCreated = false;
             JOptionPane.showMessageDialog(null,
                     "Note \" " + theName + "\" already existed.", "Fail to Create Note",
                     JOptionPane.WARNING_MESSAGE);
@@ -287,6 +291,7 @@ public class Subproject {
             }
             myModifiedNotes.add(theName);
         }
+        return noteCreated;
     }
 
     /**
@@ -305,13 +310,18 @@ public class Subproject {
      * @author Jiameng Li
      * @param theName The name of the new sketch.
      * @param thePath The path to the image file to be added.
+     * @return Whether the sketch is created successfully
      */
-    public void createSketch(final String theName, final String thePath) {
+    public boolean createSketch(final String theName, final String thePath) {
+        boolean sketchCreated = true;
         if (!InputValidator.validImageFile(thePath)) {          // If the file is not an image
+            sketchCreated = false;
             InputValidator.displayInvalidImageFileMessage();
         } else if (!InputValidator.validName(theName)) {       // If the name is invalid
+            sketchCreated = false;
             InputValidator.displayInvalidNameMessage();
         } else if (mySketches.containsKey(theName)) {           // If the sketch already existed
+            sketchCreated = false;
             JOptionPane.showMessageDialog(null,
                     "Sketch \" " + theName + "\" already existed.", "Name duplicate",
                     JOptionPane.WARNING_MESSAGE);
@@ -327,6 +337,7 @@ public class Subproject {
             }
             myModifiedSketches.add(theName);
         }
+        return sketchCreated;
     }
 
 

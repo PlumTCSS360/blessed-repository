@@ -44,6 +44,7 @@ public final class Budget {
         this.spendingLimit = spendingLimit.setScale(2, RoundingMode.HALF_UP);
         this.expenses = new LinkedList<>();
         this.parentFilePath = parentFilePath;
+        writeToTXT();
     }
 
     // GETTERS

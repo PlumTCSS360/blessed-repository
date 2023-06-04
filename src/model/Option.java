@@ -24,7 +24,6 @@ public class Option {
                 Name:
                 Phone:
                 Email:
-                
                 Additional Information:""";
 
     /** The setup text for warranty information in a new option. */
@@ -32,9 +31,7 @@ public class Option {
                 Service Name:
                 Phone:
                 Email:
-                Service Details:
-                
-                Additional Information:""";
+                Service Details:""";
 
     /** The name of the option. */
     private final String myName;
