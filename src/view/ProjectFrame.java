@@ -15,7 +15,7 @@ import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Map;
+import java.util.*;
 
 /**
  * The main UI for the project.
@@ -202,12 +202,14 @@ public class ProjectFrame implements GUIFrame{
         DefaultMutableTreeNode root = new DefaultMutableTreeNode(projectName);
         root.add(new DefaultMutableTreeNode("Description"));
         root.add(new DefaultMutableTreeNode("Budget"));
-        Map<String, Subproject> subprojects = Project.getSubprojectsList();
+        Map<String, Subproject> subprojects = new TreeMap<>(Project.getSubprojectsList());
         //for each subproject add nodes for description, budget, options, notes, and sketches
         for (Subproject sp : subprojects.values()) {
+            // Description and budget
             DefaultMutableTreeNode spNode = new DefaultMutableTreeNode(sp);
             spNode.add(new DefaultMutableTreeNode("Description"));
             spNode.add(new DefaultMutableTreeNode("Budget"));
+            // Options
             DefaultMutableTreeNode options = new DefaultMutableTreeNode("Options");
             for (Option op : sp.getOptionsList().values()) {
                 DefaultMutableTreeNode opNode = new DefaultMutableTreeNode(op);
@@ -216,12 +218,16 @@ public class ProjectFrame implements GUIFrame{
                 // TODO Add another node for option information
                 options.add(opNode);
             }
+            // Notes
             DefaultMutableTreeNode notes = new DefaultMutableTreeNode("Notes");
-            for (String n : sp.getNotesList().keySet()) {
+            Set<String> noteList = new TreeSet<>(sp.getNotesList().keySet());
+            for (String n : noteList) {
                 notes.add(new DefaultMutableTreeNode(n, false));
             }
+            // Sketches
             DefaultMutableTreeNode sketches = new DefaultMutableTreeNode("Sketches");
-            for (String s : sp.getSketchesList().keySet()) {
+            Set<String> sketchList = new TreeSet<>(sp.getSketchesList().keySet());
+            for (String s : sketchList) {
                 sketches.add(new DefaultMutableTreeNode(s, false));
             }
             spNode.add(options);
@@ -235,6 +241,7 @@ public class ProjectFrame implements GUIFrame{
         projectTree.setForeground(Color.RED);
         //projectTree.
         // Add a TreeSelectionListener to the JTree
+        final ProjectFrame frame = this;
         projectTree.addTreeSelectionListener(new TreeSelectionListener() {
             @Override
             public void valueChanged(TreeSelectionEvent e) {
@@ -280,38 +287,15 @@ public class ProjectFrame implements GUIFrame{
                     else if (selectedNode.getUserObject().equals("Image")) {
                         myCardLayout.show(activityContainerPanel, "3");
                     }
+                    // TODO Add code to open notes, sketchs, and option info
                 } else if (selectedNode != null && selectedNode.getLevel() == 1) {
+                    // Open subproject panel
                     Subproject sp = Project.getSubproject(selectedNode.getUserObject().toString());
-                    subprojectPanel = new SubprojectPanel(sp, projectTree);
+                    subprojectPanel = new SubprojectPanel(sp, frame);
                     refreshActivityPanel(subprojectPanel, "4");
                     myCardLayout.show(activityContainerPanel, "4");
                 }
             }
-        });
-
-        DefaultTreeModel model = new DefaultTreeModel(root);
-        model.addTreeModelListener(new TreeModelListener() {
-            @Override
-            public void treeNodesChanged(TreeModelEvent e) {}
-
-            @Override
-            public void treeNodesInserted(TreeModelEvent e) {
-                projectTreePanel.removeAll();
-                createTreePanel(projectName);
-                projectTreePanel.revalidate();
-                projectTreePanel.repaint();
-            }
-
-            @Override
-            public void treeNodesRemoved(TreeModelEvent e) {
-                projectTreePanel.removeAll();
-                createTreePanel(projectName);
-                projectTreePanel.revalidate();
-                projectTreePanel.repaint();
-            }
-
-            @Override
-            public void treeStructureChanged(TreeModelEvent e) {}
         });
 
         DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer();
@@ -336,6 +320,13 @@ public class ProjectFrame implements GUIFrame{
         activityContainerPanel.add(thePanel, theIdx);
         activityContainerPanel.revalidate();
         activityContainerPanel.repaint();
+    }
+
+    protected void refreshTreePanel() {
+        projectTreePanel.removeAll();
+        createTreePanel(projectName);
+        projectTreePanel.revalidate();
+        projectTreePanel.repaint();
     }
 
 

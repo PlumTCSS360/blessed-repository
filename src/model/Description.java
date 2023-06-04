@@ -40,6 +40,7 @@ public final class Description {
     public Description(String parentFilePath, String description) {
         this.description = description;
         this.parentFilePath = parentFilePath;
+        writeToTXT();
     }
 
     // GETTERS

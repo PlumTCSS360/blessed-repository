@@ -5,25 +5,30 @@ import model.Subproject;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
+/**
+ * The subproject panel that contains the buttons for create options, notes, and sketches.
+ * Ite also allows the user to compare all options by cost or compare two options with all details.
+ *
+ * @author Jiameng Li
+ * @version 0.3
+ */
 public class SubprojectPanel extends JPanel implements WorkPanel {
 
     final Subproject mySubproject;
 
-    final JTree myTree;
+    final ProjectFrame myFrame;
 
     public SubprojectPanel() {
         super(new GridBagLayout());
         mySubproject = null;
-        myTree = null;
+        myFrame = null;
     }
 
-    public SubprojectPanel(final Subproject theSubproject, final JTree theTree) {
+    public SubprojectPanel(final Subproject theSubproject, final ProjectFrame theFrame) {
         super(new GridBagLayout());
         mySubproject = theSubproject;
-        myTree = theTree;
+        myFrame = theFrame;
         setupPanel();
     }
 
@@ -46,7 +51,7 @@ public class SubprojectPanel extends JPanel implements WorkPanel {
         add(prompt, gbc);
         gbc = new GBC(1, 1, 1, 1);
         JButton button = new JButton("New Option");
-        // TODO Add action listener
+        button.addActionListener(e -> new AddOptionFrame(mySubproject, myFrame));
         add(button, gbc);
 
         // Add "New Note" button and prompt
@@ -55,12 +60,7 @@ public class SubprojectPanel extends JPanel implements WorkPanel {
         add(prompt, gbc);
         gbc = new GBC(1, 2, 1, 1);
         button = new JButton("New Note");
-        button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                new AddNoteFrame(mySubproject.getNotesList(), myTree);
-            }
-        });
+        button.addActionListener(e -> new AddNoteFrame(mySubproject, myFrame));
         add(button, gbc);
 
         // Add "New Sketch" button and prompt
@@ -69,7 +69,7 @@ public class SubprojectPanel extends JPanel implements WorkPanel {
         add(prompt, gbc);
         gbc = new GBC(1, 3, 1, 1);
         button = new JButton("New Sketch");
-        // TODO Add action listener
+        button.addActionListener(e -> new AddSketchFrame(mySubproject, myFrame));
         add(button, gbc);
 
         // Add "Compare All Options" button and prompt
@@ -78,7 +78,7 @@ public class SubprojectPanel extends JPanel implements WorkPanel {
         add(prompt, gbc);
         gbc = new GBC(1, 4, 1, 1);
         button = new JButton("Compare All Options");
-        // TODO Add action listener
+        button.addActionListener(e -> new CompareAllOptionsFrame(mySubproject));
         add(button, gbc);
 
         // Add "Compare Two Options" button and prompt
@@ -87,19 +87,19 @@ public class SubprojectPanel extends JPanel implements WorkPanel {
         add(prompt, gbc);
         gbc = new GBC(1, 5, 1, 1);
         button = new JButton("Compare Two Options");
-        // TODO Add action listener
+        button.addActionListener(e -> new CompareTwoOptionsFrame(mySubproject));
         add(button, gbc);
     }
 
     private JLabel createLabel(final String thePrompt, final GBC theGBC) {
-        JLabel prompt = new JLabel(thePrompt);
-        prompt.setFont(SUBHEADING_FONT);
-        prompt.setForeground(FOREGROUND_COLOR);
-        prompt.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 30));
+        JLabel label = new JLabel(thePrompt);
+        label.setFont(SUBHEADING_FONT);
+        label.setForeground(FOREGROUND_COLOR);
+        label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 30));
         theGBC.anchor = GridBagConstraints.LINE_START;
         theGBC.weightx = 1.0;
         theGBC.weighty = 0.2;
-        return prompt;
+        return label;
     }
 
 }

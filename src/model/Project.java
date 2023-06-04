@@ -125,11 +125,6 @@ public final class Project {
                         "The project \"" + theName + "\" already existed.",
                         "Fail to Create Project", JOptionPane.WARNING_MESSAGE);
             } else {
-                // Assigning project name, budget, expense, and description
-                myName = theName;
-                myBudget = new Budget("data/" + theName, theBudget);
-                myDescription = new Description("data/" + theName, theDescription);
-
                 projectCreated = file.mkdirs();
                 // If successfully created a directory for the project, then create text files
                 try {
@@ -140,6 +135,11 @@ public final class Project {
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
+
+                // Assigning project name, budget, expense, and description
+                myName = theName;
+                myBudget = new Budget("data/" + theName, theBudget);
+                myDescription = new Description("data/" + theName, theDescription);
             }
         }
         return projectCreated;
