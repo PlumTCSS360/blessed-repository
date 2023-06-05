@@ -139,7 +139,9 @@ public final class Project {
                 // Assigning project name, budget, expense, and description
                 myName = theName;
                 myBudget = new Budget("data/" + theName, theBudget);
+                myBudget.writeToTXT();
                 myDescription = new Description("data/" + theName, theDescription);
+                myDescription.writeToTXT();
             }
         }
         return projectCreated;
@@ -326,7 +328,9 @@ public final class Project {
             }
 
             final Budget budget = new Budget(path, theBudget);
+            budget.writeToTXT();
             final Description desc = new Description(path, theDescription);
+            budget.writeToTXT();
             sp = new Subproject(theName, budget, desc);
             mySubprojects.put(theName, sp);
         }

@@ -246,6 +246,7 @@ public class Subproject {
             }
 
             final Description desc = new Description(path, theDescription);
+            desc.writeToTXT();
             op = new Option(theName, theCost, desc, theWebsite, Option.CONTRACTOR_SETUP,
                     Option.WARRANTY_SETUP, false);
             myOptions.put(theName, op);
