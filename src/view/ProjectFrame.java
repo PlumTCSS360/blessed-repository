@@ -95,9 +95,6 @@ public class ProjectFrame implements GUIFrame{
         createSaveButton();
         // Set frame properties
         setUpProjectFrame();
-
-        //Used to test what values are initialized in Project
-        setUpProjectFiles();
     }
 
     /**
@@ -111,10 +108,6 @@ public class ProjectFrame implements GUIFrame{
         final JMenuItem menuItem2 = new JMenuItem("Item 2");
         final JMenuItem menuItem3 = new JMenuItem("Item 3");
 
-        //add menu items to menu
-//        menuBar.add(menuItem1);
-////        menuBar.add(menuItem2);
-////        menuBar.add(menuItem3);
 
         menuBar.setBackground(Color.LIGHT_GRAY);
     }
@@ -131,7 +124,7 @@ public class ProjectFrame implements GUIFrame{
         //initialize activity panels
         budgetPanel = new BudgetPanel(Project.getBudget());
         descriptionPanel = new DescriptionPanel(Project.getProjectDescription());
-        todoListPanel = new TodoPanel(Project.getProjectName());
+        todoListPanel = new TodoPanel(Project.getTodoList());
         imagePanel = new JPanel();
         subprojectPanel = new SubprojectPanel();
 
@@ -146,8 +139,8 @@ public class ProjectFrame implements GUIFrame{
         //create activity panels
 //        createBudgetPanel();
 //        createDescriptionPanel();
-        createTodoListPanel();
-        createImagePanel();
+        //createTodoListPanel();
+        //createImagePanel();
 
         //add activity panels to activity panel
         for (int i = 0; i < activityPanels.length; i++) {
@@ -193,7 +186,7 @@ public class ProjectFrame implements GUIFrame{
     /**
      * Creates the tree panel showing the project directory
      * TODO: Use the project class methods to read the project directory
-     * @author Taylor Merwin
+     * @author Taylor & Jiameng
      */
     private void createTreePanel(String projectName) {
         //Create the root node from the project directory in the data folder
@@ -201,6 +194,7 @@ public class ProjectFrame implements GUIFrame{
         DefaultMutableTreeNode root = new DefaultMutableTreeNode(projectName);
         root.add(new DefaultMutableTreeNode("Description"));
         root.add(new DefaultMutableTreeNode("Budget"));
+        root.add(new DefaultMutableTreeNode("Todo List"));
         Map<String, Subproject> subprojects = new TreeMap<>(Project.getSubprojectsList());
         //for each subproject add nodes for description, budget, options, notes, and sketches
         for (Subproject sp : subprojects.values()) {
@@ -278,14 +272,21 @@ public class ProjectFrame implements GUIFrame{
                         refreshActivityPanel(descriptionPanel, "1");
                         myCardLayout.show(activityContainerPanel, "1");
                     }
-                    //open todo list panel
-                    else if (selectedNode.getUserObject().equals("todo.txt")) {
+
+                    //open to-do list panel
+                    else if (selectedNode.getUserObject().equals("Todo List")) {
+                        if (selectedNode.getLevel() == 1) {     // Project to-do list
+                            todoListPanel = new TodoPanel(Project.getTodoList());
+                        } else if (selectedNode.getLevel() == 2) {      // Subproject to-do list
+                            final Subproject sp = Project.getSubproject(selectedNode.getParent().toString());
+                            todoListPanel = new TodoPanel(sp.getTodoList());
+
+
+                    }
+                        refreshActivityPanel(todoListPanel, "2");
                         myCardLayout.show(activityContainerPanel, "2");
                     }
-                    //open image panel
-                    else if (selectedNode.getUserObject().equals("Image")) {
-                        myCardLayout.show(activityContainerPanel, "3");
-                    }
+
                     // TODO Add code to open notes, sketchs, and option info
                 } else if (selectedNode != null && selectedNode.getLevel() == 1) {
                     // Open subproject panel
@@ -439,14 +440,6 @@ public class ProjectFrame implements GUIFrame{
         projectFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         projectFrame.setLocationRelativeTo(null);
         projectFrame.setVisible(true);
-    }
-
-
-    //Let's print out all the values that are initialized in the Project class lol
-    public void setUpProjectFiles() {
-        System.out.println("The project name: " + Project.getProjectName());
-        System.out.println("The project desc: " + Project.getProjectDescription());
-        System.out.println("The project budget: " + Project.getBudget());
     }
 
 }

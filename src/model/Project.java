@@ -27,6 +27,9 @@ public final class Project {
     /** The description of the currently opened project. */
     private static Description myDescription;
 
+    /** The to-do list of the currently opened project. */
+    private static TodoList myTodoList;
+
     /** The subprojects in the currently opened project. */
     private static final Map<String, Subproject> mySubprojects = new TreeMap<>();
 
@@ -67,6 +70,11 @@ public final class Project {
      */
     public static Description getProjectDescription() {
         return myDescription;
+    }
+
+
+    public static TodoList getTodoList() {
+        return myTodoList;
     }
 
     /**
@@ -247,6 +255,11 @@ public final class Project {
 
             // Load project description
             myDescription = Description.loadDescriptionFromTXT(path + Description.FILE_NAME);
+
+
+
+            // Load to-do list
+            myTodoList = TodoList.loadTodoFromTXT(path + TodoList.FILE_NAME);
 
             // Load subprojects
             File file = new File(path);

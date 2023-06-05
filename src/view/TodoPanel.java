@@ -1,6 +1,7 @@
 package view;
 
 import model.ListItem;
+import model.Project;
 import model.TodoList;
 
 import javax.swing.*;
@@ -32,28 +33,29 @@ public class TodoPanel extends JPanel implements WorkPanel{
     private JLabel nameLabel;
     private JLabel priorityLabel;
 
-    private static final double screenWidth = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
+
     private static final double screenHeight = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
     int fontSize = (int) (screenHeight / 50);
 
-    public TodoPanel(String projectName) {
+    public TodoPanel(TodoList todoList) {
+        this.todoList = todoList;
 
         setLayout(new GridLayout(3, 1));
 
-        setupTitle(projectName);
+        setupTitle();
         setupListPanel();
         setupInputPanel();
         setupButtons();
     }
 
-    private void setupTitle(String projectName) {
+    private void setupTitle() {
         setBackground(BACKGROUND_COLOR);
         setForeground(FOREGROUND_COLOR);
 
         titlePanel = new JPanel();
         titlePanel.setBackground(BACKGROUND_COLOR);
         titlePanel.setForeground(FOREGROUND_COLOR);
-        JLabel titleLabel = new JLabel(projectName + " Todo List");
+        JLabel titleLabel = new JLabel(Project.getProjectName() + " Todo List");
         titleLabel.setFont(TITLE_FONT);
         titleLabel.setForeground(FOREGROUND_COLOR);
         titleLabel.setAlignmentX(CENTER_ALIGNMENT);
@@ -122,6 +124,7 @@ public class TodoPanel extends JPanel implements WorkPanel{
             public void actionPerformed(ActionEvent e) {
                 String name = nameField.getText();
                 Integer priority = Integer.parseInt(priorityField.getText());
+               // ListItem item = new ListItem(name, priority);
                 listModel.addElement(new ListItem(name, priority));
                 Collections.sort(Collections.list(listModel.elements()));
                 nameField.setText("");
