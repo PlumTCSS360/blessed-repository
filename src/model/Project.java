@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 import java.util.*;
 
 /**
- * This class represent the Project in to application.
+ * This class represent the Project in the application.
  * It contains the methods for creating, saving, loading, deleting, and closing the project.
  * It also contains the necessary methods for creating, deleting, and loading subprojects.
  *
@@ -208,9 +208,10 @@ public final class Project {
     }
 
     /**
-     * Save the changes in the currently opened project since last save.
+     * Save the changes in the currently opened.
      * This method should not be called when there's no project opened. No data will be store into the
      * data file before this method is called.
+     * Budget and description are auto saved.
      * <p>
      *     Precondition: The project to be saved is currently opened.
      * </p>
@@ -218,10 +219,6 @@ public final class Project {
      * @author Jiameng Li
      */
     public static void saveProject() {
-        // Path to the folder where project information will be stored.
-        String path = "data/" + myName;
-
-        // Save subprojects
         for (Subproject sp : mySubprojects.values()) {
             sp.saveSubproject();
         }

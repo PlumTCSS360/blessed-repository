@@ -55,7 +55,7 @@ class OptionTest {
      * @author Jiameng Li
      */
     @Test
-    @Order(3)
+    @Order(2)
     void setWebsite() {
         op.setWebsite("https://www.anotherwebsite.com");
         assertEquals("https://www.anotherwebsite.com", op.getWebsite().toString());
@@ -67,7 +67,7 @@ class OptionTest {
      * @author Jiameng Li
      */
     @Test
-    @Order(4)
+    @Order(3)
     void setContractorInfo() {
         op.setContractorInfo("Test contractor information");
         assertEquals("Test contractor information", op.getContractorInfo());
@@ -79,7 +79,7 @@ class OptionTest {
      * @author Jiameng Li
      */
     @Test
-    @Order(5)
+    @Order(4)
     void setWarrantyInfo() {
         op.setWarrantyInfo("Test warranty information");
         assertEquals("Test warranty information", op.getWarrantyInfo());
@@ -92,15 +92,10 @@ class OptionTest {
      * @author Jiameng Li
      */
     @Test
-    @Order(6)
+    @Order(5)
     void saveOption() {
         Project.saveProject();
         final String path = "data/Test Project/Test Subproject/Options/Test Option";
-//        String content = FileAccessor.readTxtFile(path + "/desc.txt");
-//        String expected = """
-//                data/Test Project/Test Subproject/Options/Test Option
-//                Test option description""";
-//        assertEquals(expected, content);
         String content = FileAccessor.readTxtFile(path + "/cost.txt");
         assertEquals("80", content);
         content = FileAccessor.readTxtFile(path + "/website.txt");
