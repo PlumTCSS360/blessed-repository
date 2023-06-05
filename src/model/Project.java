@@ -330,7 +330,7 @@ public final class Project {
             final Budget budget = new Budget(path, theBudget);
             budget.writeToTXT();
             final Description desc = new Description(path, theDescription);
-            budget.writeToTXT();
+            desc.writeToTXT();
             sp = new Subproject(theName, budget, desc);
             mySubprojects.put(theName, sp);
         }

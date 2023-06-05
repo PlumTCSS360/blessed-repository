@@ -238,10 +238,7 @@ public final class InfoFrame implements GUIFrame {
             }
         }
         if (hasHitLastDot) {
-            if (atLocation != 0 && lastDotLocation - atLocation > 1 && lastDotLocation != strArray.length - 1) {
-                return true;
-            }
-            return false;
+            return atLocation != 0 && lastDotLocation - atLocation > 1 && lastDotLocation != strArray.length - 1;
         }
         return false;
     }
