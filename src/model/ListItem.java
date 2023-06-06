@@ -1,14 +1,13 @@
 package model;
 
-public class ListItem implements Comparable<ListItem>{
+public class ListItem {
 
     private String name;
-    private Integer priority;
+
     private boolean isDone;
 
-    public ListItem(String name, Integer priority) {
+    public ListItem(String name) {
         this.name = name;
-        this.priority = priority;
         this.isDone = false;
     }
 
@@ -18,12 +17,8 @@ public class ListItem implements Comparable<ListItem>{
 
     @Override
     public String toString() {
-        return name + " [" + priority + "]";
+        return name;
     }
 
-    @Override
-    public int compareTo(ListItem other) {
-        return this.priority.compareTo(other.priority);
-    }
 
 }

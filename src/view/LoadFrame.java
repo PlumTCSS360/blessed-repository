@@ -194,7 +194,6 @@ public class LoadFrame extends JFrame implements GUIFrame {
     private void refreshProjectList() {
         String[][] projects = Project.getProjectList();
         List<String> projectData = new ArrayList<>();
-
         for (String[] project : projects) {
             String projectName = project[0];
             String budget = project[1];

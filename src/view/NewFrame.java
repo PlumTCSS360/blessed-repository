@@ -1,9 +1,6 @@
 package view;
 
-import model.Budget;
-import model.Description;
-import model.GBC;
-import model.Project;
+import model.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,6 +11,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.awt.BorderLayout;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 
 import static model.Project.createProject;
 
@@ -260,6 +258,8 @@ public class NewFrame implements GUIFrame {
             if(createProject(userName, theBudget, userDescription)) {
                 Budget mybudget = new Budget("data/" + userName + "/", theBudget);
                 Description myDescription = new Description("data/" + userName, userDescription);
+                TodoList myTodoList = new TodoList("data/" + userName, new ArrayList<>());
+
                 mybudget.writeToTXT();
                 myDescription.writeToTXT();
 

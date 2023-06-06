@@ -9,6 +9,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
+import java.io.FileNotFoundException;
 import java.util.Collections;
 
 /**
@@ -26,12 +27,11 @@ public class TodoPanel extends JPanel implements WorkPanel{
     private DefaultListModel<ListItem> listModel;
     private JList<ListItem> list;
     private JTextField nameField;
-    private JTextField priorityField;
     private JButton addButton;
     private JButton removeButton;
     private JButton markAsDoneButton;
     private JLabel nameLabel;
-    private JLabel priorityLabel;
+
 
 
     private static final double screenHeight = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
@@ -80,8 +80,10 @@ public class TodoPanel extends JPanel implements WorkPanel{
 
         list.setFont(new Font("Arial", Font.PLAIN, fontSize));
 
+        for (ListItem item : todoList.getListItems()) {
+            listModel.addElement(item);
+        }
 
-        //JScrollPane scrollPane = new JScrollPane(list);
         add(listPanel);
         listPanel.add(list, BorderLayout.CENTER);
 
@@ -90,16 +92,16 @@ public class TodoPanel extends JPanel implements WorkPanel{
     private void setupInputPanel() {
         // Set up the text fields and buttons
         nameField = new JTextField(20);
-        priorityField = new JTextField(2);
+
         addButton = new JButton("Add");
         removeButton = new JButton("Remove");
         markAsDoneButton = new JButton("Mark as done");
         nameLabel = new JLabel("Name:");
-        priorityLabel = new JLabel("Priority:");
+
         nameLabel.setFont(new Font("Arial", Font.PLAIN, fontSize));
-        priorityLabel.setFont(new Font("Arial", Font.PLAIN, fontSize));
+
         nameLabel.setForeground(FOREGROUND_COLOR);
-        priorityLabel.setForeground(FOREGROUND_COLOR);
+
 
 
         // Set up the panel for the textfield and buttons
@@ -108,13 +110,12 @@ public class TodoPanel extends JPanel implements WorkPanel{
         inputPanel.setBackground(BACKGROUND_COLOR);
         inputPanel.add(nameLabel);
         inputPanel.add(nameField);
-        inputPanel.add(priorityLabel);
-        inputPanel.add(priorityField);
         inputPanel.add(addButton);
         inputPanel.add(removeButton);
         inputPanel.add(markAsDoneButton);
         add(inputPanel);
     }
+
 
     private void setupButtons() {
 
@@ -123,12 +124,18 @@ public class TodoPanel extends JPanel implements WorkPanel{
             @Override
             public void actionPerformed(ActionEvent e) {
                 String name = nameField.getText();
-                Integer priority = Integer.parseInt(priorityField.getText());
-               // ListItem item = new ListItem(name, priority);
-                listModel.addElement(new ListItem(name, priority));
-                Collections.sort(Collections.list(listModel.elements()));
+               ListItem newItem = new ListItem(name);
+                listModel.addElement(new ListItem(name));
+                todoList.getListItems().add(new ListItem(name));
+                todoList.writeToTXT();
+
                 nameField.setText("");
-                priorityField.setText("");
+
+
+                // For testing
+                for (ListItem item : todoList.getListItems()) {
+                    System.out.println(item.toString() + "\n");
+                }
             }
         });
 
@@ -136,7 +143,22 @@ public class TodoPanel extends JPanel implements WorkPanel{
         removeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
+                todoList.removeFromFile(list.getSelectedValue().toString());
                 listModel.removeElement(list.getSelectedValue());
+
+                //remove the selected item from the todo.txt file
+
+
+                todoList.getListItems().remove(list.getSelectedIndex());
+               // todoList.writeToTXT();
+
+
+
+                // For testing
+                for (ListItem item : todoList.getListItems()) {
+                    System.out.println(item.toString() + "\n");
+                }
             }
         });
 
