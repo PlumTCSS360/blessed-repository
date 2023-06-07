@@ -115,7 +115,7 @@ public class AddNoteFrame extends JFrame implements GUIFrame {
      * Called if the user click "Confirm" button.
      * Add a note to the subproject.
      *
-     * @author Jiameng Li
+     * @author Jiameng Li, Cameron Gregoire
      */
     private void confirmAction() {
         final String name = myNameField.getText();
