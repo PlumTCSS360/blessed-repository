@@ -12,7 +12,7 @@ import java.beans.PropertyChangeListener;
 
 /**
  * This class will create a panel on which to display the Description for the user to view.
- * @author Devin Peevy
+ * @author Devin Peevy, Cameron Gregoire
  */
 public class DescriptionPanel extends JPanel implements WorkPanel, PropertyChangeListener {
 
@@ -49,8 +49,11 @@ public class DescriptionPanel extends JPanel implements WorkPanel, PropertyChang
         setVisible(true);
     }
 
-    // PRIVATE HELPER METHODS
-
+    /**
+     * Arranges the components in the panel.
+     *
+     * @author Devin Peevy, Cameron Gregoire
+     */
     private void arrangePanel() {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBackground(BACKGROUND_COLOR);
