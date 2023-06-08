@@ -344,9 +344,9 @@ public class ProjectFrame implements GUIFrame{
                 //Save project
                 Project.saveProject();
                 // Create a new subproject screen
+                projectFrame.dispose();
                 new CreateSubprojectFrame(projectName);
                 refreshTreePanel();
-
             }
         });
     }

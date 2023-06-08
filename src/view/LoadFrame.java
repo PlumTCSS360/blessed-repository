@@ -237,19 +237,4 @@ public class LoadFrame extends JFrame implements GUIFrame {
             return renderer;
         }
     }
-
-    /**
-     * The entry point of the application.
-     * Creates and displays an instance of LoadFrame.
-     *
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                new LoadFrame();
-            }
-        });
-    }
 }

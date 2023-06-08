@@ -148,7 +148,7 @@ private void start() {
      * @return nameQ
      */
     private JLabel nameQ() {
-        JLabel nameQ = textArea("What is your name of your project?", JLabel.LEFT_ALIGNMENT,
+        JLabel nameQ = textArea("What is your name this subproject?", JLabel.LEFT_ALIGNMENT,
                 BODY_FONT);
         return nameQ;
     }
@@ -166,7 +166,7 @@ private void start() {
      * @return descriptionM
      */
     private JLabel descriptionM() {
-        JLabel descriptionM = textArea("Write any description of your project please.", JTextArea.LEFT_ALIGNMENT,
+        JLabel descriptionM = textArea("Add a description", JTextArea.LEFT_ALIGNMENT,
                 BODY_FONT);
         return descriptionM;
     }
@@ -254,17 +254,9 @@ private void start() {
             BigDecimal theBudget = new BigDecimal(userBudget);
             theSubproject = Project.createSubproject(userName, theBudget, userDescription);
             frame.dispose();
+            new ProjectFrame(projectName);
 
 
-
-
-//            //Create subproject budget
-//            Budget myBudget = new Budget("data/" + projectName + "/" + userName + "/budget.txt" , theBudget);
-//            myBudget.writeToTXT();
-//            // Create subproject description
-//            Description myDescription = new Description(
-//                    "data/" + projectName + "/" + userName + "/description.txt", userDescription);
-//            myDescription.writeToTXT();
         }
 
 
