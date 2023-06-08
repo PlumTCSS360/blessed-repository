@@ -1,6 +1,8 @@
 package view;
 
+import model.FileAccessor;
 import model.GBC;
+import model.Project;
 import model.Subproject;
 
 import javax.swing.*;
@@ -113,12 +115,15 @@ public class AddNoteFrame extends JFrame implements GUIFrame {
      * Called if the user click "Confirm" button.
      * Add a note to the subproject.
      *
-     * @author Jiameng Li
+     * @author Jiameng Li, Cameron Gregoire
      */
     private void confirmAction() {
         final String name = myNameField.getText();
         final String content = myContentArea.getText();
         if (mySubproject.createNote(name, content)) {
+            // Save content to a text file
+            String filePath = "Data/" + Project.getProjectName() + "/" + mySubproject.getName() + "/Notes/" + name + ".txt";
+            FileAccessor.writeTxtFile(filePath, content);
             myFrame.refreshTreePanel();
             dispose();
         }
