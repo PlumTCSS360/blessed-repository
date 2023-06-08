@@ -38,6 +38,8 @@ public class NotesPanel extends JPanel {
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
         add(titleLabel, BorderLayout.NORTH);
 
+        int margin = 5;
+
         // Create the notes text area
         notesTextArea = new JTextArea();
         JScrollPane scrollPane = new JScrollPane(notesTextArea);
@@ -50,8 +52,11 @@ public class NotesPanel extends JPanel {
         setForeground(Color.LIGHT_GRAY);
         notesTextArea.setBackground(Color.DARK_GRAY);
         notesTextArea.setForeground(Color.LIGHT_GRAY);
+        notesTextArea.setCaretColor(Color.WHITE);
         Font font = new Font("Arial", Font.PLAIN, 16);
         notesTextArea.setFont(font);
+
+        notesTextArea.setBorder(BorderFactory.createEmptyBorder(margin, margin, margin, margin));
 
         // Attach a document listener to the notes text area to detect changes
         notesTextArea.getDocument().addDocumentListener(new DocumentListener() {

@@ -55,13 +55,18 @@ public class DescriptionPanel extends JPanel {
         descriptionPanel.setOpaque(false);
         descriptionPanel.setLayout(new BorderLayout());
 
+        int margin = 5;
+
         descriptionTextArea = new JTextArea(description.getDescription());
         JScrollPane scrollPane = new JScrollPane(descriptionTextArea);
         descriptionTextArea.setFont(new Font("Arial", Font.PLAIN, 16));
         descriptionTextArea.setBackground(Color.DARK_GRAY);
         descriptionTextArea.setForeground(Color.LIGHT_GRAY);
+        descriptionTextArea.setCaretColor(Color.WHITE);
         descriptionTextArea.setLineWrap(true);
         descriptionTextArea.setWrapStyleWord(true);
+
+        descriptionTextArea.setBorder(BorderFactory.createEmptyBorder(margin, margin, margin, margin));
 
         descriptionPanel.add(scrollPane, BorderLayout.CENTER);
 
