@@ -40,7 +40,6 @@ public class EditDescriptionFrame extends JFrame implements GUIFrame {
     // PRIVATE METHODS
 
     private void start() {
-        pcs.addPropertyChangeListener(listener);
         int width = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth() / 4;
         int height = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight() / 2;
         setSize(new Dimension(width, height));
