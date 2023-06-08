@@ -145,7 +145,7 @@ class SubprojectTest {
      * @author Jiameng Li
      */
     @Test
-    @Order(8)
+    @Order(7)
     void testSetNoteContent() {
         sp.setNoteContent("Test Note", "New note content.");
         assertEquals("New note content.", sp.getNote("Test Note"));
@@ -155,28 +155,17 @@ class SubprojectTest {
 
     /**
      * Test for saveSubproject() in Subproject class.
-     * Check whether the budget, description, and notes are saved correctly.
-     * This method doesn't check whether options are saved.
+     * Check whether notes are saved correctly.
+     * This method doesn't check whether budget, description, and options are saved.
      * Sketches are checked manually for convenient.
      *
      * @author Jiameng Li
      */
     @Test
-    @Order(9)
+    @Order(8)
     void testSaveSubproject() {
         Project.closeProject();
         final String path = "data/Test Project/Test Subproject";
-//        String content = FileAccessor.readTxtFile(path + Budget.FILE_NAME);
-//        String expected = """
-//                data/Test Project/Test Subproject
-//                spending limit:100.00
-//                end""";
-//        assertEquals(expected, content);
-//        content = FileAccessor.readTxtFile(path + Description.FILE_NAME);
-//        expected = """
-//                data/Test Project/Test Subproject
-//                Test subproject description.""";
-//        assertEquals(expected, content);
         String content = FileAccessor.readTxtFile(path + "/Notes/Test Note.txt");
         assertEquals("New note content.", content);
     }
@@ -189,7 +178,7 @@ class SubprojectTest {
      * @author Jiameng Li
      */
     @Test
-    @Order(10)
+    @Order(9)
     void testLoadOptionsNotesSketches() {
         Project.loadProject("Test Project");
         sp = Project.getSubproject("Test Subproject");
@@ -209,15 +198,14 @@ class SubprojectTest {
      * @author Jiameng Li
      */
     @Test
-    @Order(11)
+    @Order(10)
     void testLoadOption() {
-        // Options list
         assertEquals(1, sp.getOptionsList().size());
         assertTrue(sp.getOptionsList().containsKey("Test Option"));
         Option op = sp.getOption("Test Option");
         assertEquals("Test Option", op.getName());
         assertEquals("90", op.getCost().toString());
-//        assertEquals("Test option description.", op.getDescription());
+        assertEquals("Test option description.", op.getDescription().getDescription());
         assertEquals("http://www.website.com", op.getWebsite().toString());
         assertEquals(Option.CONTRACTOR_SETUP, op.getContractorInfo());
         assertEquals(Option.WARRANTY_SETUP, op.getWarrantyInfo());
@@ -230,7 +218,7 @@ class SubprojectTest {
      * @author Jiameng Li
      */
     @Test
-    @Order(12)
+    @Order(11)
     void testDeleteOption() {
         sp.deleteOption("Test Option");
         assertEquals(0, sp.getOptionsList().size());
@@ -245,7 +233,7 @@ class SubprojectTest {
      * @author Jiameng Li
      */
     @Test
-    @Order(13)
+    @Order(12)
     void testDeleteNote() {
         sp.deleteNote("Test Note");
         assertEquals(0, sp.getNotesList().size());
@@ -260,7 +248,7 @@ class SubprojectTest {
      * @author Jiameng Li
      */
     @Test
-    @Order(14)
+    @Order(13)
     void testDeleteSketch() {
         sp.deleteSketch("Test Sketch");
         assertEquals(0, sp.getSketchesList().size());

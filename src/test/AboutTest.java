@@ -33,8 +33,8 @@ class AboutTest {
         Person[] testDevelopers = new Person[5];
         Person testPerson = testAbout.getUser();
         testDevelopers = testAbout.getDevelopers();
-        assertEquals(0.1, testAbout.getVersion());
-        assertEquals("JiamengLi", testPerson.getName());
+        assertEquals(0.3, testAbout.getVersion());
+        assertEquals("Jiameng Li", testPerson.getName());
         assertEquals("jli39@uw.edu", testPerson.getEmail());
         assertEquals("Devin Peevy", testDevelopers[0].getName());
         assertEquals("Junghyon Jo", testDevelopers[1].getName());
@@ -55,7 +55,7 @@ class AboutTest {
     void testGetUser() {
         About testAbout = new About();
         Person testPerson = testAbout.getUser();
-        assertEquals("JiamengLi", testPerson.getName());
+        assertEquals("Jiameng Li", testPerson.getName());
         assertEquals("jli39@uw.edu", testPerson.getEmail());
     }
 
@@ -85,7 +85,7 @@ class AboutTest {
     @Test
     void testGetVersion() {
         About testAbout = new About();
-        assertEquals(0.1, testAbout.getVersion());
+        assertEquals(0.3, testAbout.getVersion());
     }
 
 }
