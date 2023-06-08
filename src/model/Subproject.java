@@ -26,6 +26,9 @@ public class Subproject {
     /** The description of the subproject. */
     private final Description myDescription;
 
+    /** The to-do list of the currently opened subproject. */
+    private static TodoList myTodoList;
+
     /** The list of options in subproject. */
     private final Map<String,Option> myOptions;
 
@@ -92,6 +95,10 @@ public class Subproject {
      */
     public Description getDescription() {
         return myDescription;
+    }
+
+    public static TodoList getTodoList() {
+        return myTodoList;
     }
 
     /**
