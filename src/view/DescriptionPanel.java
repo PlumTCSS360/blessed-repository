@@ -24,7 +24,7 @@ public class DescriptionPanel extends JPanel {
      * Constructs a DescriptionPanel object with the given description.
      *
      * @param description The Description object representing the project description
-     * @author Cameron Gregoire
+     * @author Devin Peevy, Cameron Gregoire
      */
     public DescriptionPanel(Description description) {
         this.description = description;
