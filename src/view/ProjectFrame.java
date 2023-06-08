@@ -5,13 +5,10 @@ import model.Project;
 import model.Subproject;
 
 import javax.swing.*;
-import javax.swing.event.TreeModelEvent;
-import javax.swing.event.TreeModelListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
-import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -310,7 +307,7 @@ public class ProjectFrame implements GUIFrame{
         projectTreePanel.setBackground(Color.LIGHT_GRAY);
         projectTreePanel.add(projectTreeScrollPane, BorderLayout.CENTER);
 
-        createNewItemButton();
+        createSubprojectButton();
 
         projectTreePanel.setVisible(true);
     }
@@ -335,31 +332,20 @@ public class ProjectFrame implements GUIFrame{
      * Opens a dialog to choose the item type
      * @author Taylor Merwin
      */
-    private void createNewItemButton(){
-        JButton newItemButton = new JButton("New Item");
-        newItemButton.setBackground(Color.LIGHT_GRAY);
-        projectTreePanel.add(newItemButton, BorderLayout.SOUTH);
+    private void createSubprojectButton(){
+        JButton createSubprojectButton = new JButton("Create Subproject");
+        createSubprojectButton.setBackground(Color.LIGHT_GRAY);
+        projectTreePanel.add(createSubprojectButton, BorderLayout.SOUTH);
 
-        //Create a new item when the button is clicked
-        newItemButton.addActionListener(new ActionListener() {
+        //Create a new subproject when the button is clicked
+        createSubprojectButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String[] options = {"Sub Project", "Item"};
-                int choice = JOptionPane.showOptionDialog(projectFrame, "What would you like to create?",
-                        "New Item", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
-
-                if (choice == JOptionPane.YES_OPTION) {
-                    //System.out.println("LOL");
-                    //TODO: Create a new subproject
-                }
-
-                else if (choice == JOptionPane.NO_OPTION) {
-                    //System.out.println("ROFL");
-                    //Open a new dialog giving a list of item types to create
-                    String[] itemOptions = {"Note", "Sketch", "Option"};
-                    int itemChoice = JOptionPane.showOptionDialog(projectFrame, "What type of item would you like to create?",
-                            "New Item", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, itemOptions, itemOptions[0]);
-                }
+                //Save project
+                Project.saveProject();
+                // Create a new subproject screen
+                new CreateSubprojectFrame(projectName);
+                refreshTreePanel();
 
             }
         });
