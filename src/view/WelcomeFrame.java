@@ -203,7 +203,7 @@ public class WelcomeFrame extends JFrame  implements GUIFrame {
      * Copy the contents of the selected directory to the new directory.
      *
      * @author Taylor Merwin
-     * @auther Jiameng Li
+     * @author Jiameng Li
      * @param theSelected The file or folder to be imported.
      * @param theDest The destination where the imported file or folder will be stored.
      */

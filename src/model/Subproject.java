@@ -210,7 +210,6 @@ public class Subproject {
      * and add the option to the list.
      * This displays an error dialog if the name or website is invalid or a warning dialog if the
      * option already existed.
-     * The text file remain empty until the saveProject() method is called.
      * <p>
      *     Precondition:
      *     1. The option doesn't exist in current subproject.
@@ -253,6 +252,7 @@ public class Subproject {
             }
 
             final Description desc = new Description(path, theDescription);
+            desc.writeToTXT();
             op = new Option(theName, theCost, desc, theWebsite, Option.CONTRACTOR_SETUP,
                     Option.WARRANTY_SETUP, false);
             myOptions.put(theName, op);

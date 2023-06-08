@@ -101,6 +101,7 @@ public class Option {
     /**
      * Get the name of the option.
      *
+     * @author Jiameng Li
      * @return The name of the option.
      */
     public String getName() {

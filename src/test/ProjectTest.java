@@ -117,7 +117,7 @@ class ProjectTest {
      * @author Jiameng Li
      */
     @Test
-    @Order(6)
+    @Order(5)
     void testCloseProject() {
         Project.closeProject();
         assertNull(Project.getProjectName());
@@ -133,7 +133,7 @@ class ProjectTest {
      * @author Jiameng Li
      */
     @Test
-    @Order(7)
+    @Order(6)
     void testLoadProject() {
         Project.loadProject("Test Project");
         assertEquals("Test Project", Project.getProjectName());
@@ -150,7 +150,7 @@ class ProjectTest {
      * @author Jiameng Li
      */
     @Test
-    @Order(8)
+    @Order(7)
     void testLoadSubproject() {
         Subproject sp = Project.getSubproject("Test Subproject");
         assertEquals("Test Subproject", sp.getName());
@@ -168,7 +168,7 @@ class ProjectTest {
      * @author Jiameng Li
      */
     @Test
-    @Order(9)
+    @Order(8)
     void testDeleteSubproject() {
         Project.deleteSubproject("Test Subproject");
         assertFalse(Project.getSubprojectsList().containsKey("Test Subproject"));
@@ -183,7 +183,7 @@ class ProjectTest {
      * @author Jiameng Li
      */
     @Test
-    @Order(10)
+    @Order(9)
     void testDeleteProject() {
         Project.deleteProject("Test Project");
         File file = new File("data/Test Project");

@@ -38,6 +38,7 @@ public class ProjectFrame implements GUIFrame{
     //Activity panels to display in the activity panel
     BudgetPanel budgetPanel;
     DescriptionPanel descriptionPanel;
+    NotesPanel notesPanel;
     JPanel todoListPanel;
     JPanel imagePanel;
 
@@ -69,19 +70,14 @@ public class ProjectFrame implements GUIFrame{
 
         // Initialize ProjectFame and set frame title
         projectFrame = new JFrame("Crafty Companion - " + projectName);
-
         //Initialize the layout manager for the activities
         myCardLayout = new CardLayout();
-
-
-
         //create project tree panel with border layout
         projectTreePanel = new JPanel(new BorderLayout());
         activityContainerPanel = new JPanel();
         buttonsPanel = new JPanel();
         //initialize menu bar
         menuBar = new JMenuBar();
-
         // Create menu bar
         createMenuBar(menuBar);
         //create panels
@@ -99,7 +95,7 @@ public class ProjectFrame implements GUIFrame{
 
     /**
      @author Taylor Merwin
-    Creates the menu bar for the frame.
+     Creates the menu bar for the frame.
      */
     private void createMenuBar( JMenuBar menuBar) {
 
@@ -127,20 +123,16 @@ public class ProjectFrame implements GUIFrame{
         todoListPanel = new TodoPanel(Project.getTodoList());
         imagePanel = new JPanel();
         subprojectPanel = new SubprojectPanel();
+        notesPanel = new NotesPanel(null, null);
 
         //set up array of activity panels
-        activityPanels = new JPanel[5];
+        activityPanels = new JPanel[6];
         activityPanels[0] = budgetPanel;
         activityPanels[1] = descriptionPanel;
         activityPanels[2] = todoListPanel;
         activityPanels[3] = imagePanel;
         activityPanels[4] = subprojectPanel;
-
-        //create activity panels
-//        createBudgetPanel();
-//        createDescriptionPanel();
-        //createTodoListPanel();
-        //createImagePanel();
+        activityPanels[5] = notesPanel;
 
         //add activity panels to activity panel
         for (int i = 0; i < activityPanels.length; i++) {
@@ -185,8 +177,7 @@ public class ProjectFrame implements GUIFrame{
 
     /**
      * Creates the tree panel showing the project directory
-     * TODO: Use the project class methods to read the project directory
-     * @author Taylor & Jiameng
+     * @author Taylor Merwin, Cameron Gregoire, Jiameng Li
      */
     private void createTreePanel(String projectName) {
         //Create the root node from the project directory in the data folder
@@ -285,6 +276,15 @@ public class ProjectFrame implements GUIFrame{
                     }
                         refreshActivityPanel(todoListPanel, "2");
                         myCardLayout.show(activityContainerPanel, "2");
+                    }
+
+                    //open NotesPanel
+                    else if (selectedNode.getLevel() == 3 && ((DefaultMutableTreeNode) selectedNode.getParent()).getUserObject().equals("Notes")) {
+                        String noteName = selectedNode.getUserObject().toString();
+                        final Subproject sp = Project.getSubproject(selectedNode.getParent().getParent().toString());
+                        notesPanel = new NotesPanel(sp, noteName);
+                        refreshActivityPanel(notesPanel, "5");
+                        myCardLayout.show(activityContainerPanel, "5");
                     }
 
                     // TODO Add code to open notes, sketchs, and option info
