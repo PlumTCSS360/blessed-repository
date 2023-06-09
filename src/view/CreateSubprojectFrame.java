@@ -6,20 +6,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.awt.BorderLayout;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 
-import static model.Project.createProject;
+public class CreateSubprojectFrame implements GUIFrame{
 
-/**
- * This class creates New window so that users can create new project with
- * their own input, name of project, spending limit, and description of project.
- */
-public class NewFrame implements GUIFrame {
+    private Subproject theSubproject;
+
+    private String projectName;
 
     private final JFrame frame;
 
@@ -35,8 +28,9 @@ public class NewFrame implements GUIFrame {
 
     private String userDescription;
 
-    public NewFrame() {
-        frame = new JFrame("Crafty Companion - New");
+    public CreateSubprojectFrame(String projectName) {
+        frame = new JFrame("New Subproject");
+        this.projectName = projectName;
         userBudget = null;
         userDescription = null;
         userName = null;
@@ -47,7 +41,7 @@ public class NewFrame implements GUIFrame {
         start();
     }
 
-    private void start() {
+private void start() {
         //Show everything I want it to show.
         frame.setLayout(new BorderLayout());
         frame.add(displayText(),BorderLayout.CENTER);
@@ -58,10 +52,9 @@ public class NewFrame implements GUIFrame {
         frame.setResizable(false);
         //Center it.
         frame.setLocationRelativeTo(null);
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        //Make it show up.
         frame.setVisible(true);
     }
+
     /**
      *  Method to create button
      *  @return panel
@@ -142,7 +135,7 @@ public class NewFrame implements GUIFrame {
      * @return greeting
      */
     private JLabel greeting() {
-        JLabel greeting = new JLabel("You are creating your new project!");
+        JLabel greeting = new JLabel("Create a new subproject!");
         greeting.setAlignmentX(Component.CENTER_ALIGNMENT);
         greeting.setFont(HEADING_FONT);
         greeting.setBackground(BACKGROUND_COLOR);
@@ -155,7 +148,7 @@ public class NewFrame implements GUIFrame {
      * @return nameQ
      */
     private JLabel nameQ() {
-        JLabel nameQ = textArea("What is your name of your project?", JLabel.LEFT_ALIGNMENT,
+        JLabel nameQ = textArea("What is your name this subproject?", JLabel.LEFT_ALIGNMENT,
                 BODY_FONT);
         return nameQ;
     }
@@ -173,7 +166,7 @@ public class NewFrame implements GUIFrame {
      * @return descriptionM
      */
     private JLabel descriptionM() {
-        JLabel descriptionM = textArea("Write any description of your project please.", JTextArea.LEFT_ALIGNMENT,
+        JLabel descriptionM = textArea("Add a description", JTextArea.LEFT_ALIGNMENT,
                 BODY_FONT);
         return descriptionM;
     }
@@ -220,13 +213,19 @@ public class NewFrame implements GUIFrame {
 
         if (result == JOptionPane.YES_OPTION) {
             frame.dispose();
-            new WelcomeFrame();
+            //new ProjectFrame();
         }
     }
 
-    /**
-     * method to add action of create button as it is clicked by user
-     */
+    private JLabel textArea(String text, float alignmentX, Font font) {
+        JLabel textArea = new JLabel(text);
+        textArea.setAlignmentX(alignmentX);
+        textArea.setFont(font);
+        textArea.setBackground(BACKGROUND_COLOR);
+        textArea.setForeground(FOREGROUND_COLOR);
+        return textArea;
+    }
+
     private void createAction() {
         boolean hasFailed = false;
         userName = nameBox.getText();
@@ -243,39 +242,26 @@ public class NewFrame implements GUIFrame {
             } else if (userBudget.charAt(i) == 46){
                 countDot++;
             }
-
             if(countDot > 1){
                 JOptionPane.showMessageDialog(null, "Budget Error: You can't have more than 1 dot!");
                 hasFailed = true;
             }
         }
 
+        //Here's where the files are created
         if (!hasFailed) {
+
             BigDecimal theBudget = new BigDecimal(userBudget);
+            theSubproject = Project.createSubproject(userName, theBudget, userDescription);
+            frame.dispose();
+            new ProjectFrame(projectName);
 
-            if(createProject(userName, theBudget, userDescription)) {
-                Budget mybudget = new Budget("data/" + userName + "/", theBudget);
-                Description myDescription = new Description("data/" + userName, userDescription);
-                TodoList myTodoList = new TodoList("data/" + userName, new ArrayList<>());
-                mybudget.writeToTXT();
-                myDescription.writeToTXT();
-                frame.dispose();
-                Project.loadProject(userName);
-                new ProjectFrame(userName);
-            }
+
         }
-        else {
-            hasFailed = false;
-        }
+
+
     }
 
-    private JLabel textArea(String text, float alignmentX, Font font) {
-        JLabel textArea = new JLabel(text);
-        textArea.setAlignmentX(alignmentX);
-        textArea.setFont(font);
-        textArea.setBackground(BACKGROUND_COLOR);
-        textArea.setForeground(FOREGROUND_COLOR);
-        return textArea;
-    }
+
 
 }
