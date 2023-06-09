@@ -15,16 +15,30 @@ import java.awt.*;
  */
 public class SubprojectPanel extends JPanel implements WorkPanel {
 
-    final Subproject mySubproject;
+    /** The subproject associated with it this panel. */
+    private final Subproject mySubproject;
 
-    final ProjectFrame myFrame;
+    /** The project frame. */
+    private final ProjectFrame myFrame;
 
+    /**
+     * Construct a subproject panel without specific subproject and project frame.
+     *
+     * @author Jiameng Li
+     */
     public SubprojectPanel() {
         super(new GridBagLayout());
         mySubproject = null;
         myFrame = null;
     }
 
+    /**
+     * Construct a subproject panel with given subproject and project frame.
+     *
+     * @author Jiameng Li
+     * @param theSubproject The subproject associated with it.
+     * @param theFrame The project frame.
+     */
     public SubprojectPanel(final Subproject theSubproject, final ProjectFrame theFrame) {
         super(new GridBagLayout());
         mySubproject = theSubproject;
@@ -32,6 +46,11 @@ public class SubprojectPanel extends JPanel implements WorkPanel {
         setupPanel();
     }
 
+    /**
+     * Set up the panel.
+     *
+     * @author Jiameng Li
+     */
     private void setupPanel() {
         // Set background color
         setBackground(BACKGROUND_COLOR);
@@ -91,6 +110,13 @@ public class SubprojectPanel extends JPanel implements WorkPanel {
         add(button, gbc);
     }
 
+    /**
+     * Create a label with given prompt and grid bag constraint.
+     *
+     * @param thePrompt The prompt for the label.
+     * @param theGBC The grid bag constraint.
+     * @return The label with given prompt and grid bag constraint.
+     */
     private JLabel createLabel(final String thePrompt, final GBC theGBC) {
         JLabel label = new JLabel(thePrompt);
         label.setFont(SUBHEADING_FONT);

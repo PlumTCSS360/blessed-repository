@@ -14,7 +14,7 @@ import java.util.Scanner;
  * This class contains methods for reading from txt file and writing to both txt and png file.
  *
  * @author Jiameng Li
- * @version v0.1
+ * @version v0.3
  */
 public class FileAccessor {
 
@@ -24,6 +24,7 @@ public class FileAccessor {
      *     Precondition: The txt file in the given path exists.
      * </p>
      *
+     * @author Jiameng Li
      * @param thePath The path to the txt file to read.
      * @return The content in the txt file in given path.
      */
@@ -58,6 +59,7 @@ public class FileAccessor {
      *     Precondition: The txt file in the given path exists.
      * </p>
      *
+     * @author Jiameng Li
      * @param thePath The path to the txt file to be written.
      * @param theContent The content to write to the txt file.
      */
@@ -82,16 +84,16 @@ public class FileAccessor {
      *     Precondition: The png file in the given path exists.
      * </p>
      *
+     * @author Jiameng Li
      * @param thePath The path to the png file to be written.
      * @param theImage The image to write to the png file.
      */
     public static void writePngFile(final String thePath, final ImageIcon theImage) {
         File file = new File(thePath);
-        final Image img = theImage.getImage();
-        final BufferedImage bi = new BufferedImage(img.getWidth(null),
-                img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+        final BufferedImage bi = new BufferedImage(theImage.getIconWidth(),
+                theImage.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = bi.createGraphics();
-        g.drawImage(img, 0, 0, null);
+        theImage.paintIcon(null, g, 0, 0);
         g.dispose();
         try {
             ImageIO.write(bi, "png", file);
