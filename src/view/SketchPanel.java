@@ -1,11 +1,9 @@
 package view;
 
-import model.Project;
 import model.Subproject;
 
 import javax.swing.*;
 import java.awt.*;
-import java.math.BigDecimal;
 
 /**
  * The panel that displays the sketch/image.
@@ -71,7 +69,7 @@ public class SketchPanel extends JPanel implements WorkPanel {
 
     /**
      * Called when the "Edit" button is click.
-     * Open a file chooser that allows the user to select a image file.
+     * Open a file chooser that allows the user to select an image file.
      *
      * @author Jiameng Li
      */
@@ -98,13 +96,13 @@ public class SketchPanel extends JPanel implements WorkPanel {
         final int maxHeight = Toolkit.getDefaultToolkit().getScreenSize().height - 220;
         Image image;
         if (imageIcon.getIconHeight() < maxHeight) {
-            final double scale = maxHeight / imageIcon.getIconHeight();
-            image = imageIcon.getImage().getScaledInstance((int) (imageIcon.getIconWidth() * scale),
-                    (int) (imageIcon.getIconHeight() * scale), Image.SCALE_SMOOTH);
+            final int scale = maxHeight / imageIcon.getIconHeight();
+            image = imageIcon.getImage().getScaledInstance(imageIcon.getIconWidth() * scale,
+                    imageIcon.getIconHeight() * scale, Image.SCALE_SMOOTH);
         } else {
-            final double scale = imageIcon.getIconHeight() / maxHeight;
-            image = imageIcon.getImage().getScaledInstance((int) (imageIcon.getIconWidth() / scale),
-                    (int) (imageIcon.getIconHeight() / scale), Image.SCALE_SMOOTH);
+            final int scale = imageIcon.getIconHeight() / maxHeight;
+            image = imageIcon.getImage().getScaledInstance(imageIcon.getIconWidth() / scale,
+                    imageIcon.getIconHeight() / scale, Image.SCALE_SMOOTH);
         }
         myImage.setIcon(new ImageIcon(image));
     }
