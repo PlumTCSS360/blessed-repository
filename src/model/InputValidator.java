@@ -12,7 +12,7 @@ import java.io.IOException;
  * This class also contains method to display error message dialog for invalid input.
  *
  * @author Jiameng Li
- * @version v0.1
+ * @version v0.3
  */
 public class InputValidator {
 
@@ -29,6 +29,7 @@ public class InputValidator {
      * A valid name should be within 25 characters and should not contain any illegal characters.
      * It also should not be blank.
      *
+     * @author Jiameng Li
      * @param theName The name to be validated.
      * @return Whether the name is valid.
      */
@@ -36,6 +37,10 @@ public class InputValidator {
         boolean valid = !theName.isBlank() && theName.length() < 25;;
         for (int i = 0; i < ILLEGAL_CHAR.length && valid; i++) {
             valid = !theName.contains(ILLEGAL_CHAR[i]);
+        }
+        if (valid) {
+            valid = !theName.equals("budget") && !theName.equals("desc")
+                    && !theName.equals("Budget") && !theName.equals("Description");
         }
         return valid;
     }
@@ -46,6 +51,7 @@ public class InputValidator {
      * whether the link leads to a working website.
      * It also allows a blank string to be a valid link.
      *
+     * @author Jiameng Li
      * @param theWebsite The link for the website.
      * @return True if the link is valid or blank.
      */
@@ -56,6 +62,7 @@ public class InputValidator {
     /**
      * Check if the file in the given path is an image.
      *
+     * @author Jiameng Li
      * @param thePath The path to the file.
      * @return Whether the file exists and is an image.
      */
@@ -74,23 +81,33 @@ public class InputValidator {
 
     /**
      * Display an error message dialog for invalid name.
+     *
+     * @author Jiameng Li
      */
     public static void displayInvalidNameMessage() {
         JOptionPane.showMessageDialog(null,
-                "The name you enter is blank, longer than 25 characters,\nor contains illegal characters.",
+                """
+                The name you enter is blank, longer than 25 characters,
+                or contains illegal characters. The name cannot be
+                \"budget\" or \"desc\" or \"Budget\" or \"Description\".""",
                 "Invalid Name", JOptionPane.ERROR_MESSAGE);
     }
 
     /**
      * Display an error message dialog for invalid link.
+     *
+     * @author Jiameng Li
      */
     public static void displayInvalidUrlMessage() {
         JOptionPane.showMessageDialog(null,
-                "The link address you enter is invalid.", "Invalid Link", JOptionPane.ERROR_MESSAGE);
+                "The link address you enter is invalid.",
+                "Invalid Link", JOptionPane.ERROR_MESSAGE);
     }
 
     /**
      * Display an error message dialog for invalid file for image.
+     *
+     * @author Jiameng Li
      */
     public static void displayInvalidImageFileMessage() {
         JOptionPane.showMessageDialog(null,

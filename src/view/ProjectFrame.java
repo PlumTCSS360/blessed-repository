@@ -284,7 +284,15 @@ public class ProjectFrame implements GUIFrame{
                         myCardLayout.show(activityContainerPanel, "5");
                     }
 
-                    // TODO Add code to open notes, sketchs, and option info
+                    // Open Sketch panel
+                    else if (selectedNode.getLevel() == 3 && selectedNode.getParent().toString().equals("Sketches")) {
+                        final Subproject sp = Project.getSubproject(selectedNode.getParent().getParent().toString());
+                        imagePanel = new SketchPanel(sp, selectedNode.getUserObject().toString());
+                        refreshActivityPanel(imagePanel, "3");
+                        myCardLayout.show(activityContainerPanel, "3");
+                    }
+
+                    // TODO Add code to open option info
                 } else if (selectedNode != null && selectedNode.getLevel() == 1) {
                     // Open subproject panel
                     Subproject sp = Project.getSubproject(selectedNode.getUserObject().toString());
@@ -307,7 +315,10 @@ public class ProjectFrame implements GUIFrame{
         projectTreePanel.setBackground(Color.LIGHT_GRAY);
         projectTreePanel.add(projectTreeScrollPane, BorderLayout.CENTER);
 
-        createSubprojectButton();
+        final JPanel panel = new JPanel(new BorderLayout());
+        createSubprojectButton(panel);
+        createDeleteItemButton(panel);
+        projectTreePanel.add(panel, BorderLayout.SOUTH);
 
         projectTreePanel.setVisible(true);
     }
@@ -332,10 +343,10 @@ public class ProjectFrame implements GUIFrame{
      * Opens a dialog to choose the item type
      * @author Taylor Merwin
      */
-    private void createSubprojectButton(){
+    private void createSubprojectButton(final JPanel thePanel){
         JButton createSubprojectButton = new JButton("Create Subproject");
         createSubprojectButton.setBackground(Color.LIGHT_GRAY);
-        projectTreePanel.add(createSubprojectButton, BorderLayout.SOUTH);
+        thePanel.add(createSubprojectButton, BorderLayout.SOUTH);
 
         //Create a new subproject when the button is clicked
         createSubprojectButton.addActionListener(new ActionListener() {
@@ -347,6 +358,64 @@ public class ProjectFrame implements GUIFrame{
                 projectFrame.dispose();
                 new CreateSubprojectFrame(projectName);
                 refreshTreePanel();
+            }
+        });
+    }
+
+    /**
+     * Create a button that delete the currently selected from the project and refresh the tree panel.
+     *
+     * @author Jiameng Li
+     * @param thePanel The panel it belongs to.
+     */
+    private void createDeleteItemButton(final JPanel thePanel) {
+        JButton delete = new JButton("Delete Item");
+        delete.setBackground(Color.LIGHT_GRAY);
+        thePanel.add(delete, BorderLayout.NORTH);
+
+        delete.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) projectTree.getLastSelectedPathComponent();
+
+                // No item selected
+                if (selectedNode == null) {
+                    JOptionPane.showMessageDialog(null, "Please select an item to delete.",
+                            "No item selected", JOptionPane.INFORMATION_MESSAGE);
+                // Project is selected
+                } else if (selectedNode.getLevel() == 0) {
+                    JOptionPane.showMessageDialog(null, "Can't delete project in this frame.",
+                    "Can't delete project", JOptionPane.INFORMATION_MESSAGE);
+                // Budget, Description, or List is selected
+                } else if (selectedNode.getUserObject().toString().equals("Budget") ||
+                        selectedNode.getUserObject().toString().equals("Description") ||
+                        selectedNode.getUserObject().toString().equals("Todo List")) {
+                    JOptionPane.showMessageDialog(null, "Can't delete Budget, Description, or Todo List.",
+                            "Can't delete Item", JOptionPane.INFORMATION_MESSAGE);
+                // A subproject is selected
+                } else if (selectedNode.getLevel() == 1) {
+                    Project.deleteSubproject(selectedNode.getUserObject().toString());
+                    refreshTreePanel();
+                // Notes, Sketches, or Options folder in a subproject is selected
+                } else if (selectedNode.getLevel() == 2) {
+                    JOptionPane.showMessageDialog(null, "Can't delete Notes, Sketches, or Options folder.",
+                            "Can't delete folder", JOptionPane.INFORMATION_MESSAGE);
+                // A note, sketch, or option is selected
+                } else if (selectedNode.getLevel() == 3) {
+                    final String folder = selectedNode.getParent().toString();
+                    final String name = selectedNode.getUserObject().toString();
+                    final Subproject sp = Project.getSubproject(selectedNode.getParent().getParent().toString());
+                    switch (folder) {
+                        case "Notes" -> sp.deleteNote(name);
+                        case "Sketches" -> sp.deleteSketch(name);
+                        case "Options" -> sp.deleteOption(name);
+                    }
+                    refreshTreePanel();
+                // Information about an option is selected
+                } else if (selectedNode.getLevel() == 4) {
+                    JOptionPane.showMessageDialog(null, "Can't delete necessary information about option.",
+                            "Can't delete item", JOptionPane.INFORMATION_MESSAGE);
+                }
             }
         });
     }
